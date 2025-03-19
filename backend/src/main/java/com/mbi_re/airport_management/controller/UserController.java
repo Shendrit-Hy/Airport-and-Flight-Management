@@ -28,9 +28,4 @@ public class UserController {
     public ResponseEntity<List<User>> getUsersByTenant(@RequestHeader("X-Tenant-ID") String tenantId) {
         return ResponseEntity.ok(userService.getUsersByTenant(tenantId));
     }
-
-    @GetMapping("/users/a")
-    public ResponseEntity<List<User>> getUsersByID(@RequestHeader("X-Tenant-ID") String tenantId) {
-        return ResponseEntity.ok(userService.getUsersByTenant(tenantId));
-    }
 }
