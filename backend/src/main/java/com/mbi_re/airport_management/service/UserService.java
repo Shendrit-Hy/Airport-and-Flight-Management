@@ -37,4 +37,8 @@ public class UserService {
     public List<User> getUsersByTenant(String tenantId) {
         return userRepository.findAllByTenantId(tenantId);
     }
+
+    public Optional<User> getUserById(Long id, String tenantId) {
+        return userRepository.findById(id).filter(user -> user.getTenantId().equals(tenantId));
+    }
 }
