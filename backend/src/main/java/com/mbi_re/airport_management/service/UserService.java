@@ -1,7 +1,6 @@
 package com.mbi_re.airport_management.service;
 
 import com.mbi_re.airport_management.dto.UserDTO;
-import com.mbi_re.airport_management.model.Role;
 import com.mbi_re.airport_management.model.User;
 import com.mbi_re.airport_management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ public class UserService {
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setRole(Role.valueOf(role));
         user.setTenantId(tenantId);
         return userRepository.save(user);
     }
