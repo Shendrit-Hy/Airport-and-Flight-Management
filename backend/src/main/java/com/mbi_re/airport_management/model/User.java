@@ -26,6 +26,28 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    @Column(nullable = false)
+    private String fullName;
+
+    @Column(nullable = false)
+    private String country;
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     public String getEmail() {
         return email;
     }

@@ -21,9 +21,11 @@ public class UserService {
 
     public User registerUser(UserDTO userDTO, String role, String tenantId) {
         User user = new User();
+        user.setFullName(userDTO.getFullname());
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setCountry(userDTO.getCountry());
         user.setTenantId(tenantId);
         return userRepository.save(user);
     }
