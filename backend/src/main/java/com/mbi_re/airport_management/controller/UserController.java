@@ -8,11 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-public class
-UserController {
+public class UserController {
 
     @Autowired
     private UserService userService;
@@ -29,9 +29,17 @@ UserController {
     public ResponseEntity<List<User>> getUsersByTenant(@RequestHeader("X-Tenant-ID") String tenantId) {
         return ResponseEntity.ok(userService.getUsersByTenant(tenantId));
     }
+
     @GetMapping("/profile")
     public ResponseEntity<UserDTO> getProfile(@RequestHeader("X-Tenant-ID") String tenantId) {
         return ResponseEntity.ok(userService.getCurrentUserProfile(tenantId));
     }
 
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> getUserById(
+            @PathVariable Long id,
+            @RequestHeader("X-Tenant-ID") String tenantId) {
+        Optional<User> user = userService.getUserById(id, tenantId);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
