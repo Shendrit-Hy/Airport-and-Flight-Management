@@ -24,4 +24,18 @@ public class AirportController {
         return airport.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAirportById(
+            @PathVariable Long id,
+            @RequestHeader("X-Tenant-ID") String tenantId) {
+
+        boolean deleted = airportService.deleteAirportById(id, tenantId);
+        if (deleted) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.status(404).body("Airport not found or doesn't belong to tenant");
+        }
+    }
+
 }
