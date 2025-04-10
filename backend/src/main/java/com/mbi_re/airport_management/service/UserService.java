@@ -5,6 +5,7 @@ import com.mbi_re.airport_management.model.Role;
 import com.mbi_re.airport_management.model.User;
 import com.mbi_re.airport_management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,19 @@ public class UserService {
         user.setTenantId(tenantId);
         return userRepository.save(user);
     }
+    public UserDTO getCurrentUserProfile(String tenantId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsernameAndTenantId(username, tenantId)
+                .map(user -> {
+                    UserDTO dto = new UserDTO();
+                    dto.setUsername(user.getUsername());
+                    dto.setEmail(user.getEmail());
+                    dto.setTenantId(user.getTenantId());
+                    return dto;
+                })
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
 
     public Optional<User> findByUsername(String username, String tenantId) {
         return userRepository.findByUsernameAndTenantId(username, tenantId);

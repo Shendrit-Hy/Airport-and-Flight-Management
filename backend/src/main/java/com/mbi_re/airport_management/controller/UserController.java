@@ -11,7 +11,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
-public class UserController {
+public class
+UserController {
 
     @Autowired
     private UserService userService;
@@ -28,4 +29,9 @@ public class UserController {
     public ResponseEntity<List<User>> getUsersByTenant(@RequestHeader("X-Tenant-ID") String tenantId) {
         return ResponseEntity.ok(userService.getUsersByTenant(tenantId));
     }
+    @GetMapping("/profile")
+    public ResponseEntity<UserDTO> getProfile(@RequestHeader("X-Tenant-ID") String tenantId) {
+        return ResponseEntity.ok(userService.getCurrentUserProfile(tenantId));
+    }
+
 }
