@@ -1,7 +1,6 @@
 package com.mbi_re.airport_management.service;
 
 import com.mbi_re.airport_management.dto.UserDTO;
-import com.mbi_re.airport_management.model.Role;
 import com.mbi_re.airport_management.model.User;
 import com.mbi_re.airport_management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +22,11 @@ public class UserService {
 
     public User registerUser(UserDTO userDTO, String role, String tenantId) {
         User user = new User();
+        user.setFullName(userDTO.getFullname());
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setRole(Role.valueOf(role));
+        user.setCountry(userDTO.getCountry());
         user.setTenantId(tenantId);
         return userRepository.save(user);
     }
@@ -53,7 +53,6 @@ public class UserService {
         return userRepository.findAllByTenantId(tenantId);
     }
 
-
     public Optional<User> getUserById(Long id, String tenantId) {
         return userRepository.findById(id).filter(user -> user.getTenantId().equals(tenantId));
     }
@@ -77,6 +76,10 @@ public class UserService {
         dto.setEmail(user.getEmail());
         dto.setTenantId(user.getTenantId());
         return dto;
+    }
+
+    public Optional<User> getUserById(Long id, String tenantId) {
+        return userRepository.findById(id).filter(user -> user.getTenantId().equals(tenantId));
     }
 
 }

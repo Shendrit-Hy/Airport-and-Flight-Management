@@ -42,6 +42,7 @@ public class UserController {
         Optional<User> user = userService.getUserById(id, tenantId);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
     @PutMapping("/profile")
     public ResponseEntity<UserDTO> updateProfile(
             @RequestBody UserDTO updatedUser,
