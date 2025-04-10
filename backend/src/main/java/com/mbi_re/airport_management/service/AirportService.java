@@ -17,4 +17,15 @@ public class AirportService {
         return airportRepository.findById(id)
                 .filter(a -> a.getTenantId().equals(tenantId));
     }
+
+    public boolean deleteAirportById(Long id, String tenantId) {
+        Optional<Airport> airportOpt = airportRepository.findById(id);
+
+        if (airportOpt.isPresent() && airportOpt.get().getTenantId().equals(tenantId)) {
+            airportRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
 }
