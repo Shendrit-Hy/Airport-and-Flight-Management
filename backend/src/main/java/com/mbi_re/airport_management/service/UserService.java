@@ -4,6 +4,7 @@ import com.mbi_re.airport_management.dto.UserDTO;
 import com.mbi_re.airport_management.model.User;
 import com.mbi_re.airport_management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,20 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public UserDTO getCurrentUserProfile(String tenantId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsernameAndTenantId(username, tenantId)
+                .map(user -> {
+                    UserDTO dto = new UserDTO();
+                    dto.setUsername(user.getUsername());
+                    dto.setEmail(user.getEmail());
+                    dto.setTenantId(user.getTenantId());
+                    return dto;
+                })
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+
     public Optional<User> findByUsername(String username, String tenantId) {
         return userRepository.findByUsernameAndTenantId(username, tenantId);
     }
@@ -41,4 +56,30 @@ public class UserService {
     public Optional<User> getUserById(Long id, String tenantId) {
         return userRepository.findById(id).filter(user -> user.getTenantId().equals(tenantId));
     }
+
+    public UserDTO updateUserProfile(UserDTO updatedUser, String tenantId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsernameAndTenantId(username, tenantId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Përditëso fushat që lejon për ndryshim
+        user.setEmail(updatedUser.getEmail());
+        user.setUsername(updatedUser.getUsername());
+        // Nota: Nuk e përditësojmë password-in këtu (mund të bëhet në endpoint tjetër)
+
+        userRepository.save(user);
+
+        // Kthejmë DTO-në e përditësuar
+        UserDTO dto = new UserDTO();
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setTenantId(user.getTenantId());
+        return dto;
+    }
+
+    public Optional<User> getUserById(Long id, String tenantId) {
+        return userRepository.findById(id).filter(user -> user.getTenantId().equals(tenantId));
+    }
+
 }

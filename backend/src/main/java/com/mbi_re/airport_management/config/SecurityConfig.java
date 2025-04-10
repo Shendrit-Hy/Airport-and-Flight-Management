@@ -14,8 +14,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()  // Allow all requests without authentication
+                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/profile").authenticated()
+                        .anyRequest().permitAll() // ose .authenticated() nëse don me mbrojt të gjitha
                 )
+
                 .csrf(AbstractHttpConfigurer::disable); // Disable CSRF for Postman
 
         return http.build();
