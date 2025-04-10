@@ -30,6 +30,7 @@ public class UserService {
         user.setTenantId(tenantId);
         return userRepository.save(user);
     }
+
     public UserDTO getCurrentUserProfile(String tenantId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsernameAndTenantId(username, tenantId)
@@ -56,6 +57,7 @@ public class UserService {
     public Optional<User> getUserById(Long id, String tenantId) {
         return userRepository.findById(id).filter(user -> user.getTenantId().equals(tenantId));
     }
+
     public UserDTO updateUserProfile(UserDTO updatedUser, String tenantId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -76,6 +78,5 @@ public class UserService {
         dto.setTenantId(user.getTenantId());
         return dto;
     }
-
 
 }
