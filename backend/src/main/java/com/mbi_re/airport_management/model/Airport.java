@@ -69,4 +69,15 @@ public class Airport {
     private String icaoCode;  // e.g. KJFK, KLAX
     private String country;
     private String city;
+    @Column(name = "tenant_id", nullable = false)
+    private String tenantId;
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+
 }
