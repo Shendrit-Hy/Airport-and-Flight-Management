@@ -32,22 +32,9 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<UserDTO> getProfile(@RequestHeader("X-Tenant-ID") String tenantId) {
-        return ResponseEntity.ok(userService.getCurrentUserProfile(tenantId));
+        UserDTO userProfile = userService.getCurrentUserProfile(tenantId);
+        return ResponseEntity.ok(userProfile);
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<User> getUserById(
-            @PathVariable Long id,
-            @RequestHeader("X-Tenant-ID") String tenantId) {
-        Optional<User> user = userService.getUserById(id, tenantId);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PutMapping("/profile")
-    public ResponseEntity<UserDTO> updateProfile(
-            @RequestBody UserDTO updatedUser,
-            @RequestHeader("X-Tenant-ID") String tenantId) {
-        return ResponseEntity.ok(userService.updateUserProfile(updatedUser, tenantId));
-    }
 
 }
