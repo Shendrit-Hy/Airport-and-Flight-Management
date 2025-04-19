@@ -29,11 +29,17 @@ public class UserController {
     public ResponseEntity<List<User>> getUsersByTenant(@RequestHeader("X-Tenant-ID") String tenantId) {
         return ResponseEntity.ok(userService.getUsersByTenant(tenantId));
     }
+    
+    @PutMapping("/profile")
+    public ResponseEntity<UserDTO> updateProfile(
+            @RequestBody UserDTO updatedUser,
+            @RequestHeader("X-Tenant-ID") String tenantId) {
+        return ResponseEntity.ok(userService.updateUserProfile(updatedUser, tenantId));
+    }
 
     @GetMapping("/profile")
     public ResponseEntity<UserDTO> getProfile(@RequestHeader("X-Tenant-ID") String tenantId) {
-        UserDTO userProfile = userService.getCurrentUserProfile(tenantId);
-        return ResponseEntity.ok(userProfile);
+        return ResponseEntity.ok(userService.getCurrentUserProfile(tenantId));
     }
 
 
