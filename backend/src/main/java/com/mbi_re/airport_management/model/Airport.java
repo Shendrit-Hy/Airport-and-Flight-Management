@@ -1,5 +1,7 @@
 package com.mbi_re.airport_management.model;
 import jakarta.persistence.*;
+
+@Entity
 public class Airport {
 
     @Id
@@ -70,12 +72,12 @@ public class Airport {
     private String country;
     private String city;
     @Column(name = "tenant_id", nullable = false)
-    private String tenantId;
-    public String getTenantId() {
+    private Long tenantId;
+    public Long getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(String tenantId) {
+    public void setTenantId(Long tenantId) {
         this.tenantId = tenantId;
     }
 
