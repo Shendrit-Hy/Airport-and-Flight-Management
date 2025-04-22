@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface AirportRepository extends JpaRepository<Airport, Long> {
-    Optional<Airport> findByIdAndTenantId(Long id, Long tenantId);
+    Optional<Airport> findByIdAndTenantId(Long id, String tenantId);
 }
