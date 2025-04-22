@@ -10,23 +10,19 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                        .requestMatchers("/api/auth/profile").authenticated()
-                        .anyRequest().permitAll() // ose .authenticated() nëse don me mbrojt të gjitha
-                )
-
-                .csrf(AbstractHttpConfigurer::disable); // Disable CSRF for Postman
-
-        return http.build();
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-}
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()  // Allow all requests without authentication
+                )
+                .csrf(AbstractHttpConfigurer::disable); // Disable CSRF for Postman
 
+        return http.build();
+    }
+}
