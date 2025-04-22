@@ -12,7 +12,6 @@ import java.util.Optional;
 public class AirportService {
 
     @Autowired
-
     private AirportRepository airportRepository;
 
     public Optional<Airport> getAirportById(Long id, String tenantId) {
