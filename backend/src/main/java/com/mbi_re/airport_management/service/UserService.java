@@ -31,20 +31,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public UserDTO getCurrentUserProfile(String tenantId) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByUsernameAndTenantId(username, tenantId)
-                .map(user -> {
-                    UserDTO dto = new UserDTO();
-                    dto.setUsername(user.getUsername());
-                    dto.setEmail(user.getEmail());
-                    dto.setTenantId(user.getTenantId());
-                    return dto;
-                })
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-
     public Optional<User> findByUsername(String username, String tenantId) {
         return userRepository.findByUsernameAndTenantId(username, tenantId);
     }
@@ -52,31 +38,52 @@ public class UserService {
     public List<User> getUsersByTenant(String tenantId) {
         return userRepository.findAllByTenantId(tenantId);
     }
-    
 
-    public UserDTO updateUserProfile(UserDTO updatedUser, String tenantId) {
+    public UserDTO updateUserProfile(UserDTO updatedUserDTO, String tenantId) {
+
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userRepository.findByUsernameAndTenantId(username, tenantId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Përditëso fushat që lejon për ndryshim
-        user.setEmail(updatedUser.getEmail());
-        user.setUsername(updatedUser.getUsername());
-        // Nota: Nuk e përditësojmë password-in këtu (mund të bëhet në endpoint tjetër)
+
+        user.setFullName(updatedUserDTO.getFullname());
+        user.setEmail(updatedUserDTO.getEmail());
+        user.setCountry(updatedUserDTO.getCountry());
+
+
+        if (updatedUserDTO.getPassword() != null && !updatedUserDTO.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(updatedUserDTO.getPassword()));
+        }
+
 
         userRepository.save(user);
 
-        // Kthejmë DTO-në e përditësuar
-        UserDTO dto = new UserDTO();
-        dto.setUsername(user.getUsername());
-        dto.setEmail(user.getEmail());
-        dto.setTenantId(user.getTenantId());
-        return dto;
+        UserDTO updatedDTO = new UserDTO();
+        updatedDTO.setUsername(user.getUsername());
+        updatedDTO.setEmail(user.getEmail());
+        updatedDTO.setFullname(user.getFullName());
+        updatedDTO.setCountry(user.getCountry());
+        updatedDTO.setTenantId(user.getTenantId());
+
+        return updatedDTO;
     }
 
+    public UserDTO getCurrentUserProfile(String tenantId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> user = userRepository.findByUsernameAndTenantId(username, tenantId);
+
+        return user.map(u -> {
+            UserDTO dto = new UserDTO();
+            dto.setUsername(u.getUsername());
+            dto.setEmail(u.getEmail());
+            dto.setFullname(u.getFullName());
+            dto.setCountry(u.getCountry());
+            dto.setTenantId(u.getTenantId());
+            return dto;
+        }).orElseThrow(() -> new RuntimeException("User not found"));
+    }
     public Optional<User> getUserById(Long id, String tenantId) {
         return userRepository.findById(id).filter(user -> user.getTenantId().equals(tenantId));
     }
-
 }
