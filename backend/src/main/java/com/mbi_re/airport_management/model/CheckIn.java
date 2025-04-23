@@ -1,12 +1,10 @@
 package com.mbi_re.airport_management.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+@Table(name = "check_ins")
 @Entity
 public class CheckIn {
     @Id
