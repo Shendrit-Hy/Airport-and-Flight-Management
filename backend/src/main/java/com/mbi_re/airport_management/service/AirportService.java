@@ -29,4 +29,18 @@ public class AirportService {
         return false;
     }
 
+    public Optional<Airport> updateAirportById(Long id, String tenantId, Airport updatedAirport) {
+        return airportRepository.findByIdAndTenantId(id, tenantId).map(existingAirport -> {
+            existingAirport.setName(updatedAirport.getName());
+            existingAirport.setLocation(updatedAirport.getLocation());
+            existingAirport.setCity(updatedAirport.getCity());
+            existingAirport.setCountry(updatedAirport.getCountry());
+            existingAirport.setIataCode(updatedAirport.getIataCode());
+            existingAirport.setIcaoCode(updatedAirport.getIcaoCode());
+
+            return airportRepository.save(existingAirport);
+        });
+    }
+
+
 }
