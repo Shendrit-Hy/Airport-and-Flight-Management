@@ -4,11 +4,12 @@ package com.mbi_re.airport_management.service;
 import com.mbi_re.airport_management.dto.AnnouncementDTO;
 import com.mbi_re.airport_management.model.Announcement;
 import com.mbi_re.airport_management.repository.AnnouncementRepository;
+import lombok.Builder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Builder
 @Service
 public class AnnouncementService {
 
