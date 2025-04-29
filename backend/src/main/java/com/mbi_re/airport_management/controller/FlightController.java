@@ -40,4 +40,14 @@ public class FlightController {
         flightService.deleteFlight(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/status/{flightId}")
+    public ResponseEntity<String> getFlightStatus(@PathVariable Long flightId) {
+        return ResponseEntity.ok(flightService.getFlightStatus(flightId));
+    }
+
+    @GetMapping("/live")
+    public ResponseEntity<List<FlightDTO>> getLiveFlights() {
+        return ResponseEntity.ok(flightService.getLiveFlights());
+    }
+
 }

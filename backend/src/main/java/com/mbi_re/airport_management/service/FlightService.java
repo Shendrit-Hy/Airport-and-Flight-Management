@@ -75,5 +75,17 @@ public class FlightService {
                 flight.getStatus()
         );
     }
+    public String getFlightStatus(Long flightId) {
+        Flight flight = flightRepository.findById(flightId)
+                .orElseThrow(() -> new RuntimeException("Flight not found"));
+        return flight.getStatus();
+    }
+
+    public List<FlightDTO> getLiveFlights() {
+        return flightRepository.findByStatus("ACTIVE").stream()
+                .map(this::entityToDto)
+                .collect(Collectors.toList());
+    }
+
 
 }
