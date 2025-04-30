@@ -1,9 +1,14 @@
-package com.mbi_re.airport_management.dto;
+package com.mbi_re.airport_management.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-public class FlightDTO {
+@Entity
+public class FlightStatus {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String flightNumber;
     private String departureAirport;
     private String arrivalAirport;
@@ -11,10 +16,10 @@ public class FlightDTO {
     private LocalDateTime arrivalTime;
     private String status;
 
-    public FlightDTO() {}
+    public FlightStatus() {}
 
-    public FlightDTO(Long id, String flightNumber, String departureAirport, String arrivalAirport,
-                     LocalDateTime departureTime, LocalDateTime arrivalTime, String status) {
+    public FlightStatus(Long id, String flightNumber, String departureAirport, String arrivalAirport,
+                        LocalDateTime departureTime, LocalDateTime arrivalTime, String status) {
         this.id = id;
         this.flightNumber = flightNumber;
         this.departureAirport = departureAirport;
