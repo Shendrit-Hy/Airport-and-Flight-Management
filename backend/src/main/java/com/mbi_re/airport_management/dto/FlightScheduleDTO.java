@@ -2,7 +2,7 @@ package com.mbi_re.airport_management.dto;
 
 import java.time.LocalDateTime;
 
-public class FlightDTO {
+public class FlightScheduleDTO {
     private Long id;
     private String flightNumber;
     private String departureAirport;
@@ -11,10 +11,10 @@ public class FlightDTO {
     private LocalDateTime arrivalTime;
     private String status;
 
-    public FlightDTO() {}
+    public FlightScheduleDTO() {}
 
-    public FlightDTO(Long id, String flightNumber, String departureAirport, String arrivalAirport,
-                     LocalDateTime departureTime, LocalDateTime arrivalTime, String status) {
+    public FlightScheduleDTO(Long id, String flightNumber, String departureAirport, String arrivalAirport,
+                             LocalDateTime departureTime, LocalDateTime arrivalTime, String status) {
         this.id = id;
         this.flightNumber = flightNumber;
         this.departureAirport = departureAirport;

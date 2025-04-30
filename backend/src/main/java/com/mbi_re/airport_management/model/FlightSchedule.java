@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Flight {
+public class FlightSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,10 +16,10 @@ public class Flight {
     private LocalDateTime arrivalTime;
     private String status;
 
-    public Flight() {}
+    public FlightSchedule() {}
 
-    public Flight(Long id, String flightNumber, String departureAirport, String arrivalAirport,
-                  LocalDateTime departureTime, LocalDateTime arrivalTime, String status) {
+    public FlightSchedule(Long id, String flightNumber, String departureAirport, String arrivalAirport,
+                          LocalDateTime departureTime, LocalDateTime arrivalTime, String status) {
         this.id = id;
         this.flightNumber = flightNumber;
         this.departureAirport = departureAirport;
