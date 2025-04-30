@@ -2,8 +2,8 @@ package com.mbi_re.airport_management.controller;
 
 import com.mbi_re.airport_management.dto.StaffDTO;
 import com.mbi_re.airport_management.service.StaffService;
-import com.mbi_re.airport_management.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,30 +13,35 @@ import java.util.List;
 public class StaffController {
 
     @Autowired
-    private StaffService service;
+    private StaffService staffService;
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public StaffDTO create(@RequestBody StaffDTO dto) {
-        return service.create(dto);
+        return staffService.create(dto);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
     public List<StaffDTO> getAll() {
-        return service.getAll();
+        return staffService.getAll();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public StaffDTO getById(@PathVariable Long id) {
-        return service.getById(id);
+        return staffService.getById(id);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/{id}")
     public StaffDTO update(@PathVariable Long id, @RequestBody StaffDTO dto) {
-        return service.update(id, dto);
+        return staffService.update(id, dto);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        service.delete(id);
+        staffService.delete(id);
     }
 }
