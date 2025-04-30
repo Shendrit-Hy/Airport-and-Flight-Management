@@ -1,13 +1,14 @@
 package com.mbi_re.airport_management.controller;
 
 import com.mbi_re.airport_management.dto.WeatherDTO;
-import com.mbi_re.airport_management.model.Weather;
 import com.mbi_re.airport_management.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'OPERATOR', 'USER')")
 public class WeatherController {
 
     @Autowired
