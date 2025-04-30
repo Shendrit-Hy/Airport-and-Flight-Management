@@ -16,6 +16,9 @@ public class Flight {
     private LocalDateTime arrivalTime;
     private String status;
 
+    @Column(name = "tenant_id", nullable = false)
+    private String tenantId;
+
     public Flight() {}
 
     public Flight(Long id, String flightNumber, String departureAirport, String arrivalAirport,
@@ -29,6 +32,7 @@ public class Flight {
         this.status = status;
     }
 
+    // Getters and setters ...
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -49,4 +53,7 @@ public class Flight {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getTenantId() { return tenantId; }
+    public void setTenantId(String tenantId) { this.tenantId = tenantId; }
 }

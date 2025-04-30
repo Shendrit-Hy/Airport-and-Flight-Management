@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface FlightRepository extends JpaRepository<Flight, Long> {
-    List<Flight> findByStatus(String status);
-
+    List<Flight> findByTenantId(String tenantId);
+    List<Flight> findByStatusAndTenantId(String status, String tenantId);
 }

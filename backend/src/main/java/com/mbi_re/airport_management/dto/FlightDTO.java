@@ -10,6 +10,7 @@ public class FlightDTO {
     private LocalDateTime departureTime;
     private LocalDateTime arrivalTime;
     private String status;
+    private String tenantId;
 
     public FlightDTO() {}
 
@@ -24,6 +25,7 @@ public class FlightDTO {
         this.status = status;
     }
 
+    // Getters and setters ...
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -44,4 +46,7 @@ public class FlightDTO {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getTenantId() { return tenantId; }
+    public void setTenantId(String tenantId) { this.tenantId = tenantId; }
 }
