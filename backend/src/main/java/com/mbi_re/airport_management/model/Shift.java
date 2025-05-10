@@ -12,8 +12,7 @@ public class Shift {
     private String shiftName;
     private String startTime;
     private String endTime;
-
-    // Getters & setters
+    private String tenantId;
 
     public Long getId() {
         return id;
@@ -45,5 +44,13 @@ public class Shift {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

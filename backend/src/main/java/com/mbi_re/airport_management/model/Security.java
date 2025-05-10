@@ -11,8 +11,7 @@ public class Security {
 
     private String guardName;
     private String assignedShift;
-
-    // Getters & setters
+    private String tenantId;
 
     public Long getId() {
         return id;
@@ -36,5 +35,13 @@ public class Security {
 
     public void setAssignedShift(String assignedShift) {
         this.assignedShift = assignedShift;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

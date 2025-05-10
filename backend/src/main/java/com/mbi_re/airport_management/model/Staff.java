@@ -1,5 +1,4 @@
 package com.mbi_re.airport_management.model;
-import jakarta.persistence.*;
 
 import jakarta.persistence.*;
 
@@ -13,6 +12,7 @@ public class Staff {
     private String name;
     private String role;
     private String email;
+    private String tenantId;
 
     // Getters & setters
     public Long getId() { return id; }
@@ -26,4 +26,7 @@ public class Staff {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public String getTenantId() { return tenantId; }
+    public void setTenantId(String tenantId) { this.tenantId = tenantId; }
 }

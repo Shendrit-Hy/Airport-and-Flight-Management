@@ -4,6 +4,7 @@ public class WeatherDTO {
     private String temperature;
     private String condition;
     private String runwayStatus;
+    private String tenantId;
 
     public String getTemperature() {
         return temperature;
@@ -28,4 +29,7 @@ public class WeatherDTO {
     public void setRunwayStatus(String runwayStatus) {
         this.runwayStatus = runwayStatus;
     }
+
+    public String getTenantId() { return tenantId; }
+    public void setTenantId(String tenantId) { this.tenantId = tenantId; }
 }

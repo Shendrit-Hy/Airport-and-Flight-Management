@@ -3,8 +3,10 @@ package com.mbi_re.airport_management.service;
 import com.mbi_re.airport_management.dto.StaffDTO;
 import com.mbi_re.airport_management.model.Staff;
 import com.mbi_re.airport_management.repository.StaffRepository;
+import com.mbi_re.airport_management.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,23 +17,42 @@ public class StaffService {
     @Autowired
     private StaffRepository repository;
 
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+
+    private String getCurrentTenantId() {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        return tokenProvider.getTenantIdFromJWT(token);
+    }
+
     public StaffDTO create(StaffDTO dto) {
         Staff staff = toEntity(dto);
+        staff.setTenantId(getCurrentTenantId()); // ➡️ Set tenantId automatically
         repository.save(staff);
         return toDTO(staff);
     }
 
     public List<StaffDTO> getAll() {
-        return repository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+        String tenantId = getCurrentTenantId();
+        return repository.findAll().stream()
+                .filter(staff -> tenantId.equals(staff.getTenantId()))
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     public StaffDTO getById(Long id) {
         Staff staff = repository.findById(id).orElseThrow();
+        if (!staff.getTenantId().equals(getCurrentTenantId())) {
+            throw new RuntimeException("Access denied");
+        }
         return toDTO(staff);
     }
 
     public StaffDTO update(Long id, StaffDTO dto) {
         Staff staff = repository.findById(id).orElseThrow();
+        if (!staff.getTenantId().equals(getCurrentTenantId())) {
+            throw new RuntimeException("Access denied");
+        }
         staff.setName(dto.getName());
         staff.setRole(dto.getRole());
         staff.setEmail(dto.getEmail());
@@ -40,7 +61,11 @@ public class StaffService {
     }
 
     public void delete(Long id) {
-        repository.deleteById(id);
+        Staff staff = repository.findById(id).orElseThrow();
+        if (!staff.getTenantId().equals(getCurrentTenantId())) {
+            throw new RuntimeException("Access denied");
+        }
+        repository.delete(staff);
     }
 
     private StaffDTO toDTO(Staff staff) {
