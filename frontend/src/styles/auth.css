@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #121212;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.auth-container {
+  display: flex;
+  width: 800px;
+  height: 500px;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 35px rgba(0, 123, 255, 0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+.auth-container:hover {
+  box-shadow: 0 0 45px rgba(0, 123, 255, 1);
+}
+
+.auth-left,
+.auth-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-left img,
+.auth-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  gap: 15px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input,
+button,
+select {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+}
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+p {
+  text-align: center;
+  font-size: 14px;
+}
+
+a {
+  color: #1e90ff;
+  text-decoration: none;
+}
