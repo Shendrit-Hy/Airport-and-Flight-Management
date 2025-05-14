@@ -12,6 +12,7 @@ public class UserDTO {
     private String email;
     private String password;
     private String country;
+    private String tenantId;
 
     public String getFullname() {
         return fullname;
@@ -28,8 +29,6 @@ public class UserDTO {
     public void setCountry(String country) {
         this.country = country;
     }
-
-    private String tenantId;
 
     public String getUsername() {
         return username;
