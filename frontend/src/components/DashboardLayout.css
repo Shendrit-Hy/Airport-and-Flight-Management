@@ -118,13 +118,13 @@ body {
 }
 
 .card1 {
-  background-image: url('/ticket-stat.webp');
+  background-image: url('/flight-overview.png');
   background-size: cover;
   background-position: center;
 }
 
 .card2 {
-  background-image: url('/ticket-stat.webp');
+  background-image: url('/tickets-sold.png');
   background-size: cover;
   background-position: center;
 }
@@ -136,7 +136,7 @@ body {
 }
 
 .card4 {
-  background-image: url('/ticket.webp');
+  background-image: url('/support-tickets.png');
   background-size: cover;
   background-position: center;
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/auth.css';// CSS i përbashkët për login/signup
-import loginImage from '../assets/login.webp'; // vendos foton në /assets
+import '../styles/auth.css';
+import loginImage from '../assets/login.webp';
 
 export default function LoginPage() {
   return (
