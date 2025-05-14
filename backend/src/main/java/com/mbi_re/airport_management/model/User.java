@@ -32,6 +32,24 @@ public class User {
     @Column(nullable = false)
     private String country;
 
+    @Column(nullable = false)
+    private String password;
+
+    @Column(name = "tenant_id", nullable = false)
+    private String tenantId; // Multitenancy support
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public String getFullName() {
         return fullName;
     }
@@ -55,12 +73,6 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    @Column(nullable = false)
-    private String password;
-
-    @Column(name = "tenant_id", nullable = false)
-    private String tenantId; // Multitenancy support
 
     public Long getId() {
         return id;
