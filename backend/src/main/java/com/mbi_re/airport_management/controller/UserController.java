@@ -2,8 +2,10 @@ package com.mbi_re.airport_management.controller;
 
 import com.mbi_re.airport_management.dto.UserDTO;
 import com.mbi_re.airport_management.model.User;
+import com.mbi_re.airport_management.security.JwtService;
 import com.mbi_re.airport_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,17 +19,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private JwtService jwtService;
+
     @PostMapping("/register")
     public ResponseEntity<User> register(
             @RequestBody UserDTO userDTO,
-            @RequestParam String role,
-            @RequestHeader("X-Tenant-ID") String tenantId) {
-        return ResponseEntity.ok(userService.registerUser(userDTO, role, tenantId));
-    }
-
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsersByTenant(@RequestHeader("X-Tenant-ID") String tenantId) {
-        return ResponseEntity.ok(userService.getUsersByTenant(tenantId));
+            @RequestHeader(value = "X-Tenant-ID", required = false) String tenantId) {
+        System.out.println("Received tenant ID: " + tenantId);  // Log to verify
+        if (tenantId == null || tenantId.isEmpty()) {
+            return ResponseEntity.badRequest().body(null); // You can return an error if the tenantId is not present
+        }
+        return ResponseEntity.ok(userService.registerUser(userDTO, tenantId));
     }
 
     @GetMapping("/profile")
