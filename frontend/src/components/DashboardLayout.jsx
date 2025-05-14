@@ -8,7 +8,7 @@ function DashboardLayout() {
   return (
     <div className="dashboard-container">
       <aside className="sidebar">
-        <div className="logo">MBARE</div>
+        <div className="logo">MBI RE</div>
         <button className="menu-btn">DASHBOARD</button>
         <nav className="menu">
           <a href="#">FLIGHTS</a>
