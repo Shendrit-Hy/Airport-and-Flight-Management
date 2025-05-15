@@ -1,8 +1,10 @@
 package com.mbi_re.airport_management.controller;
 
+import com.mbi_re.airport_management.dto.SupportDTO;
 import com.mbi_re.airport_management.model.SupportRequest;
 import com.mbi_re.airport_management.service.SupportService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,13 +19,15 @@ public class SupportController {
     }
 
     @PostMapping
-    public ResponseEntity<SupportRequest> fileComplaint(@RequestBody SupportRequest request) {
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<SupportRequest> fileComplaint(@RequestBody SupportDTO request) {
 
         return ResponseEntity.ok(service.fileComplaint(request));
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')") // vetem ADMIN mund ti shoh te gjitha
     public ResponseEntity<List<SupportRequest>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+        return ResponseEntity.ok(service.getAllComplaints());
     }
 }
