@@ -10,6 +10,8 @@ import RegisterPage from './pages/RegisterPage';
 import { AuthProvider } from './context/AuthContext';
 import UserProfile from './pages/UserProfile';
 import CheckInPage from './pages/CheckInPage';
+import BookingPage from './pages/BookingPage';
+
 
 
 function App() {
@@ -18,6 +20,8 @@ function App() {
         <AuthProvider>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/booking" element={<BookingPage />} />
+
         <Route path="/signup" element={<RegisterPage />} />
         <Route path="/profile" element={<UserProfile />} />
           <Route path="/checkin" element={<CheckInPage />} />
