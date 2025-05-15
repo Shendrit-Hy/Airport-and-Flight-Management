@@ -1,0 +1,171 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #111;
+  color: #fff;
+  height:80%;
+}
+
+.navbar {
+  background: #1a1a1a;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #333;
+
+}
+
+.navbar-left {
+  font-weight: bold;
+  font-size: 1.4rem;
+}
+
+.navbar-links a {
+  color: #fff;
+  margin-left: 1.5rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.navbar-links a:hover {
+  color: #00bfff;
+}
+
+.booking-page-container {
+  padding: 2rem 4rem;
+}
+
+.booking-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  gap: 5rem;
+  flex-wrap: wrap;
+}
+
+.booking-details {
+  background: #222;
+  height: 400px;
+  padding: 1.5rem;
+  border-radius: 12px;
+  min-width: 280px;
+  flex: 1;
+}
+
+.booking-details h2 {
+  margin-top: 0;
+}
+
+.detail-box {
+  background: #333;
+  padding: 0.6rem;
+  border-radius: 8px;
+  margin: 0.4rem 0;
+}
+
+.price {
+  background: #333;
+  padding: 0.6rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  display: inline-block;
+}
+
+.form {
+  background: #222;
+  padding: 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width:500px;
+}
+
+.input {
+  background: #333;
+  color: #fff;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 8px;
+  //margin: 0.5rem 0;
+}
+
+.button {
+  //margin-top: 1rem;
+  padding: 0.8rem;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: #0056b3;
+}
+
+.tab-bar {
+  display: flex;
+  //margin-bottom: 1rem;
+  justify-content: space-between;
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 0.5rem;
+  background: #333;
+  color: #fff;
+  font-weight: 500;
+}
+
+.tab.active {
+  background: #0044ff;
+  color: white;
+}
+
+.ticket-control {
+  //margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #333;
+  padding: 0.8rem;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.ticket-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ticket-buttons button {
+  background: #555;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.8rem;
+  font-size: 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.ticket-buttons button:hover {
+  background: #777;
+}
+
+.ticket-count {
+  font-size: 1.1rem;
+  min-width: 24px;
+  text-align: center;
+}
