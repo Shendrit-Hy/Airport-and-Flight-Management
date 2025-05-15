@@ -1,9 +1,11 @@
 import React from 'react';
 import './DashboardLayout.css';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function DashboardLayout() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <div className="dashboard-container">
@@ -21,7 +23,9 @@ function DashboardLayout() {
       </aside>
 
       <div className="main">
-        <header className="topbar">ADMIN</header>
+        <header className="topbar">
+          ADMIN – Welcome, {user?.username || 'Guest'} {}
+        </header>
 
         <div className="content">
           <div className="dashboard-cards">
