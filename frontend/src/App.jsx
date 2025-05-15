@@ -13,6 +13,7 @@ import BookingPage from './pages/BookingPage';
 import AdminDashboard from './components/DashboardLayout';
 import AdminLogin from './pages/AdminLoginPage';
 import AdminRoute from './components/AdminRoute';
+import Flights from './pages/Flights';
 
 
 function App() {
@@ -26,7 +27,8 @@ function App() {
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/checkin" element={<CheckInPage />} />
         <Route path="/tickets" element={<TicketsPage />} />
-        <Route path="/flights" element={<FlightsPage />} />
+        <Route path="/admin/flights" element={<FlightsPage />} />
+        <Route path="/flights" element={<Flights />} />
         <Route path="/routes" element={<RoutesPage />} />
         <Route path="/support" element={<SupportPage />} />
         <Route path="/admin" element={<AdminLogin />} />
