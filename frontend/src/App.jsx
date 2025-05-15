@@ -1,7 +1,6 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import TicketsPage from './pages/TicketsPage';
-import FlightsPage from './pages/FlightsPage';
 import RoutesPage from './pages/RoutesPage';
 import SupportPage from './pages/SupportPage';
 import LoginPage from './pages/LoginPage';
@@ -13,14 +12,33 @@ import BookingPage from './pages/BookingPage';
 import AdminDashboard from './components/DashboardLayout';
 import AdminLogin from './pages/AdminLoginPage';
 import AdminRoute from './components/AdminRoute';
+import Navbar from './components/Navbar';
+import FlightsPage from './pages/FlightsPage';
 import Flights from './pages/Flights';
 
+
+function LayoutWithNavbar({ children }) {
+  const location = useLocation();
+  const hideNavbarPaths = ['/admin', '/login', '/signup','/checkin'];
+
+  const shouldHideNavbar = hideNavbarPaths.some(path =>
+    location.pathname.startsWith(path)
+  );
+
+  return (
+    <div style={{ paddingTop: shouldHideNavbar ? '60px' : '0' }}>
+      {!shouldHideNavbar && <Navbar />}
+      {children}
+    </div>
+  );
+}
 
 function App() {
   return (
     <BrowserRouter>
-        <AuthProvider>
-      <Routes>
+      <AuthProvider>
+        <LayoutWithNavbar>
+          <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/booking" element={<BookingPage />} />
         <Route path="/signup" element={<RegisterPage />} />
@@ -32,16 +50,17 @@ function App() {
         <Route path="/routes" element={<RoutesPage />} />
         <Route path="/support" element={<SupportPage />} />
         <Route path="/admin" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          }
-        />
-      </Routes>
-      </AuthProvider>
-    </BrowserRouter>
-  );
-}
+        <Route path="/admin/dashboard" element={<AdminRoute>
+            <AdminDashboard />
+               </AdminRoute>
+                    }
+                       />
+                     </Routes>
+                   </LayoutWithNavbar>
+                 </AuthProvider>
+               </BrowserRouter>
+             );
+           }
 
-export default App;
+ export default App;
+
