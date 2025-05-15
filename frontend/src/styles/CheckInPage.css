@@ -1,0 +1,70 @@
+.checkin-container {
+  max-width: 500px;
+  margin: 50px auto;
+  background-color: #111;
+  color: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 0 15px #0ff;
+}
+
+.checkin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.checkin-form input {
+  padding: 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+}
+
+.checkin-form button {
+  padding: 10px;
+  background-color: teal;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.ticket-info {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid #0ff;
+  border-radius: 10px;
+  background-color: #222;
+}
+
+.ticket-info button {
+  margin-top: 1rem;
+  padding: 10px;
+  background-color: limegreen;
+  color: black;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.error {
+  color: tomato;
+  margin-top: 1rem;
+}
+.button-group {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.back-button {
+  padding: 10px;
+  background-color: #555;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
