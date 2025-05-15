@@ -9,6 +9,7 @@ import RegisterPage from './pages/RegisterPage';
 import { AuthProvider } from './context/AuthContext';
 import UserProfile from './pages/UserProfile';
 import CheckInPage from './pages/CheckInPage';
+import BookingPage from './pages/BookingPage';
 import AdminDashboard from './components/DashboardLayout';
 import AdminLogin from './pages/AdminLoginPage';
 import AdminRoute from './components/AdminRoute';
@@ -20,6 +21,7 @@ function App() {
         <AuthProvider>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/booking" element={<BookingPage />} />
         <Route path="/signup" element={<RegisterPage />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/checkin" element={<CheckInPage />} />
