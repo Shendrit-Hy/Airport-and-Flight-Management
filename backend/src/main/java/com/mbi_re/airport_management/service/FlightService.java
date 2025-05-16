@@ -18,13 +18,20 @@ public class FlightService {
     @Autowired
     private FlightRepository flightRepository;
 
-    public List<FlightDTO> getTodayAndUpcomingFlights() {
+    public List<FlightDTO> getTodayAndUpcomingFlights(String tenantId) {
         LocalDate today = LocalDate.now();
-        List<Flight> flights = flightRepository.findByFlightDateGreaterThanEqual(today);
+        List<Flight> flights = flightRepository.findByFlightDateGreaterThanEqualAndTenantId(today, tenantId);
 
         return flights.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public FlightDTO addFlight(FlightDTO dto) {
+        Flight flight = mapToEntity(dto);
+        flight.setTenantId(dto.getTenantId()); // ensure tenant ID is set
+        Flight saved = flightRepository.save(flight);
+        return mapToDTO(saved);
     }
 
     private FlightDTO mapToDTO(Flight flight) {
@@ -39,10 +46,11 @@ public class FlightService {
         dto.setAvailableSeat(flight.getAvailableSeat());
         dto.setPrice(flight.getPrice());
         dto.setAirline(flight.getAirline());
+        dto.setTenantId(flight.getTenantId());
         return dto;
     }
 
-    public FlightDTO addFlight(FlightDTO dto) {
+    private Flight mapToEntity(FlightDTO dto) {
         Flight flight = new Flight();
         flight.setFlightNumber(dto.getFlightNumber());
         flight.setDepartureAirport(dto.getDepartureAirport());
@@ -53,21 +61,8 @@ public class FlightService {
         flight.setAvailableSeat(dto.getAvailableSeat());
         flight.setPrice(dto.getPrice());
         flight.setAirline(dto.getAirline());
-
-        Flight saved = flightRepository.save(flight);
-
-        FlightDTO result = new FlightDTO();
-        result.setId(saved.getId());
-        result.setFlightNumber(saved.getFlightNumber());
-        result.setDepartureAirport(saved.getDepartureAirport());
-        result.setArrivalAirport(saved.getArrivalAirport());
-        result.setDepartureTime(saved.getDepartureTime());
-        result.setArrivalTime(saved.getArrivalTime());
-        result.setFlightDate(saved.getFlightDate());
-        result.setAvailableSeat(saved.getAvailableSeat());
-        result.setPrice(saved.getPrice());
-        result.setAirline(saved.getAirline());
-
-        return result;
+        flight.setTenantId(dto.getTenantId());
+        return flight;
     }
 }
+

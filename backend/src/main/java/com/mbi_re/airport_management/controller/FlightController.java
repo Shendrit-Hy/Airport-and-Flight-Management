@@ -18,13 +18,17 @@ public class FlightController {
     private FlightService flightService;
 
     @GetMapping
-    public List<FlightDTO> getFlights() {
-        return flightService.getTodayAndUpcomingFlights();
+    public List<FlightDTO> getFlights(@RequestHeader("X-Tenant-ID") String tenantId) {
+        return flightService.getTodayAndUpcomingFlights(tenantId);
     }
 
     @PostMapping
-    public ResponseEntity<FlightDTO> addFlight(@RequestBody FlightDTO flightDTO) {
+    public ResponseEntity<FlightDTO> addFlight(
+            @RequestHeader("X-Tenant-ID") String tenantId,
+            @RequestBody FlightDTO flightDTO) {
+        flightDTO.setTenantId(tenantId);
         FlightDTO saved = flightService.addFlight(flightDTO);
         return ResponseEntity.ok(saved);
     }
 }
+

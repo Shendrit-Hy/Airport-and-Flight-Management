@@ -30,6 +30,17 @@ public class Flight {
 
     private String airline;
 
+    @Column(name = "tenant_id", nullable = false)
+    private String tenantId;
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
     public Long getId() {
         return id;
     }

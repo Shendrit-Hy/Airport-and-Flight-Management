@@ -1,15 +1,61 @@
 package com.mbi_re.airport_management.dto;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class SupportDTO {
+    private String ticketId;
     public String subject;
     public String message;
     public String email;
+    private String type;
+    private String status;
+    private LocalDateTime createdAt;
     private String tenantId;
-    public String getSubject() {
-        return subject;
+    private String flightNumber;
+
+    public String getTicketId() {
+        return ticketId;
     }
+
+    public void setTicketId(String ticketId) {
+        this.ticketId = ticketId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getFlightNumber() {
+        return flightNumber;
+    }
+
+    public void setFlightNumber(String flightNumber) {
+        this.flightNumber = flightNumber;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getSubject() { return subject; }
 
     public void setSubject(String subject) {
         this.subject = subject;
