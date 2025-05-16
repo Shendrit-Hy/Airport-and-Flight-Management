@@ -9,12 +9,13 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class TenantInterceptor implements HandlerInterceptor {
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String tenantId = request.getHeader("X-Tenant-ID"); // Expecting tenant ID in request headers
-        if (tenantId != null) {
+        if (tenantId != null && !tenantId.trim().isEmpty()) {
             TenantContext.setTenantId(tenantId);
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Missing X-Tenant-ID header");
             return false;
         }
         return true;

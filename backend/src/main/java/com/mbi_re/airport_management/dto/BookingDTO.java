@@ -8,6 +8,15 @@ public class BookingDTO {
     private String flightNumber;
     private String seatNumber;
     private String status;
+    private String tenantId;
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
     public String getPassengerName() {
         return passengerName;
