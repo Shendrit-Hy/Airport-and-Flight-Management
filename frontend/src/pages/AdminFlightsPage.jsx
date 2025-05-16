@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/AdminFlightsPage.css';
-import { getFlights, createFlight } from '../api/flightService';
+import { getFlights, createFlight, deleteFlight } from '../api/flightService';
 
 export default function AdminFlightsPage() {
   const [flights, setFlights] = useState([]);
@@ -21,13 +21,8 @@ export default function AdminFlightsPage() {
   }, []);
 
   const loadFlights = async () => {
-    try {
-      const res = await getFlights();
-      console.log('Flights:', res.data);
-      setFlights(res.data);
-    } catch (err) {
-      console.error('Failed to load flights', err);
-    }
+    const res = await getFlights();
+    setFlights(res.data);
   };
 
   const handleChange = (e) => {
@@ -36,23 +31,24 @@ export default function AdminFlightsPage() {
 
   const handleAddFlight = async (e) => {
     e.preventDefault();
-    try {
-      await createFlight(newFlight);
-      setNewFlight({
-        flightNumber: '',
-        departureAirport: '',
-        arrivalAirport: '',
-        departureTime: '',
-        arrivalTime: '',
-        flightDate: '',
-        availableSeat: '',
-        price: '',
-        airline: ''
-      });
-      loadFlights();
-    } catch (err) {
-      console.error('Failed to add flight', err);
-    }
+    await createFlight(newFlight);
+    setNewFlight({
+      flightNumber: '',
+      departureAirport: '',
+      arrivalAirport: '',
+      departureTime: '',
+      arrivalTime: '',
+      flightDate: '',
+      availableSeat: '',
+      price: '',
+      airline: ''
+    });
+    loadFlights();
+  };
+
+  const handleDelete = async (id) => {
+    await deleteFlight(id);
+    loadFlights();
   };
 
   return (
@@ -72,7 +68,6 @@ export default function AdminFlightsPage() {
           <div className="admin-title">ADMIN</div>
         </header>
 
-        {/* Form for adding flight */}
         <form className="flight-add-form" onSubmit={handleAddFlight}>
           <div className="form-grid">
             {[
@@ -104,34 +99,34 @@ export default function AdminFlightsPage() {
 
         <div className="flights-table">
           <div className="table-header">
-            <span className="vlera">Flight Number</span>
-            <span className="vlera">Departure Airport</span>
-            <span className="vlera">Arrival Airport</span>
-            <span className="vlera">Departure Time</span>
-            <span className="vlera">Arrival Time</span>
-            <span className="vlera">Flight Date</span>
-            <span className="vlera">Available Seat</span>
-            <span className="vlera">Price</span>
-            <span className="vlera">Airline</span>
+            <span>Flight Number</span>
+            <span>Departure Airport</span>
+            <span>Arrival Airport</span>
+            <span>Departure Time</span>
+            <span>Arrival Time</span>
+            <span>Flight Date</span>
+            <span>Available Seat</span>
+            <span>Price</span>
+            <span>Airline</span>
+            <span>Actions</span>
           </div>
 
-          {flights.length === 0 ? (
-            <p style={{ marginTop: '20px' }}>No flights found.</p>
-          ) : (
-            flights.map((f) => (
-              <div className="table-row" key={f.id}>
-                <span>{f.flightNumber}</span>
-                <span>{f.departureAirport}</span>
-                <span>{f.arrivalAirport}</span>
-                <span>{f.departureTime}</span>
-                <span>{f.arrivalTime}</span>
-                <span>{f.flightDate}</span>
-                <span>{f.availableSeat}</span>
-                <span>{f.price}</span>
-                <span>{f.airline}</span>
-              </div>
-            ))
-          )}
+          {flights.map((f) => (
+            <div className="table-row" key={f.id}>
+              <span>{f.flightNumber}</span>
+              <span>{f.departureAirport}</span>
+              <span>{f.arrivalAirport}</span>
+              <span>{f.departureTime}</span>
+              <span>{f.arrivalTime}</span>
+              <span>{f.flightDate}</span>
+              <span>{f.availableSeat}</span>
+              <span>{f.price}</span>
+              <span>{f.airline}</span>
+              <span>
+                <button className="delete-btn" onClick={() => handleDelete(f.id)}>🗑</button>
+              </span>
+            </div>
+          ))}
         </div>
       </main>
     </div>

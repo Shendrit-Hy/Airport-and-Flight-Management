@@ -21,6 +21,7 @@ import AdminStaffPage from './pages/AdminStaffPage';
 import AdminBooking from './pages/AdminBooking';
 import AdminFlightsPage from './pages/AdminFlightsPage';
 import AdminMaintenancePage from './pages/AdminMaintenancePage';
+import AdminAirportPage from './pages/AdminAirportPage';
 
 
 function LayoutWithNavbar({ children }) {
@@ -61,7 +62,8 @@ function App() {
         <Route path="/admin/staff" element={<AdminStaffPage />} />
         <Route path="/admin/booking" element={<AdminBooking />} />
         <Route path="/admin/flightspage" element={<AdminFlightsPage />} />
-            <Route path="/admin/maintenance" element={<AdminMaintenancePage />} />
+        <Route path="/admin/maintenance" element={<AdminMaintenancePage />} />
+        <Route path="/admin/airport" element={<AdminAirportPage />} />
         <Route path="/admin/dashboard" element={<AdminRoute>
             <AdminDashboard />
                </AdminRoute>
@@ -73,6 +75,5 @@ function App() {
                </BrowserRouter>
              );
            }
-
- export default App;
+       export default App;
 

@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/MaintenancePage.css';
-import { getMaintenances, createMaintenance } from '../api/maintenanceService';
+import {
+  getMaintenances,
+  createMaintenance,
+  deleteMaintenance
+} from '../api/maintenanceService';
 
 export default function AdminMaintenancePage() {
   const [maintenances, setMaintenances] = useState([]);
@@ -39,6 +43,11 @@ export default function AdminMaintenancePage() {
       status: '',
       description: ''
     });
+    loadData();
+  };
+
+  const handleDelete = async (id) => {
+    await deleteMaintenance(id);
     loadData();
   };
 
@@ -95,6 +104,7 @@ export default function AdminMaintenancePage() {
             <span>Priority</span>
             <span>Status</span>
             <span>Description</span>
+            <span>Actions</span>
           </div>
 
           {maintenances.map((item) => (
@@ -106,6 +116,9 @@ export default function AdminMaintenancePage() {
               <span>{item.priority}</span>
               <span>{item.status}</span>
               <span>{item.description}</span>
+              <span>
+                <button className="delete-btn" onClick={() => handleDelete(item.id)}>🗑</button>
+              </span>
             </div>
           ))}
         </div>
