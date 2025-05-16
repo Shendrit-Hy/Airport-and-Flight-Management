@@ -1,19 +1,25 @@
-import axios from './axiosInstance';
+import axios from 'axios';
 
-export const sendSupportRequest = async (data, token, tenantId) => {
-  return axios.post('/support', data, {
+const SUPPORT_API_BASE = 'http://localhost:8080/api/support';
+
+export const sendSupportRequest = async (data, tenantId) => {
+  return axios.post('http://localhost:8080/api/support', data, {
     headers: {
-      Authorization: `Bearer ${token}`,
-      'X-Tenant-ID': tenantId
+      'X-Tenant-ID': tenantId,
+      'Content-Type': 'application/json'
     }
   });
 };
 
+
+
+// Get all support requests (for admin)
 export const getSupportRequests = async (token, tenantId) => {
-  return axios.get('/support', {
+  return axios.get(SUPPORT_API_BASE, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'X-Tenant-ID': tenantId
-    }
+      'Content-Type': 'application/json',
+      'X-Tenant-ID': tenantId,
+    },
   });
 };

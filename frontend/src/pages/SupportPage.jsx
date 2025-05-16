@@ -1,92 +1,95 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { Formik, Form, Field } from 'formik';
+import React, { useContext } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/SupportPage.css';
-import { sendSupportRequest, getSupportRequests } from '../api/supportService';
+import { sendSupportRequest } from '../api/supportService';
+import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 const SupportPage = () => {
-  const { user, token } = useContext(AuthContext);
-  const [tickets, setTickets] = useState([]);
+  const { user } = useContext(AuthContext);
 
-  const fetchTickets = async () => {
-    try {
-      const res = await getSupportRequests(token, user?.tenantId);
-      setTickets(res.data);
-    } catch (err) {
-      console.error('Error loading tickets:', err);
+  const validate = (values) => {
+    const errors = {};
+    if (!values.subject) {
+      errors.subject = 'Subjekti është i detyrueshëm';
     }
+    if (!values.message) {
+      errors.message = 'Mesazhi është i detyrueshëm';
+    }
+    if (!values.email) {
+      errors.email = 'Email-i është i detyrueshëm';
+    }
+    if (
+      (values.type === 'Baggage' || values.type === 'Lost Item') &&
+      !values.flightNumber
+    ) {
+      errors.flightNumber = 'Numri i fluturimit është i detyrueshëm për këtë kategori';
+    }
+    return errors;
   };
 
   const handleSubmit = async (values, { resetForm }) => {
+    const tenantId = getTenantIdFromSubdomain();
     try {
-      await sendSupportRequest(values, token, user?.tenantId);
-      alert('Support request sent!');
+      await sendSupportRequest(values, tenantId);
+      alert('Kërkesa u dërgua me sukses!');
       resetForm();
-      fetchTickets();
-    } catch (err) {
-      alert('Failed to send support request.');
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        alert("Ky fluturim nuk ekziston.");
+      } else {
+        alert("Ndodhi një gabim. Ju lutem provoni përsëri.");
+      }
     }
   };
 
-
   return (
-       <div className="support-wrapper">
-    <div className="support-page">
-      <h2>Support Center</h2>
+    <div className="support-wrapper">
+      <div className="support-page">
+        <h2>Qendra e Mbështetjes</h2>
 
-      {/* === Form për kërkesë mbështetje === */}
-      <section className="support-form">
-        <h3 className="titulli">Dërgo një Kërkesë</h3>
-        <Formik
-          initialValues={{ subject: '', message: '', email: user?.email || '' }}
-          onSubmit={handleSubmit}
-        >
-          <Form>
-            <Field name="subject" placeholder="Subjekti" className="input" />
-            <Field as="textarea" name="message" placeholder="Mesazhi yt" className="textarea" />
-            <Field name="email" placeholder="Email-i yt" className="input" />
-            <button type="submit" className="button">Dërgo</button>
-          </Form>
-        </Formik>
-      </section>
+        <section className="support-form">
+          <h3 className="titulli">Dërgo një Kërkesë</h3>
+          <Formik
+            initialValues={{
+              type: 'General',
+              subject: '',
+              message: '',
+              email: user?.email || '',
+              flightNumber: '',
+            }}
+            validate={validate}
+            onSubmit={handleSubmit}
+          >
+            {({ values }) => (
+              <Form>
+                <Field as="select" name="type" className="input">
+                  <option value="General">General</option>
+                  <option value="Feedback">Feedback</option>
+                  <option value="Lost Item">Lost Item</option>
+                  <option value="Baggage">Baggage</option>
+                  <option value="Immigration">Immigration</option>
+                </Field>
 
-      {/* === Tiketat e dërguara (vetëm nëse është loguar) === */}
-      {user && (
-        <section className="tickets">
-          <h3>Tiketat e tua</h3>
-          {tickets.length === 0 ? (
-            <p>Asnjë tiketë e regjistruar.</p>
-          ) : (
-            <ul>
-              {tickets.map((t, i) => (
-                <li key={i}>
-                  <strong>{t.subject}</strong> - {t.message}
-                </li>
-              ))}
-            </ul>
-          )}
+                <Field name="subject" placeholder="Subjekti" className="input" />
+                <ErrorMessage name="subject" component="div" className="error" />
+
+                <Field as="textarea" name="message" placeholder="Mesazhi yt" className="textarea" />
+                <ErrorMessage name="message" component="div" className="error" />
+
+                <Field name="email" placeholder="Email-i yt" className="input" />
+                <ErrorMessage name="email" component="div" className="error" />
+
+                <Field name="flightNumber" placeholder="Numri i fluturimit" className="input" />
+                <ErrorMessage name="flightNumber" component="div" className="error" />
+
+                <button type="submit" className="button">Dërgo</button>
+              </Form>
+            )}
+          </Formik>
         </section>
-      )}
-
-      {/* === Informacione për shërbime === */}
-      <section className="airport-services">
-        <h3>Shërbimet e Aeroportit</h3>
-        <ul>
-          <li><strong>Baggage Services:</strong> Gjetja e bagazheve të humbura</li>
-          <li><strong>Lost & Found:</strong> Kontakt për objekte të humbura</li>
-          <li><strong>Immigration:</strong> Ndihmë për dokumentacion dhe kalime kufitare</li>
-        </ul>
-      </section>
-
-      {/* === Seksioni i kontaktit/ndihmës === */}
-      <section className="contact">
-        <h3>Kontakt</h3>
-        <p>📧 Email: support@airport.com</p>
-        <p>📞 Tel: +383 44 000 000</p>
-        <p>📍 Adresa: Aeroporti Ndërkombëtar, Prishtinë</p>
-      </section>
-    </div>
       </div>
+    </div>
   );
 };
 
