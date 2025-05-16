@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bookings")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -26,6 +25,9 @@ public class Booking {
     private LocalDateTime bookingTime;
 
     private String status; // e.g. BOOKED, CANCELLED
+    @Column(nullable = false)
+    private String tenantId;
+
 
     public Long getId() {
         return id;
@@ -74,5 +76,13 @@ public class Booking {
     public void setStatus(String status) {
         this.status = status;
     }
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
 }
 
