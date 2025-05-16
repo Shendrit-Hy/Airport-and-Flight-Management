@@ -52,7 +52,7 @@ function AdminBooking() {
         <button className="side-button">SEARCH</button>
       </div>
 
-      <div className="content">
+      <div className="content bookings-container">
         <div className="admin-ribbon">
           <span className="admin-label">ADMIN</span>
         </div>
