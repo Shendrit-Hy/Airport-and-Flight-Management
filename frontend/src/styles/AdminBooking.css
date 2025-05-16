@@ -50,18 +50,18 @@
 
 /* BOOKINGS PAGE background */
 .bookings-container {
-  background: url('/sunset2.png') no-repeat center center;
+  background: url('/public/Sunset.png') center/cover no-repeat;
   background-size: cover;
 }
 
 /* PAYMENTS PAGE background */
 .payments-container {
-  background: url('/Money.png') no-repeat center center;
+  background: url('/public/Money.png') center/cover no-repeat;
   background-size: cover;
 }
 
 .users-container {
-  background: url('/airport-image.png') no-repeat center center;
+  background: url('/public/airport-image.png') center/cover no-repeat;
   background-size: cover;
 }
 
