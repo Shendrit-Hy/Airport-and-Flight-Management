@@ -1,10 +1,30 @@
-import axiosInstance from './axiosInstance';
-export const getFlights = () => axiosInstance.get('/api/flights');
+import axios from 'axios';
 
-export const getFlightById = (id) => axiosInstance.get(`/api/flights/${id}`);
+const API_URL = 'http://localhost:8080/api/flights';
 
-export const createFlight = (data) => axiosInstance.post('/api/flights', data);
+export const getFlights = (tenantId, token) => {
+  return axios.get(API_URL, {
+    headers: {
+      'X-Tenant-ID': tenantId,
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
 
-export const updateFlight = (id, data) => axiosInstance.put(`/api/flights/${id}`, data);
+export const createFlight = (flightData, tenantId, token) => {
+  return axios.post(API_URL, flightData, {
+    headers: {
+      'X-Tenant-ID': tenantId,
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
 
-export const deleteFlight = (id) => axiosInstance.delete(`/api/flights/${id}`);
+export const deleteFlight = (id, tenantId, token) => {
+  return axios.delete(`${API_URL}/${id}`, {
+    headers: {
+      'X-Tenant-ID': tenantId,
+      Authorization: `Bearer ${token}`
+    }
+  });
+};

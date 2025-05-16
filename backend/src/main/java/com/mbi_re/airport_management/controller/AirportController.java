@@ -1,52 +1,47 @@
 package com.mbi_re.airport_management.controller;
 
+import com.mbi_re.airport_management.dto.AirportDTO;
 import com.mbi_re.airport_management.model.Airport;
 import com.mbi_re.airport_management.service.AirportService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/airports")
 public class AirportController {
 
-    @Autowired
-    private AirportService airportService;
+    private final AirportService airportService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Airport> getAirportById(
-            @PathVariable Long id,
-            @RequestHeader("X-Tenant-ID") String tenantId) {
-
-        Optional<Airport> airport = airportService.getAirportById(id, tenantId);
-        return airport.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public AirportController(AirportService airportService) {
+        this.airportService = airportService;
     }
 
+    private String extractTenantId(String host) {
+        if (host == null || !host.contains(".")) return "default";
+        return host.split("\\.")[0];
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<List<Airport>> getAllAirports(
+            @RequestHeader("X-Tenant-ID") String tenantId) {
+        return ResponseEntity.ok(airportService.getAllAirports(tenantId));
+    }
+//    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping
+    public ResponseEntity<Airport> createAirport(
+            @RequestBody AirportDTO airportDTO,
+            @RequestHeader("X-Tenant-ID") String tenantId) {
+        Airport created = airportService.createAirport(airportDTO, tenantId);
+        return ResponseEntity.ok(created);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAirportById(
-            @PathVariable Long id,
-            @RequestHeader("X-Tenant-ID") String tenantId) {
-
-        boolean deleted = airportService.deleteAirportById(id, tenantId);
-        if (deleted) {
-            return ResponseEntity.noContent().build(); // 204 No Content
-        } else {
-            return ResponseEntity.status(404).body("Airport not found or doesn't belong to tenant");
-        }
+    public ResponseEntity<Void> deleteAirport(@PathVariable Long id) {
+        airportService.deleteAirport(id);
+        return ResponseEntity.noContent().build();
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateAirportById(
-            @PathVariable Long id,
-            @RequestHeader("X-Tenant-ID") String tenantId,
-            @RequestBody Airport updatedAirport) {
-
-        Optional<Airport> result = airportService.updateAirportById(id, tenantId, updatedAirport);
-        return result.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(404).body(null));
-    }
-
-
 }

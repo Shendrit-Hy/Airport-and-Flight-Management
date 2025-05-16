@@ -1,7 +1,0 @@
-CREATE TABLE check_ins (
-    id SERIAL PRIMARY KEY,
-    booking_id VARCHAR(100) NOT NULL UNIQUE,
-    seat_number VARCHAR(10) NOT NULL,
-    check_in_time TIMESTAMP NOT NULL DEFAULT NOW(),
-    boarded BOOLEAN NOT NULL DEFAULT FALSE
-);

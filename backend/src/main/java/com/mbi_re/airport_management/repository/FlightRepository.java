@@ -6,9 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FlightRepository extends JpaRepository<Flight, Long> {
     List<Flight> findByFlightDateGreaterThanEqualAndTenantId(LocalDate date, String tenantId);
     Flight findByFlightNumber(String flightNumber);
+    Optional<Flight> findByIdAndTenantId(Long id, String tenantId);
+
 }

@@ -1,46 +1,36 @@
 package com.mbi_re.airport_management.service;
 
+import com.mbi_re.airport_management.dto.AirportDTO;
 import com.mbi_re.airport_management.model.Airport;
 import com.mbi_re.airport_management.repository.AirportRepository;
-import com.mbi_re.airport_management.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class AirportService {
 
-    @Autowired
-    private AirportRepository airportRepository;
+    private final AirportRepository airportRepository;
 
-    public Optional<Airport> getAirportById(Long id, String tenantId) {
-        return airportRepository.findById(id)
-                .filter(a -> a.getTenantId().equals(tenantId));
+    public AirportService(AirportRepository airportRepository) {
+        this.airportRepository = airportRepository;
     }
 
-    public boolean deleteAirportById(Long id, String tenantId) {
-        Optional<Airport> airportOpt = airportRepository.findById(id);
-
-        if (airportOpt.isPresent() && airportOpt.get().getTenantId().equals(tenantId)) {
-            airportRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public List<Airport> getAllAirports(String tenantId) {
+        return airportRepository.findByTenantId(tenantId);
     }
 
-    public Optional<Airport> updateAirportById(Long id, String tenantId, Airport updatedAirport) {
-        return airportRepository.findByIdAndTenantId(id, tenantId).map(existingAirport -> {
-            existingAirport.setName(updatedAirport.getName());
-            existingAirport.setLocation(updatedAirport.getLocation());
-            existingAirport.setCity(updatedAirport.getCity());
-            existingAirport.setCountry(updatedAirport.getCountry());
-            existingAirport.setIataCode(updatedAirport.getIataCode());
-            existingAirport.setIcaoCode(updatedAirport.getIcaoCode());
-
-            return airportRepository.save(existingAirport);
-        });
+    public Airport createAirport(AirportDTO airportDTO, String tenantId) {
+        Airport airport = new Airport();
+        airport.setName(airportDTO.getName());
+        airport.setLocation(airportDTO.getLocation());
+        airport.setCountry(airportDTO.getCountry());
+        airport.setCity(airportDTO.getCity());
+        airport.setTenantId(tenantId);
+        return airportRepository.save(airport);
     }
 
-
+    public void deleteAirport(Long id) {
+        airportRepository.deleteById(id);
+    }
 }

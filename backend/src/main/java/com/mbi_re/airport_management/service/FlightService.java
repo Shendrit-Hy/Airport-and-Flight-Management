@@ -64,5 +64,11 @@ public class FlightService {
         flight.setTenantId(dto.getTenantId());
         return flight;
     }
+
+    public void deleteFlight(Long flightId, String tenantId) {
+        Flight flight = flightRepository.findByIdAndTenantId(flightId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Flight not found or access denied"));
+        flightRepository.delete(flight);
+    }
 }
 
