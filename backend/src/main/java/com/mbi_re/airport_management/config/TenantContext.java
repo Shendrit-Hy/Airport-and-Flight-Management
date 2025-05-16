@@ -14,4 +14,7 @@ public class TenantContext {
     public static void clear() {
         currentTenant.remove();
     }
+    public static boolean hasTenant() {
+        return currentTenant.get() != null;
+    }
 }
