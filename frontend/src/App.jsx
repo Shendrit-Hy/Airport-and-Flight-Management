@@ -15,6 +15,13 @@ import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
 import FlightsPage from './pages/FlightsPage';
 import Flights from './pages/Flights';
+import FilteredFlights from './pages/FilteredFlights';
+// import Home from './pages/Home';
+import AdminStaffPage from './pages/AdminStaffPage';
+import AdminBooking from './pages/AdminBooking';
+import AdminFlightsPage from './pages/AdminFlightsPage';
+import AdminMaintenancePage from './pages/AdminMaintenancePage';
+import AdminAirportPage from './pages/AdminAirportPage';
 
 
 function LayoutWithNavbar({ children }) {
@@ -40,6 +47,7 @@ function App() {
         <LayoutWithNavbar>
           <Routes>
         <Route path="/login" element={<LoginPage />} />
+{/*         <Route path="/home" element={<Home />} /> */}
         <Route path="/booking" element={<BookingPage />} />
         <Route path="/signup" element={<RegisterPage />} />
         <Route path="/profile" element={<UserProfile />} />
@@ -48,8 +56,14 @@ function App() {
         <Route path="/admin/flights" element={<FlightsPage />} />
         <Route path="/flights" element={<Flights />} />
         <Route path="/routes" element={<RoutesPage />} />
-        <Route path="/support" element={<SupportPage />} />
+        <Route path="/help" element={<SupportPage />} />
+        <Route path="/filteredflights" element={<FilteredFlights />} />
         <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/staff" element={<AdminStaffPage />} />
+        <Route path="/admin/booking" element={<AdminBooking />} />
+        <Route path="/admin/flightspage" element={<AdminFlightsPage />} />
+        <Route path="/admin/maintenance" element={<AdminMaintenancePage />} />
+        <Route path="/admin/airport" element={<AdminAirportPage />} />
         <Route path="/admin/dashboard" element={<AdminRoute>
             <AdminDashboard />
                </AdminRoute>
@@ -61,6 +75,5 @@ function App() {
                </BrowserRouter>
              );
            }
-
- export default App;
+       export default App;
 

@@ -35,7 +35,16 @@ export default function LoginPage() {
       <div className="auth-left">
         <img src={loginImage} alt="Plane" />
       </div>
-      <div className="auth-right">
+
+          <div className="auth-right">
+            <button
+              type="button"
+              className="back-icon-button"
+              onClick={() => navigate(-1)}
+            >
+              ←
+            </button>
+
         <div className="form-wrapper">
           <h2>Log In</h2>
           {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -58,6 +67,9 @@ export default function LoginPage() {
             />
             <button type="submit">Log In</button>
           </form>
+
+
+
           <p>
             Don’t have an account? <Link to="/signup">Sign up</Link>
           </p>

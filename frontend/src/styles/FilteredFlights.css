@@ -1,0 +1,87 @@
+.filtered-flights {
+  background: url('../public/Sunset.png') center/cover no-repeat;
+  padding: 40px;
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header h2 {
+  font-size: 28px;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.filter-btn {
+  background-color: #0057ff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.flight-card {
+  background-color: #1e1e1e;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Apply to all inputs unless overridden */
+.row input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid white;
+  background-color: #333;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  width:600px;
+}
+
+.row input::placeholder {
+  color: #bbb;
+}
+
+/* Specific for seat input to occupy full width on its row */
+.row .seats-input {
+  flex: 1;
+}
+
+.buy-btn {
+  background-color: #0047ff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background 0.3s;
+  white-space: nowrap;
+  flex: none;
+}
