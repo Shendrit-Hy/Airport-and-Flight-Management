@@ -15,6 +15,8 @@ import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
 import FlightsPage from './pages/FlightsPage';
 import Flights from './pages/Flights';
+import FilteredFlights from './pages/FilteredFlights';
+
 
 
 function LayoutWithNavbar({ children }) {
@@ -49,6 +51,8 @@ function App() {
         <Route path="/flights" element={<Flights />} />
         <Route path="/routes" element={<RoutesPage />} />
         <Route path="/support" element={<SupportPage />} />
+        <Route path="/filteredflights" element={<FilteredFlights />} />
+
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminRoute>
             <AdminDashboard />
