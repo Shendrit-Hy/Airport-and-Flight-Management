@@ -1,0 +1,52 @@
+.flight-add-form {
+  display: flex;
+  flex-direction: column;
+  background-color: #1f1f1f;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  box-shadow: 0 0 10px teal;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #ccc;
+}
+
+.input-group input {
+  padding: 10px;
+  border: none;
+  border-radius: 20px;
+  background-color: #e2e9ff;
+  outline: none;
+}
+
+.add-btn {
+  background-color: #0066ff;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100px;
+  align-self: flex-end;
+}
+.flights-table{
+background-color:black;
+font-size:10px;
+}
+

@@ -19,7 +19,7 @@ import FilteredFlights from './pages/FilteredFlights';
 // import Home from './pages/Home';
 import AdminStaffPage from './pages/AdminStaffPage';
 import AdminBooking from './pages/AdminBooking';
-
+import AdminFlightsPage from './pages/AdminFlightsPage';
 
 
 function LayoutWithNavbar({ children }) {
@@ -59,11 +59,7 @@ function App() {
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/staff" element={<AdminStaffPage />} />
         <Route path="/admin/booking" element={<AdminBooking />} />
-
-
-
-
-
+        <Route path="/admin/flightspage" element={<AdminFlightsPage />} />
         <Route path="/admin/dashboard" element={<AdminRoute>
             <AdminDashboard />
                </AdminRoute>
