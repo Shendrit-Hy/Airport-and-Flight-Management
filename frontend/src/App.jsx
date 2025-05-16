@@ -50,7 +50,7 @@ function App() {
         <Route path="/admin/flights" element={<FlightsPage />} />
         <Route path="/flights" element={<Flights />} />
         <Route path="/routes" element={<RoutesPage />} />
-        <Route path="/support" element={<SupportPage />} />
+        <Route path="/help" element={<SupportPage />} />
         <Route path="/filteredflights" element={<FilteredFlights />} />
 
         <Route path="/admin" element={<AdminLogin />} />
