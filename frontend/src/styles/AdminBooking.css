@@ -1,9 +1,9 @@
-/** {
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
-}*/
+}
 
 .admin-container {
   display: flex;
@@ -44,11 +44,25 @@
 
 .content {
   flex: 1;
-  background: url('../public/Sunset.png') no-repeat center center;
-  background-size: cover;
   position: relative;
   padding-bottom: 20px;
-  height:100%;
+}
+
+/* BOOKINGS PAGE background */
+.bookings-container {
+  background: url('/public/Sunset.png') center/cover no-repeat;
+  background-size: cover;
+}
+
+/* PAYMENTS PAGE background */
+.payments-container {
+  background: url('/public/Money.png') center/cover no-repeat;
+  background-size: cover;
+}
+
+.users-container {
+  background: url('/public/airport-image.png') center/cover no-repeat;
+  background-size: cover;
 }
 
 .admin-ribbon {
@@ -68,6 +82,7 @@
 .bookings-title {
   font-size: 24px;
   margin: 30px 20px 60px 20px;
+  color: black;
 }
 
 .bookings-table-container {

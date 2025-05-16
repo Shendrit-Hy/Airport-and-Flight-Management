@@ -27,25 +27,10 @@ export const getProfile = (tenantId, token) => {
   });
 };
 
-export const searchFlights = (from, to, startDate, endDate, persons, tenantId) => {
-  return axios.get('http://localhost:8080/api/flights/search', {
-    params: {
-      from,
-      to,
-      startDate,
-      endDate,
-      persons,
-    },
+export const getFlights = (tenantId) => {
+  return axios.get('http://localhost:8080/api/flights', {
     headers: {
-      'X-Tenant-ID': tenantId,
-    },
-  });
-};
-
-export const getAllFlights = (tenantId) => {
-  return axios.get("/api/flights", {
-    headers: {
-      "X-Tenant-ID": tenantId,
-    },
+      'X-Tenant-ID': tenantId
+    }
   });
 };

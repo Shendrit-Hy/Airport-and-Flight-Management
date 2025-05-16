@@ -1,11 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/Flights.css";
+import { getFlights } from "../api/api";
+import { getTenantIdFromSubdomain } from "../utils/getTenantId";
 
-const Flights = ({ data }) => {
+const Flights = () => {
+  const [flights, setFlights] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // No filtering; show all flights directly
-  const displayedFlights = data || []; // fallback to empty array if undefined
+  useEffect(() => {
+    const tenantId = getTenantIdFromSubdomain();
+    getFlights(tenantId)
+      .then((res) => {
+        setFlights(res.data);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch flights:", err);
+      });
+  }, []);
+
+  const filteredFlights = flights.filter((flight) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      flight.flightNumber?.toLowerCase().includes(term) ||
+      flight.departureAirport?.toLowerCase().includes(term) ||
+      flight.arrivalAirport?.toLowerCase().includes(term) ||
+      flight.airline?.toLowerCase().includes(term)
+    );
+  });
 
   return (
     <div className="page-container">
@@ -14,7 +35,7 @@ const Flights = ({ data }) => {
         <div className="search-bar">
           <input
             type="text"
-            placeholder="SEARCH"
+            placeholder="SEARCH BY FLIGHT, CITY OR AIRLINE"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -32,18 +53,18 @@ const Flights = ({ data }) => {
                 <th>DESTINATION</th>
                 <th>DEPARTURE TIME</th>
                 <th>ARRIVAL TIME</th>
-                <th>ACTIVE</th>
+                <th>AIRLINE</th>
               </tr>
             </thead>
             <tbody>
-              {displayedFlights.map((flight, index) => (
+              {filteredFlights.map((flight, index) => (
                 <tr key={index}>
                   <td>{flight.flightNumber}</td>
-                  <td>{flight.origin}</td>
-                  <td>{flight.destination}</td>
+                  <td>{flight.departureAirport}</td>
+                  <td>{flight.arrivalAirport}</td>
                   <td>{flight.departureTime}</td>
                   <td>{flight.arrivalTime}</td>
-                  <td>{flight.active ? "Yes" : "No"}</td>
+                  <td>{flight.airline}</td>
                 </tr>
               ))}
             </tbody>
