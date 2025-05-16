@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface FlightRepository extends JpaRepository<Flight, Long> {
-    List<Flight> findByFlightDateGreaterThanEqual(LocalDate date);
+    List<Flight> findByFlightDateGreaterThanEqualAndTenantId(LocalDate date, String tenantId);
+    Flight findByFlightNumber(String flightNumber);
 }
