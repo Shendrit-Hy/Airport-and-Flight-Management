@@ -1,5 +1,4 @@
-/* Layout i përgjithshëm */
-.admin-layout {
+.adminsupport-layout {
   display: flex;
   height: 100vh;
   width: 100vw;
@@ -7,56 +6,64 @@
   color: white;
 }
 
-/* Sidebar */
-.sidebar {
+.adminsupport-sidebar {
   width: 220px;
   background-color: #111;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
-.sidebar .logo {
+.adminsupport-logo {
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
-.sidebar a {
+.adminsupport-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.adminsupport-nav-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.adminsupport-nav-row a {
   color: white;
   text-decoration: none;
-  padding: 8px 0;
+  padding: 6px 0;
 }
 
-.sidebar a.active {
+.adminsupport-nav-row a.active {
   font-weight: bold;
   border-left: 3px solid teal;
   padding-left: 10px;
 }
 
-/* Main content */
-.main-content {
+.adminsupport-main-content {
   flex: 1;
   padding: 40px;
   overflow-y: auto;
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-.admin-header {
+.adminsupport-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
 }
 
-.admin-title {
+.adminsupport-title {
   font-weight: bold;
   font-size: 16px;
 }
 
-/* Form për shtim */
-.flight-add-form {
+.adminsupport-form {
   display: flex;
   flex-direction: column;
   background-color: #1f1f1f;
@@ -66,26 +73,26 @@
   box-shadow: 0 0 10px teal;
 }
 
-.form-grid {
+.adminsupport-form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 15px;
   margin-bottom: 20px;
 }
 
-.input-group {
+.adminsupport-input-group {
   display: flex;
   flex-direction: column;
 }
 
-.input-group label {
+.adminsupport-input-group label {
   font-size: 14px;
   margin-bottom: 5px;
   color: #ccc;
 }
 
-.input-group input,
-.input-group textarea {
+.adminsupport-input-group input,
+.adminsupport-input-group textarea {
   padding: 10px;
   border: none;
   border-radius: 20px;
@@ -94,17 +101,16 @@
   outline: none;
 }
 
-.input-group textarea {
+.adminsupport-input-group textarea {
   resize: vertical;
   min-height: 60px;
 }
 
-.input-group.full-width {
+.adminsupport-input-group.full-width {
   grid-column: 1 / -1;
 }
 
-/* Butoni ADD */
-.add-btn {
+.adminsupport-add-btn {
   background-color: #0066ff;
   color: white;
   padding: 12px 24px;
@@ -116,27 +122,26 @@
   align-self: flex-end;
 }
 
-/* Tabela */
-.flights-table {
+.adminsupport-table {
   background-color: #1f1f1f;
   border-radius: 10px;
   padding: 20px;
   margin-bottom: 20px;
 }
 
-.table-header,
-.table-row {
+.adminsupport-table-header,
+.adminsupport-table-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) 60px;
   padding: 10px 0;
   border-bottom: 1px solid #444;
 }
 
-.table-header {
+.adminsupport-table-header {
   font-weight: bold;
 }
 
-.delete-btn {
+.adminsupport-delete-btn {
   background: transparent;
   border: none;
   font-size: 18px;

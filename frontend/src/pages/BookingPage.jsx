@@ -14,27 +14,27 @@ function BookingProvider({ children }) {
   );
 }
 
-function Navbar() {
-  return (
-    <div className="navbar">
-      <div className="navbar-left">Flight Booking</div>
-      <div className="navbar-links">
-        <a href="#">Home</a>
-        <a href="#">Contact</a>
-        <a href="#">Flights</a>
-      </div>
-    </div>
-  );
+function BookingNavbar() {
+//   return (
+//     <div className="bookingpage-navbar">
+//       <div className="bookingpage-navbar-left">Flight Booking</div>
+//       <div className="bookingpage-navbar-links">
+//         <a href="#">Home</a>
+//         <a href="#">Contact</a>
+//         <a href="#">Flights</a>
+//       </div>
+//     </div>
+//   );
 }
 
 function BookingDetails({ flightDetails }) {
   return (
-    <div className="booking-details">
+    <div className="bookingpage-details">
       <h2>Details</h2>
-      <p className="detail-box">{flightDetails.time}</p>
-      <p className="detail-box">FROM: {flightDetails.from}</p>
-      <p className="detail-box">TO: {flightDetails.to}</p>
-      <p className="price">{flightDetails.price}</p>
+      <p className="bookingpage-detail-box">{flightDetails.time}</p>
+      <p className="bookingpage-detail-box">FROM: {flightDetails.from}</p>
+      <p className="bookingpage-detail-box">TO: {flightDetails.to}</p>
+      <p className="bookingpage-price">{flightDetails.price}</p>
     </div>
   );
 }
@@ -54,32 +54,31 @@ function UserInfoForm({ next }) {
         next();
       }}
     >
-      <Form className="form">
-        <div className="tab-bar">
-          <span className="tab active">Your info</span>
-          <span className="tab">Payment</span>
+      <Form className="bookingpage-form">
+        <div className="bookingpage-tab-bar">
+          <span className="bookingpage-tab active">Your info</span>
+          <span className="bookingpage-tab">Payment</span>
         </div>
 
-        <Field name="fullName" placeholder="Full Name" className="input" />
-        <Field name="email" type="email" placeholder="Email" className="input" />
-        <Field name="age" placeholder="Age" className="input" />
-        <Field name="phone" placeholder="Phone Number" className="input" />
+        <Field name="fullName" placeholder="Full Name" className="bookingpage-input" />
+        <Field name="email" type="email" placeholder="Email" className="bookingpage-input" />
+        <Field name="age" placeholder="Age" className="bookingpage-input" />
+        <Field name="phone" placeholder="Phone Number" className="bookingpage-input" />
 
-        <div className="ticket-control">
+        <div className="bookingpage-ticket-control">
           <span>Add another ticket:</span>
-          <div className="ticket-buttons">
+          <div className="bookingpage-ticket-buttons">
             <button type="button" onClick={decrease}>−</button>
-            <span className="ticket-count">{ticketCount}</span>
+            <span className="bookingpage-ticket-count">{ticketCount}</span>
             <button type="button" onClick={increase}>+</button>
           </div>
         </div>
 
-        <button type="submit" className="button">Continue to payment</button>
+        <button type="submit" className="bookingpage-button">Continue to payment</button>
       </Form>
     </Formik>
   );
 }
-
 
 function PaymentForm({ flightDetails }) {
   const { userInfo } = useContext(BookingContext);
@@ -93,15 +92,15 @@ function PaymentForm({ flightDetails }) {
         navigate("/checkin");
       }}
     >
-      <Form className="form">
-        <div className="tab-bar">
-          <span className="tab">Your info</span>
-          <span className="tab active">Payment</span>
+      <Form className="bookingpage-form">
+        <div className="bookingpage-tab-bar">
+          <span className="bookingpage-tab">Your info</span>
+          <span className="bookingpage-tab active">Payment</span>
         </div>
-        <Field name="cardNumber" placeholder="Card Number" className="input" />
-        <Field name="cvc" placeholder="CVC" className="input" />
-        <p className="price">Total: {flightDetails.price}</p>
-        <button type="submit" className="button">Buy</button>
+        <Field name="cardNumber" placeholder="Card Number" className="bookingpage-input" />
+        <Field name="cvc" placeholder="CVC" className="bookingpage-input" />
+        <p className="bookingpage-price">Total: {flightDetails.price}</p>
+        <button type="submit" className="bookingpage-button">Buy</button>
       </Form>
     </Formik>
   );
@@ -119,10 +118,10 @@ function BookingPage() {
 
   return (
     <BookingProvider>
-      <Navbar />
-      <div className="booking-page-container">
-        <h1 className="booking-title">Booking Page</h1>
-        <div className="content">
+      <BookingNavbar />
+      <div className="bookingpage-container">
+        <h1 className="bookingpage-title">Booking Page</h1>
+        <div className="bookingpage-content">
           <BookingDetails flightDetails={flightDetails} />
           {step === 0 ? (
             <UserInfoForm next={() => setStep(1)} />

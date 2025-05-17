@@ -7,20 +7,6 @@ const CheckInPage = () => {
   const { user } = useContext(AuthContext);
   const [ticket, setTicket] = useState(null);
   const [error, setError] = useState('');
-  const handleSearch = async (values) => {
-
-//     // mock për testim
-//     const fakeData = {
-//       id: 1,
-//       passengerName: 'Vlera Derplanin',
-//       flightNumber: 'AF129',
-//       date: '2025-05-20'
-//     };
-//
-//     setTicket(fakeData);
-//     setError('');
-//   };
-
 
   const handleSearch = async (values) => {
     try {
@@ -45,7 +31,7 @@ const CheckInPage = () => {
       setTicket(null);
     }
   };
-};
+
   const handleCheckIn = async () => {
     try {
       await fetch(`/api/bookings/${ticket.id}/checkin`, {
@@ -65,31 +51,30 @@ const CheckInPage = () => {
   };
 
   return (
-    <div className="checkin-container">
+    <div className="checkinpage-container">
       <h2>Check-In për Fluturim</h2>
       <Formik initialValues={{ code: '' }} onSubmit={handleSearch}>
-        <Form className="checkin-form">
+        <Form className="checkinpage-form">
           <label htmlFor="code">Shkruaj Kodin e Biletës</label>
-          <Field id="code" name="code" placeholder="p.sh. ABC123" />
-          <button type="submit">Kërko</button>
-           <div className="button-group">
-              <button onClick={() => window.history.back()} className="back-button">
-                  Back
-              </button>
-           </div>
+          <Field id="code" name="code" placeholder="p.sh. ABC123" className="checkinpage-input" />
+          <button type="submit" className="checkinpage-submit">Kërko</button>
+          <div className="checkinpage-button-group">
+            <button onClick={() => window.history.back()} className="checkinpage-back-button">
+              Back
+            </button>
+          </div>
         </Form>
       </Formik>
 
-      {error && <p className="error">{error}</p>}
+      {error && <p className="checkinpage-error">{error}</p>}
 
       {ticket && (
-        <div className="ticket-info">
+        <div className="checkinpage-ticket-info">
           <h3>Detajet e Biletës</h3>
           <p><strong>Emri:</strong> {ticket.passengerName}</p>
           <p><strong>Fluturimi:</strong> {ticket.flightNumber}</p>
           <p><strong>Data:</strong> {ticket.date}</p>
-          <button onClick={handleCheckIn}>Bëj Check-In</button>
-
+          <button onClick={handleCheckIn} className="checkinpage-checkin-btn">Bëj Check-In</button>
         </div>
       )}
     </div>

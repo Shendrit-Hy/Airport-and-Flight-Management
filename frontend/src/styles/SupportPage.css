@@ -1,40 +1,4 @@
-.support-page {
-  max-width: 800px;
-  margin: 30px auto;
-  padding-top: 80px;
-  color: white;
-}
-
-.support-form, .tickets, .airport-services, .contact {
-  /*margin-bottom: 40px;*/
-  padding: 0px;
-  padding-top:0px;
-    padding-bottom:20px;
-  background-color: #1f1f1f;
-  border-radius: 10px;
-  box-shadow: 0 0 10px teal;
-}
-.titulli{
-margin-top: 70px;
-
-}
-.input, .textarea {
-  width: 98%;
-  margin: 10px 0;
-  padding: 10px;
-  border-radius: 6px;
-  border: none;
-}
-
-.button {
-  background-color: teal;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-.support-wrapper {
+.supportpage-wrapper {
   width: 100vw;
   min-height: 100vh;
   background-color: #121212;
@@ -45,10 +9,55 @@ margin-top: 70px;
   box-sizing: border-box;
 }
 
-.support-page {
+.supportpage-container {
   width: 100%;
   max-width: 1400px;
   padding: 40px;
   box-sizing: border-box;
   color: white;
+}
+
+.supportpage-form {
+  padding: 20px;
+  background-color: #1f1f1f;
+  border-radius: 10px;
+  box-shadow: 0 0 10px teal;
+}
+
+.supportpage-title {
+  margin-top: 20px;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.supportpage-input,
+.supportpage-textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  background-color: #333;
+  color: white;
+}
+
+.supportpage-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.supportpage-submit {
+  background-color: teal;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.supportpage-error {
+  color: tomato;
+  font-size: 13px;
+  margin-bottom: 5px;
 }

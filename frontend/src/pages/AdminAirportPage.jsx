@@ -54,26 +54,30 @@ export default function AdminAirportPage() {
   };
 
   return (
-    <div className="admin-layout">
-      <aside className="sidebar">
-        <div className="logo">MBI RE</div>
-        <nav>
-          <a href="/admin/dashboard">DASHBOARD</a>
-          <a href="/admin/search">SEARCH</a>
-          <a href="/admin/airport" className="active">AIRPORT</a>
+    <div className="airport-layout">
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a>
+            <a href="/admin/search">SEARCH</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">AIRPORT</a>
+          </div>
         </nav>
       </aside>
 
-      <main className="main-content">
-        <header className="admin-header">
+      <main className="airport-main-content">
+        <header className="airport-header">
           <h2>AIRPORT</h2>
-          <div className="admin-title">ADMIN</div>
+          <div className="airport-admin-title">ADMIN</div>
         </header>
 
-        <form className="flight-add-form" onSubmit={handleAdd}>
-          <div className="form-grid">
-            <div className="input-group">
-              <label htmlFor="name">Name</label>
+        <form className="airport-add-form" onSubmit={handleAdd}>
+          <div className="airport-form-grid">
+            <div className="airport-input-group">
+              <label htmlFor="airportId">Airport ID</label>
               <input
                 type="text"
                 id="name"
@@ -83,7 +87,7 @@ export default function AdminAirportPage() {
                 required
               />
             </div>
-            <div className="input-group">
+            <div className="airport-input-group">
               <label htmlFor="location">Location</label>
               <input
                 type="text"
@@ -117,28 +121,29 @@ export default function AdminAirportPage() {
               />
             </div>
           </div>
-          <button type="submit" className="add-btn">ADD</button>
+          <button type="submit" className="airport-add-btn">ADD</button>
         </form>
 
-        <div className="flights-table">
-          <div className="table-header">
-            <span>ID</span>
-            <span>Name</span>
-            <span>Location</span>
-            <span>City</span>
-            <span>Country</span>
+        <div className="airport-table">
+          <div className="airport-table-header">
+            <span>Airport Name</span>
+            <span>Airport Location</span>
             <span>Actions</span>
           </div>
 
           {airports.map((airport) => (
-            <div className="table-row" key={airport.id}>
-              <span>{airport.id}</span>
-              <span>{airport.name}</span>
+            <div className="airport-table-row" key={airport.id}>
+              <span>{airport.airportId}</span>
               <span>{airport.location}</span>
               <span>{airport.city}</span>
               <span>{airport.country}</span>
               <span>
-                <button className="delete-btn" onClick={() => handleDelete(airport.id)}>🗑</button>
+                <button
+                  className="airport-delete-btn"
+                  onClick={() => handleDelete(airport.id)}
+                >
+                  🗑
+                </button>
               </span>
             </div>
           ))}

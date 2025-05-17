@@ -2,24 +2,22 @@ import axios from 'axios';
 
 const SUPPORT_API_BASE = 'http://localhost:8080/api/support';
 
+// Dërgo kërkesë për suport si user (me X-Tenant-ID)
 export const sendSupportRequest = async (data, tenantId) => {
-  return axios.post('http://localhost:8080/api/support', data, {
+  return axios.post(SUPPORT_API_BASE, data, {
     headers: {
       'X-Tenant-ID': tenantId,
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   });
 };
 
-
-
-// Get all support requests (for admin)
 export const getSupportRequests = async (token, tenantId) => {
   return axios.get(SUPPORT_API_BASE, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
       'X-Tenant-ID': tenantId,
+      'Content-Type': 'application/json',
     },
   });
 };

@@ -13,7 +13,7 @@ import AdminDashboard from './components/DashboardLayout';
 import AdminLogin from './pages/AdminLoginPage';
 import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
-import FlightsPage from './pages/FlightsPage';
+// import FlightsPage from './pages/FlightsPage';
 import Flights from './pages/Flights';
 import FilteredFlights from './pages/FilteredFlights';
 // import Home from './pages/Home';
@@ -30,19 +30,27 @@ import AdminPayments from './pages/AdminPayments';
 
 function LayoutWithNavbar({ children }) {
   const location = useLocation();
-  const hideNavbarPaths = ['/admin', '/login', '/signup','/checkin'];
+  const hideNavbarPaths = [
+    '/login',
+    '/signup',
+    '/checkin',
+    '/admin'
+  ];
 
   const shouldHideNavbar = hideNavbarPaths.some(path =>
-    location.pathname.startsWith(path)
+    location.pathname === path || location.pathname.startsWith(path)
   );
 
   return (
-    <div style={{ paddingTop: shouldHideNavbar ? '60px' : '0' }}>
+    <div>
       {!shouldHideNavbar && <Navbar />}
-      {children}
+      <div style={{ paddingTop: !shouldHideNavbar ? '60px' : 0 }}>
+        {children}
+      </div>
     </div>
   );
 }
+
 
 function App() {
   return (
@@ -57,7 +65,7 @@ function App() {
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/checkin" element={<CheckInPage />} />
         <Route path="/tickets" element={<TicketsPage />} />
-        <Route path="/admin/flights" element={<FlightsPage />} />
+{/*         <Route path="/admin/flights" element={<FlightsPage />} /> */}
         <Route path="/flights" element={<Flights />} />
         <Route path="/routes" element={<RoutesPage />} />
         <Route path="/help" element={<SupportPage />} />
@@ -67,7 +75,7 @@ function App() {
         <Route path="/admin/booking" element={<AdminBooking />} />
         <Route path="/admin/maintenance" element={<AdminMaintenancePage />} />
         <Route path="/admin/airport" element={<AdminAirportPage />} />
-          <Route path="/admin/support" element={<AdminSupportPage />} />
+         <Route path="/admin/support" element={<AdminSupportPage />} />
         <Route path="/admin/passangers" element={<AdminPassangers />} />
         <Route path="/admin/payments" element={<AdminPayments />} />
         <Route
@@ -86,7 +94,6 @@ function App() {
             </AdminRoute>
           }
         />
-
         <Route path="/admin/dashboard" element={<AdminRoute>
             <AdminDashboard />
                </AdminRoute>

@@ -2,29 +2,29 @@ import React from 'react';
 import "../styles/FilteredFlights.css";
 
 const FlightCard = () => (
-  <div className="flight-card">
-    <div className="row">
-      <input type="text" placeholder="From" />
-      <input type="text" placeholder="To" />
+  <div className="filteredflights-card">
+    <div className="filteredflights-row">
+      <input type="text" placeholder="From" className="filteredflights-input" />
+      <input type="text" placeholder="To" className="filteredflights-input" />
     </div>
-    <div className="row">
-      <input type="text" placeholder="Departure" />
-      <input type="text" placeholder="Arrival" />
+    <div className="filteredflights-row">
+      <input type="text" placeholder="Departure" className="filteredflights-input" />
+      <input type="text" placeholder="Arrival" className="filteredflights-input" />
     </div>
-    <div className="row">
-      <input type="text" placeholder="Number of available seats" className="seats-input" />
-      <input type="text" placeholder="Price" className="price-input" />
-      <button className="buy-btn">Buy</button>
+    <div className="filteredflights-row">
+      <input type="text" placeholder="Number of available seats" className="filteredflights-input filteredflights-seats" />
+      <input type="text" placeholder="Price" className="filteredflights-input filteredflights-price" />
+      <button className="filteredflights-buy-btn">Buy</button>
     </div>
   </div>
 );
 
 const FilteredFlights = () => {
   return (
-    <div className="filtered-flights">
-      <div className="header">
+    <div className="filteredflights-wrapper">
+      <div className="filteredflights-header">
         <h2>Filtered Flights</h2>
-        <button className="filter-btn">
+        <button className="filteredflights-filter-btn">
           Filter By <span>▼</span>
         </button>
       </div>

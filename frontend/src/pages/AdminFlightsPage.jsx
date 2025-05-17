@@ -60,24 +60,28 @@ const handleAddFlight = async () => {
   };
 
   return (
-    <div className="admin-layout">
-      <aside className="sidebar">
-        <div className="logo">MBI RE</div>
-        <nav>
-          <a href="/admin/dashboard">DASHBOARD</a>
-          <a href="/admin/flightspage" className="active">FLIGHTS</a>
-          <a href="/admin/search">SEARCH</a>
+    <div className="adminflights-layout">
+      <aside className="adminflights-sidebar">
+        <div className="adminflights-logo">MBI RE</div>
+        <nav className="adminflights-nav">
+          <div className="adminflights-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a>
+            <a href="/admin/search">SEARCH</a>
+          </div>
+          <div className="adminflights-nav-row">
+            <a href="/admin/flights" className="active">FLIGHTS</a>
+          </div>
         </nav>
       </aside>
 
-      <main className="main-content">
-        <header className="admin-header">
+      <main className="adminflights-main-content">
+        <header className="adminflights-header">
           <h2>FLIGHTS</h2>
-          <div className="admin-title">ADMIN</div>
+          <div className="adminflights-title">ADMIN</div>
         </header>
 
-        <form className="flight-add-form" onSubmit={handleAddFlight}>
-          <div className="form-grid">
+        <form className="adminflights-add-form" onSubmit={handleAddFlight}>
+          <div className="adminflights-form-grid">
             {[
               { name: 'flightNumber', label: 'Flight Number' },
               { name: 'departureAirport', label: 'Departure Airport' },
@@ -89,7 +93,7 @@ const handleAddFlight = async () => {
               { name: 'price', label: 'Price' },
               { name: 'airline', label: 'Airline' }
             ].map((field) => (
-              <div className="input-group" key={field.name}>
+              <div className="adminflights-input-group" key={field.name}>
                 <label htmlFor={field.name}>{field.label}</label>
                 <input
                   type="text"
@@ -102,11 +106,11 @@ const handleAddFlight = async () => {
               </div>
             ))}
           </div>
-          <button type="submit" className="add-btn">ADD</button>
+          <button type="submit" className="adminflights-add-btn">ADD</button>
         </form>
 
-        <div className="flights-table">
-          <div className="table-header">
+        <div className="adminflights-table">
+          <div className="adminflights-table-header">
             <span>Flight Number</span>
             <span>Departure Airport</span>
             <span>Arrival Airport</span>
@@ -120,7 +124,7 @@ const handleAddFlight = async () => {
           </div>
 
           {flights.map((f) => (
-            <div className="table-row" key={f.id}>
+            <div className="adminflights-table-row" key={f.id}>
               <span>{f.flightNumber}</span>
               <span>{f.departureAirport}</span>
               <span>{f.arrivalAirport}</span>
@@ -131,7 +135,7 @@ const handleAddFlight = async () => {
               <span>{f.price}</span>
               <span>{f.airline}</span>
               <span>
-                <button className="delete-btn" onClick={() => handleDelete(f.id)}>🗑</button>
+                <button className="adminflights-delete-btn" onClick={() => handleDelete(f.id)}>🗑</button>
               </span>
             </div>
           ))}

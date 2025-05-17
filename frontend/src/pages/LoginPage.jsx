@@ -31,48 +31,49 @@ export default function LoginPage() {
   });
 
   return (
-    <div className="auth-container">
-      <div className="auth-left">
-        <img src={loginImage} alt="Plane" />
-      </div>
+    <div className="login-wrapper">
+      <div className="login-container">
+        <div className="login-left">
+          <img src={loginImage} alt="Plane" />
+        </div>
 
-          <div className="auth-right">
-            <button
-              type="button"
-              className="back-icon-button"
-              onClick={() => navigate(-1)}
-            >
-              ←
-            </button>
+        <div className="login-right">
+          <button
+            type="button"
+            className="login-back-icon-button"
+            onClick={() => navigate(-1)}
+          >
+            ←
+          </button>
 
-        <div className="form-wrapper">
-          <h2>Log In</h2>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          <form onSubmit={formik.handleSubmit}>
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              onChange={formik.handleChange}
-              value={formik.values.username}
-              required
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              onChange={formik.handleChange}
-              value={formik.values.password}
-              required
-            />
-            <button type="submit">Log In</button>
-          </form>
-
-
-
-          <p>
-            Don’t have an account? <Link to="/signup">Sign up</Link>
-          </p>
+          <div className="login-form-wrapper">
+            <h2>Log In</h2>
+            {error && <p className="login-error">{error}</p>}
+            <form className="login-form" onSubmit={formik.handleSubmit}>
+              <input
+                className="login-input"
+                type="text"
+                name="username"
+                placeholder="Username"
+                onChange={formik.handleChange}
+                value={formik.values.username}
+                required
+              />
+              <input
+                className="login-input"
+                type="password"
+                name="password"
+                placeholder="Password"
+                onChange={formik.handleChange}
+                value={formik.values.password}
+                required
+              />
+              <button className="login-submit-btn" type="submit">Log In</button>
+            </form>
+            <p className="login-footer">
+              Don’t have an account? <Link to="/signup">Sign up</Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

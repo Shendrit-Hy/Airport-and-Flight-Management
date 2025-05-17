@@ -29,23 +29,25 @@ const Flights = () => {
   });
 
   return (
-    <div className="page-container">
-      <div className="flights-container">
-        <h2>FLIGHTS</h2>
-        <div className="search-bar">
+    <div className="flights-page-container">
+      <div className="flights-main-container">
+        <h2 className="flights-title">FLIGHTS</h2>
+
+        <div className="flights-search-bar">
           <input
             type="text"
             placeholder="SEARCH BY FLIGHT, CITY OR AIRLINE"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            className="flights-search-input"
           />
-          <button>
+          <button className="flights-search-button">
             <span>&#128269;</span>
           </button>
         </div>
 
-        <div className="table-wrapper">
-          <table>
+        <div className="flights-table-wrapper">
+          <table className="flights-table">
             <thead>
               <tr>
                 <th>FLIGHT NO</th>

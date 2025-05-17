@@ -1,4 +1,4 @@
-.profile-page {
+.userprofile-page {
   display: flex;
   min-height: 100vh;
   font-family: sans-serif;
@@ -9,58 +9,58 @@
   color: white;
 }
 
-
-.sidebar {
+.userprofile-sidebar {
   width: 180px;
   background-color: #1f1f1f;
   color: white;
   padding: 10px;
 }
 
-.logo {
+.userprofile-logo {
   font-weight: bold;
   font-style: italic;
   font-size: 20px;
   background: #e0e0e0;
   padding: 10px;
   text-align: center;
+  color: black;
 }
 
-.sidebar-item {
+.userprofile-sidebar-item {
   padding: 10px;
   margin-top: 20px;
   background-color: #333;
 }
 
-.main-content {
+.userprofile-main {
   flex: 1;
-  z-index: 1; /* mbi overlay */
+  z-index: 1;
   background-size: cover;
   background-position: center;
   color: white;
 }
 
-.topbar {
+.userprofile-topbar {
   background-color: rgba(0, 0, 0, 0.8);
   padding: 10px;
   text-align: right;
   font-weight: bold;
 }
-.profile-container {
+
+.userprofile-container {
   display: flex;
   justify-content: space-between;
   padding: 40px 60px;
 }
 
-
-.left-section {
+.userprofile-left {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.profile-btn,
-.update-btn {
+.userprofile-btn,
+.userprofile-update {
   background-color: #222;
   border: none;
   padding: 10px 20px;
@@ -70,37 +70,37 @@
   cursor: pointer;
 }
 
-.update-btn {
+.userprofile-update {
   background-color: #555;
   font-size: 12px;
 }
 
-.right-section .flight-box {
+.userprofile-right .userprofile-flight-box {
   background-color: #222;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
 }
 
-.flight-box p {
+.userprofile-flight-box p {
   font-weight: bold;
 }
 
-.flight-table {
+.userprofile-table {
   background-color: rgba(0, 0, 0, 0.8);
   margin: 30px 350px;
   border-radius: 10px;
   padding: 20px;
 }
 
-.flight-table table {
+.userprofile-table table {
   width: 100%;
   border-collapse: collapse;
   color: white;
 }
 
-.flight-table th,
-.flight-table td {
+.userprofile-table th,
+.userprofile-table td {
   border: 1px solid #ccc;
   padding: 8px;
   text-align: center;
