@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/AdminFlightsPage.css';
 import { getFlights, createFlight, deleteFlight } from '../api/flightService';
+import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 export default function AdminFlightsPage() {
   const [flights, setFlights] = useState([]);
@@ -16,39 +17,46 @@ export default function AdminFlightsPage() {
     airline: ''
   });
 
+  const tenantId = getTenantIdFromSubdomain();
+  const token = localStorage.getItem("token"); // Read JWT token directly
+
   useEffect(() => {
     loadFlights();
   }, []);
 
   const loadFlights = async () => {
-    const res = await getFlights();
-    setFlights(res.data);
+    try {
+      const res = await getFlights(tenantId, token);
+      setFlights(res.data);
+    } catch (err) {
+      console.error("Failed to load flights", err);
+    }
   };
 
   const handleChange = (e) => {
     setNewFlight({ ...newFlight, [e.target.name]: e.target.value });
   };
 
-  const handleAddFlight = async (e) => {
-    e.preventDefault();
-    await createFlight(newFlight);
-    setNewFlight({
-      flightNumber: '',
-      departureAirport: '',
-      arrivalAirport: '',
-      departureTime: '',
-      arrivalTime: '',
-      flightDate: '',
-      availableSeat: '',
-      price: '',
-      airline: ''
-    });
-    loadFlights();
-  };
+const handleAddFlight = async () => {
+  try {
+    await createFlight(newFlight, tenantId, token);
+    console.log("Flight created!");
+    // Optionally refresh flight list or reset form
+  } catch (error) {
+    console.error("Failed to create flight", error);
+    if (error.response?.status === 401) {
+      alert("You must be logged in as admin to create a flight.");
+    }
+  }
+};
 
   const handleDelete = async (id) => {
-    await deleteFlight(id);
-    loadFlights();
+    try {
+      await deleteFlight(id, tenantId, token);
+      loadFlights();
+    } catch (err) {
+      console.error("Failed to delete flight", err);
+    }
   };
 
   return (

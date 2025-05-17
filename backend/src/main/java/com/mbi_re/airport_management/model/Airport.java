@@ -10,6 +10,9 @@ public class Airport {
 
     private String name;
     private String location;
+    private String country;
+    private String city;
+    private String tenantId;
 
     public Long getId() {
         return id;
@@ -35,22 +38,6 @@ public class Airport {
         this.location = location;
     }
 
-    public String getIataCode() {
-        return iataCode;
-    }
-
-    public void setIataCode(String iataCode) {
-        this.iataCode = iataCode;
-    }
-
-    public String getIcaoCode() {
-        return icaoCode;
-    }
-
-    public void setIcaoCode(String icaoCode) {
-        this.icaoCode = icaoCode;
-    }
-
     public String getCountry() {
         return country;
     }
@@ -67,12 +54,6 @@ public class Airport {
         this.city = city;
     }
 
-    private String iataCode;  // e.g. JFK, LAX
-    private String icaoCode;  // e.g. KJFK, KLAX
-    private String country;
-    private String city;
-    @Column(name = "tenant_id", nullable = false)
-    private String tenantId;
     public String getTenantId() {
         return tenantId;
     }
@@ -80,6 +61,4 @@ public class Airport {
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
     }
-
-
 }

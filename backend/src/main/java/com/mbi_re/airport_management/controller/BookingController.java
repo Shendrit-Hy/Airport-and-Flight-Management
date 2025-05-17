@@ -1,5 +1,6 @@
 package com.mbi_re.airport_management.controller;
 
+import com.mbi_re.airport_management.config.TenantContext;
 import com.mbi_re.airport_management.dto.BookingDTO;
 import com.mbi_re.airport_management.model.Booking;
 import com.mbi_re.airport_management.service.BookingService;
@@ -10,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bookings")
 @CrossOrigin
+
 public class BookingController {
 
     private final BookingService service;
@@ -20,12 +22,16 @@ public class BookingController {
 
     @PostMapping
     public Booking createBooking(@RequestBody BookingDTO dto) {
-        return service.createBooking(dto);
+        String tenantId = TenantContext.getTenantId();
+        return service.createBooking(dto,tenantId);
     }
 
     @GetMapping
     public List<Booking> getAll() {
+        String tenantId = TenantContext.getTenantId();
+        System.out.println("Po kërkohen bookings për tenant: " + tenantId);
         return service.getAllBookings();
+
     }
 
     @GetMapping("/{id}")

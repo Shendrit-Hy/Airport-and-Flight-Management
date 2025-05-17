@@ -6,20 +6,52 @@ function AdminBooking() {
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
-    axios.get("/api/bookings")
-      .then((response) => {
+    const token = localStorage.getItem("token"); // Ose merre nga AuthContext
+    const tenantId = "airline1"; // ose import nga getTenantId()
+
+    console.log("📡 Duke dërguar request për bookings me token:", token);
+
+    axios.get('http://localhost:8080/api/bookings', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'X-Tenant-ID': tenantId,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
         const data = Array.isArray(response.data)
           ? response.data
           : response.data.bookings;
-        setBookings(Array.isArray(data) ? data : []);
+
+        console.log("📦 Marrë nga backend:", data);
+        setBookings(data || []);
       })
-      .catch((error) => console.error("Error fetching bookings:", error));
+      .catch(error => {
+        console.error(' Error fetching bookings:', error);
+      });
   }, []);
 
-  const handleDelete = (id) => {
-    const updated = bookings.filter((b, i) => b.id ? b.id !== id : i !== id);
-    setBookings(updated);
-  };
+  const handleDelete = async (id) => {
+  const token = localStorage.getItem("token");
+  const tenantId = "airline1";
+
+  try {
+    await axios.delete(`http://localhost:8080/api/bookings/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'X-Tenant-ID': tenantId
+      }
+    });
+
+    // Fshi nga state vetëm nëse backend-i konfirmon fshirjen
+    const updatedBookings = bookings.filter(booking => booking.id !== id);
+    setBookings(updatedBookings);
+
+    console.log("Booking u fshi me sukses.");
+  } catch (error) {
+    console.error("Fshirja dështoi:", error);
+  }
+};
 
   return (
     <div className="adminbooking-container">

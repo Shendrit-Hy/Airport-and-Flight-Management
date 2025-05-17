@@ -73,12 +73,27 @@ function App() {
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/staff" element={<AdminStaffPage />} />
         <Route path="/admin/booking" element={<AdminBooking />} />
-        <Route path="/admin/flightspage" element={<AdminFlightsPage />} />
         <Route path="/admin/maintenance" element={<AdminMaintenancePage />} />
         <Route path="/admin/airport" element={<AdminAirportPage />} />
-        <Route path="/admin/support" element={<AdminSupportPage />} />
+         <Route path="/admin/support" element={<AdminSupportPage />} />
         <Route path="/admin/passangers" element={<AdminPassangers />} />
         <Route path="/admin/payments" element={<AdminPayments />} />
+        <Route
+          path="/admin/flightspage"
+          element={
+            <AdminRoute>
+              <AdminFlightsPage />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/airport"
+          element={
+            <AdminRoute>
+              <AdminAirportPage />
+            </AdminRoute>
+          }
+        />
         <Route path="/admin/dashboard" element={<AdminRoute>
             <AdminDashboard />
                </AdminRoute>
