@@ -1,0 +1,121 @@
+.home-page {
+  font-family: sans-serif;
+}
+
+/* Seksioni 1 */
+.welcome-section {
+  background: url('/public/plane-bg.jpg') center/cover no-repeat;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.overlay-text {
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2rem;
+  border-radius: 12px;
+}
+
+/* Seksioni 2 */
+.search-section {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 2rem;
+}
+
+.image-group img {
+  width: 200px;
+  height: auto;
+  margin: 0 10px;
+}
+
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.search-form input,
+.search-form button {
+  padding: 10px;
+  width: 250px;
+}
+
+/* Seksioni 3 */
+.flights-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 2rem;
+}
+
+.plane-image-left img {
+  width: 500px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.flights-table-right {
+  flex: 1;
+  margin-left: 2rem;
+}
+
+.flight-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.flight-table th,
+.flight-table td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: center;
+  background-color: white;
+}
+
+.flight-table th {
+  background-color: #222;
+  color: white;
+  font-weight: bold;
+}
+
+.view-flights-btn {
+  margin-top: 1rem;
+  padding: 10px 20px;
+  background-color: #d0183c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.submit{
+ cursor: pointer;}
+/* DIZAJN */
+.placeholder-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.placeholder-box {
+  border: 2px solid red;
+  padding: 2rem;
+  border-radius: 20px;
+  font-size: 1.5rem;
+}
+
+/* Foto që mbulon tërë ekranin */
+.fullscreen-image-section {
+  width: 100%;
+}
+
+.full-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
