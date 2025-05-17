@@ -27,6 +27,14 @@ public class FlightService {
                 .collect(Collectors.toList());
     }
 
+    public List<FlightDTO> getAllFlights(String tenantId) {
+        List<Flight> flights = flightRepository.findByTenantId(tenantId);
+
+        return flights.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
     public FlightDTO addFlight(FlightDTO dto) {
         Flight flight = mapToEntity(dto);
         flight.setTenantId(dto.getTenantId()); // ensure tenant ID is set

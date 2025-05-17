@@ -23,6 +23,11 @@ public class FlightController {
     public List<FlightDTO> getFlights(@RequestHeader("X-Tenant-ID") String tenantId) {
         return flightService.getTodayAndUpcomingFlights(tenantId);
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all")
+    public List<FlightDTO> getAllFlights(@RequestHeader("X-Tenant-ID") String tenantId) {
+        return flightService.getAllFlights(tenantId);
+    }
 
     // Only ADMIN can add flights
     @PreAuthorize("hasRole('ADMIN')")

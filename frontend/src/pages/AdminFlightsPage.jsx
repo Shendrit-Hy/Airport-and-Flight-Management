@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/AdminFlightsPage.css';
-import { getFlights, createFlight, deleteFlight } from '../api/flightService';
+import { getAllFlights, createFlight, deleteFlight } from '../api/flightService';
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 export default function AdminFlightsPage() {
@@ -26,7 +26,7 @@ export default function AdminFlightsPage() {
 
   const loadFlights = async () => {
     try {
-      const res = await getFlights(tenantId, token);
+      const res = await getAllFlights(tenantId, token);
       setFlights(res.data);
     } catch (err) {
       console.error("Failed to load flights", err);
