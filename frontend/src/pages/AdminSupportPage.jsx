@@ -52,25 +52,28 @@ export default function AdminSupportPage() {
   };
 
   return (
-    <div className="admin-layout">
-      <aside className="sidebar">
-        <div className="logo">MBI RE</div>
-        <nav>
-          <a href="/admin/dashboard">DASHBOARD</a>
-          <a href="/admin/search">SEARCH</a>
-          <a href="/admin/support" className="active">SUPPORT TICKETS</a>
+    <div className="adminsupport-layout">
+      <aside className="adminsupport-sidebar">
+        <div className="adminsupport-logo">MBI RE</div>
+        <nav className="adminsupport-nav">
+          <div className="adminsupport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a>
+            <a href="/admin/search">SEARCH</a>
+          </div>
+          <div className="adminsupport-nav-row">
+            <a href="/admin/support" className="active">SUPPORT TICKETS</a>
+          </div>
         </nav>
       </aside>
 
-      <main className="main-content">
-        <header className="admin-header">
+      <main className="adminsupport-main-content">
+        <header className="adminsupport-header">
           <h2>SUPPORT TICKETS</h2>
-          <div className="admin-title">ADMIN</div>
+          <div className="adminsupport-title">ADMIN</div>
         </header>
 
-        {/* Form */}
-        <form className="flight-add-form" onSubmit={handleAdd}>
-          <div className="input-group full-width">
+        <form className="adminsupport-form" onSubmit={handleAdd}>
+          <div className="adminsupport-input-group full-width">
             <label htmlFor="message">Message</label>
             <textarea
               id="message"
@@ -81,7 +84,7 @@ export default function AdminSupportPage() {
             />
           </div>
 
-          <div className="form-grid">
+          <div className="adminsupport-form-grid">
             {[
               { name: 'reportedBy', label: 'Reported By' },
               { name: 'priority', label: 'Priority' },
@@ -90,7 +93,7 @@ export default function AdminSupportPage() {
               { name: 'location', label: 'Location' },
               { name: 'issueType', label: 'Issue Type' }
             ].map((field) => (
-              <div className="input-group" key={field.name}>
+              <div className="adminsupport-input-group" key={field.name}>
                 <label htmlFor={field.name}>{field.label}</label>
                 <input
                   type="text"
@@ -104,12 +107,11 @@ export default function AdminSupportPage() {
             ))}
           </div>
 
-          <button type="submit" className="add-btn">ADD</button>
+          <button type="submit" className="adminsupport-add-btn">ADD</button>
         </form>
 
-        {/* Table */}
-        <div className="flights-table">
-          <div className="table-header">
+        <div className="adminsupport-table">
+          <div className="adminsupport-table-header">
             <span>Airport ID</span>
             <span>Location</span>
             <span>Issue Type</span>
@@ -121,7 +123,7 @@ export default function AdminSupportPage() {
           </div>
 
           {tickets.map((ticket) => (
-            <div className="table-row" key={ticket.id}>
+            <div className="adminsupport-table-row" key={ticket.id}>
               <span>{ticket.airportId}</span>
               <span>{ticket.location}</span>
               <span>{ticket.issueType}</span>
@@ -130,7 +132,10 @@ export default function AdminSupportPage() {
               <span>{ticket.status}</span>
               <span>{ticket.description}</span>
               <span>
-                <button className="delete-btn" onClick={() => handleDelete(ticket.id)}>🗑</button>
+                <button
+                  className="adminsupport-delete-btn"
+                  onClick={() => handleDelete(ticket.id)}
+                >🗑</button>
               </span>
             </div>
           ))}

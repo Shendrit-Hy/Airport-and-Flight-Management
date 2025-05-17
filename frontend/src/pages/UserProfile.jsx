@@ -6,34 +6,34 @@ export default function UserProfile() {
   const { user } = useAuth();
 
   return (
-    <div className="profile-page">
-      <aside className="sidebar">
-        <div className="logo">LOGO</div>
-        <div className="sidebar-item">Profile</div>
+    <div className="userprofile-page">
+      <aside className="userprofile-sidebar">
+        <div className="userprofile-logo">LOGO</div>
+        <div className="userprofile-sidebar-item">Profile</div>
       </aside>
 
-      <div className="main-content">
-        <header className="topbar">
+      <div className="userprofile-main">
+        <header className="userprofile-topbar">
           <span>User</span>
         </header>
 
-        <div className="profile-container">
-          <div className="left-section">
-            <button className="profile-btn">USERNAME</button>
-            <button className="update-btn">UPDATE YOUR USERNAME</button>
-            <button className="profile-btn">FULL NAME</button>
-            <button className="profile-btn">EMAIL</button>
+        <div className="userprofile-container">
+          <div className="userprofile-left">
+            <button className="userprofile-btn">USERNAME</button>
+            <button className="userprofile-btn userprofile-update">UPDATE YOUR USERNAME</button>
+            <button className="userprofile-btn">FULL NAME</button>
+            <button className="userprofile-btn">EMAIL</button>
           </div>
 
-          <div className="right-section">
-            <div className="flight-box">
+          <div className="userprofile-right">
+            <div className="userprofile-flight-box">
               <p>NUMRI I<br />FLUTURIMEVE</p>
-              <h3>7</h3> {/* këtë mund ta bësh dinamik më vonë */}
+              <h3>7</h3>
             </div>
           </div>
         </div>
 
-        <div className="flight-table">
+        <div className="userprofile-table">
           <table>
             <thead>
               <tr>

@@ -1,12 +1,12 @@
-.adminstaff-layout {
+.adminmaintenance-layout {
   display: flex;
   height: 100vh;
   width: 100vw;
-  background: url('/public/plane-bg.jpg') center/cover no-repeat;
+  background: url('/assets/bg.jpg') center/cover no-repeat;
   color: white;
 }
 
-.adminstaff-sidebar {
+.adminmaintenance-sidebar {
   width: 220px;
   background-color: #111;
   padding: 20px;
@@ -14,86 +14,92 @@
   flex-direction: column;
 }
 
-.adminstaff-logo {
+.adminmaintenance-logo {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 30px;
 }
 
-.adminstaff-nav {
+.adminmaintenance-nav {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.adminstaff-nav-row {
+.adminmaintenance-nav-row {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: 10px;
 }
 
-.adminstaff-nav-row a {
+.adminmaintenance-nav-row a {
   color: white;
   text-decoration: none;
-  padding: 8px 0;
-  display: block;
+  padding: 6px 0;
 }
 
-.adminstaff-nav-row a.active {
+.adminmaintenance-nav-row a.active {
   font-weight: bold;
   border-left: 3px solid teal;
   padding-left: 10px;
 }
 
-.adminstaff-main {
+.adminmaintenance-main-content {
   flex: 1;
   padding: 40px;
   overflow-y: auto;
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-.adminstaff-header {
+.adminmaintenance-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  padding: 10px;
 }
 
-.adminstaff-title {
+.adminmaintenance-title {
   font-weight: bold;
+  font-size: 16px;
 }
 
-.adminstaff-add-form {
+.adminmaintenance-form {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   background-color: #1f1f1f;
   padding: 20px;
   border-radius: 15px;
   margin-bottom: 30px;
   box-shadow: 0 0 10px teal;
-  flex-wrap: wrap;
 }
 
-.adminstaff-form-left {
+.adminmaintenance-form-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 15px;
-  flex: 1;
-  width: 90%;
+  margin-bottom: 20px;
 }
 
-.adminstaff-form-left input {
+.adminmaintenance-input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.adminmaintenance-input-group label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #ccc;
+}
+
+.adminmaintenance-input-group input {
   padding: 10px;
   border: none;
   border-radius: 20px;
-  background-color: #333;
-  color: white;
+  background-color: #e2e9ff;
   outline: none;
 }
 
-.adminstaff-add-btn {
+.adminmaintenance-add-btn {
   background-color: #0066ff;
   color: white;
   padding: 12px 24px;
@@ -101,28 +107,29 @@
   border-radius: 20px;
   font-weight: bold;
   cursor: pointer;
-  margin-top: 10px;
+  width: 100px;
+  align-self: flex-end;
 }
 
-.adminstaff-table {
-  background: #222;
+.adminmaintenance-table {
+  background-color: #1f1f1f;
   border-radius: 10px;
   padding: 20px;
 }
 
-.adminstaff-table-header,
-.adminstaff-table-row {
+.adminmaintenance-table-header,
+.adminmaintenance-table-row {
   display: grid;
-  grid-template-columns: 2fr 2fr 2fr 2fr 2fr;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) 60px;
   padding: 10px 0;
   border-bottom: 1px solid #444;
 }
 
-.adminstaff-table-header {
+.adminmaintenance-table-header {
   font-weight: bold;
 }
 
-.adminstaff-delete-btn {
+.adminmaintenance-delete-btn {
   background: transparent;
   border: none;
   font-size: 18px;
