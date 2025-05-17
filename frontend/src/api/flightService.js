@@ -11,6 +11,15 @@ export const getFlights = (tenantId, token) => {
   });
 };
 
+export const getAllFlights = (tenantId, token) => {
+  return axios.get(`${API_URL}/all`, {
+    headers: {
+      'X-Tenant-ID': tenantId,
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
 export const createFlight = (flightData, tenantId, token) => {
   return axios.post(API_URL, flightData, {
     headers: {
