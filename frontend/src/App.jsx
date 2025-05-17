@@ -16,7 +16,7 @@ import Navbar from './components/Navbar';
 // import FlightsPage from './pages/FlightsPage';
 import Flights from './pages/Flights';
 import FilteredFlights from './pages/FilteredFlights';
-// import Home from './pages/Home';
+import Home from './pages/Home';
 import AdminStaffPage from './pages/AdminStaffPage';
 import AdminBooking from './pages/AdminBooking';
 import AdminFlightsPage from './pages/AdminFlightsPage';
@@ -59,7 +59,7 @@ function App() {
         <LayoutWithNavbar>
           <Routes>
         <Route path="/login" element={<LoginPage />} />
-{/*         <Route path="/home" element={<Home />} /> */}
+        <Route path="/home" element={<Home />} />
         <Route path="/booking" element={<BookingPage />} />
         <Route path="/signup" element={<RegisterPage />} />
         <Route path="/profile" element={<UserProfile />} />
