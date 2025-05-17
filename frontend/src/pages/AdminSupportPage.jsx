@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/AdminSupportPage.css';
-import {
-  getSupportTickets,
-  createSupportTicket,
-  deleteSupportTicket
-} from '../api/supportService';
+// import {
+//   getSupportTickets,
+//   createSupportTicket,
+//   deleteSupportTicket
+// } from '../api/supportService';
 
 export default function AdminSupportPage() {
   const [tickets, setTickets] = useState([]);
