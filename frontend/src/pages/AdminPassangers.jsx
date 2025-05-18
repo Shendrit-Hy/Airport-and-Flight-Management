@@ -1,28 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import "../styles/AdminBooking.css"; // reuse same CSS
 import axios from 'axios';
+import "../styles/AdminBooking.css";
 
 function AdminPassangers() {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      fullName: 'John Doe',
-      email: 'john@example.com',
-      phone: '+123456789',
-      nationality: 'USA'
-    }
-  ]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/users') // Replace with your real API
+    axios.get('/api/users')
       .then(response => {
-        const data = Array.isArray(response.data)
-          ? response.data
-          : response.data.users;
-
-        if (Array.isArray(data) && data.length > 0) {
-          setUsers(data);
-        }
+        const data = Array.isArray(response.data) ? response.data : response.data.users;
+        setUsers(Array.isArray(data) ? data : []);
       })
       .catch(error => {
         console.error('Error fetching users:', error);
@@ -34,30 +21,52 @@ function AdminPassangers() {
       user.id ? user.id !== id : index !== id
     );
     setUsers(updated);
-
-    // Optionally send DELETE request
-    // axios.delete(`/api/users/${id}`)
-    //   .then(() => console.log('Deleted'))
-    //   .catch(err => console.error('Delete failed', err));
   };
 
   return (
-    <div className="admin-container">
-      <div className="sidebar">
-        <img src="/logo.png" alt="Logo" className="logo" />
-        <button className="side-button">DASHBOARD</button>
-        <button className="side-button">SEARCH</button>
-      </div>
+    <div className="adminpassangers-container">
+      <aside className="adminbooking-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">SEARCH</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">BOOKING</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">SUPPORT</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">PASSANGERS</a>
+          </div>
+        </nav>
+      </aside>
 
-      <div className="content users-container">
-        <div className="admin-ribbon">
-          <span className="admin-label">ADMIN</span>
+      <main className="adminpassangers-content">
+        <div className="adminpassangers-ribbon">
+          <span className="adminpassangers-label">ADMIN</span>
         </div>
 
-        <h2 className="bookings-title">PASSANGERS</h2>
+        <h2 className="adminpassangers-title">PASSANGERS</h2>
 
-        <div className="bookings-table-container">
-          <table className="bookings-table">
+        <div className="adminpassangers-table-container">
+          <table className="adminpassangers-table">
             <thead>
               <tr>
                 <th>Full Name</th>
@@ -68,26 +77,34 @@ function AdminPassangers() {
               </tr>
             </thead>
             <tbody>
-              {users.map((user, index) => (
-                <tr key={user.id || index}>
-                  <td>{user.fullName}</td>
-                  <td>{user.email}</td>
-                  <td>{user.phone}</td>
-                  <td>{user.nationality}</td>
-                  <td>
-                    <button
-                      className="delete-button"
-                      onClick={() => handleDelete(user.id || index)}
-                    >
-                      Delete
-                    </button>
+              {Array.isArray(users) && users.length > 0 ? (
+                users.map((user, index) => (
+                  <tr key={user.id || index}>
+                    <td>{user.fullName}</td>
+                    <td>{user.email}</td>
+                    <td>{user.phone}</td>
+                    <td>{user.nationality}</td>
+                    <td>
+                      <button
+                        className="adminpassangers-delete-btn"
+                        onClick={() => handleDelete(user.id || index)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: "center" }}>
+                    No passengers found.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
