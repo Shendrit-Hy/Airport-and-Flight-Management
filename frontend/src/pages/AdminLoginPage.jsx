@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import '../styles/auth.css';
 import loginImage from '../assets/login.webp';
@@ -37,16 +37,17 @@ export default function AdminLogin() {
   });
 
   return (
-    <div className="auth-container">
-      <div className="auth-left">
+    <div className="adminlogin-container">
+      <div className="adminlogin-left">
         <img src={loginImage} alt="Plane" />
       </div>
-      <div className="auth-right">
-        <div className="form-wrapper">
+      <div className="adminlogin-right">
+        <div className="adminlogin-form-wrapper">
           <h2>Admin Login</h2>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          <form onSubmit={formik.handleSubmit}>
+          {error && <p className="adminlogin-error">{error}</p>}
+          <form onSubmit={formik.handleSubmit} className="adminlogin-form">
             <input
+              className="adminlogin-input"
               type="text"
               name="username"
               placeholder="Username"
@@ -55,6 +56,7 @@ export default function AdminLogin() {
               required
             />
             <input
+              className="adminlogin-input"
               type="password"
               name="password"
               placeholder="Password"
@@ -62,7 +64,7 @@ export default function AdminLogin() {
               value={formik.values.password}
               required
             />
-            <button type="submit">Log In</button>
+            <button className="adminlogin-submit-btn" type="submit">Log In</button>
           </form>
         </div>
       </div>

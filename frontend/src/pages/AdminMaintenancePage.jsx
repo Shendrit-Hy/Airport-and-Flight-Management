@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/MaintenancePage.css';
+import '../styles/AdminMaintenancePage.css';
 import {
   getMaintenances,
   createMaintenance,
@@ -52,24 +52,48 @@ export default function AdminMaintenancePage() {
   };
 
   return (
-    <div className="admin-layout">
-      <aside className="sidebar">
-        <div className="logo">MBI RE</div>
-        <nav>
-          <a href="/admin/dashboard">DASHBOARD</a>
-          <a href="/admin/search">SEARCH</a>
-          <a href="/admin/maintenance" className="active">MAINTENANCE</a>
+    <div className="adminmaintenance-layout">
+      <aside className="adminmaintenance-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">SEARCH</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">BOOKING</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">SUPPORT</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">PASSANGERS</a>
+          </div>
         </nav>
       </aside>
 
-      <main className="main-content">
-        <header className="admin-header">
+      <main className="adminmaintenance-main-content">
+        <header className="adminmaintenance-header">
           <h2>MAINTENANCE</h2>
-          <div className="admin-title">ADMIN</div>
+          <div className="adminmaintenance-title">ADMIN</div>
         </header>
 
-        <form className="flight-add-form" onSubmit={handleAdd}>
-          <div className="form-grid">
+        <form className="adminmaintenance-form" onSubmit={handleAdd}>
+          <div className="adminmaintenance-form-grid">
             {[
               { name: 'airportId', label: 'Airport ID' },
               { name: 'location', label: 'Location' },
@@ -79,7 +103,7 @@ export default function AdminMaintenancePage() {
               { name: 'status', label: 'Status' },
               { name: 'description', label: 'Description' }
             ].map((field) => (
-              <div className="input-group" key={field.name}>
+              <div className="adminmaintenance-input-group" key={field.name}>
                 <label htmlFor={field.name}>{field.label}</label>
                 <input
                   type="text"
@@ -92,11 +116,11 @@ export default function AdminMaintenancePage() {
               </div>
             ))}
           </div>
-          <button type="submit" className="add-btn">ADD</button>
+          <button type="submit" className="adminmaintenance-add-btn">ADD</button>
         </form>
 
-        <div className="flights-table">
-          <div className="table-header">
+        <div className="adminmaintenance-table">
+          <div className="adminmaintenance-table-header">
             <span>Airport ID</span>
             <span>Location</span>
             <span>Issue Type</span>
@@ -108,7 +132,7 @@ export default function AdminMaintenancePage() {
           </div>
 
           {maintenances.map((item) => (
-            <div className="table-row" key={item.id}>
+            <div className="adminmaintenance-table-row" key={item.id}>
               <span>{item.airportId}</span>
               <span>{item.location}</span>
               <span>{item.issueType}</span>
@@ -117,7 +141,7 @@ export default function AdminMaintenancePage() {
               <span>{item.status}</span>
               <span>{item.description}</span>
               <span>
-                <button className="delete-btn" onClick={() => handleDelete(item.id)}>🗑</button>
+                <button className="adminmaintenance-delete-btn" onClick={() => handleDelete(item.id)}>🗑</button>
               </span>
             </div>
           ))}
