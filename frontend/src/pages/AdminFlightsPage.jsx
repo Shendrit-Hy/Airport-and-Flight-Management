@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/AdminFlightsPage.css';
-import { getFlights, createFlight, deleteFlight } from '../api/flightService';
+import { getAllFlights, createFlight, deleteFlight } from '../api/flightService';
+import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 export default function AdminFlightsPage() {
   const [flights, setFlights] = useState([]);
@@ -16,60 +17,91 @@ export default function AdminFlightsPage() {
     airline: ''
   });
 
+  const tenantId = getTenantIdFromSubdomain();
+  const token = localStorage.getItem("token"); // Read JWT token directly
+
   useEffect(() => {
     loadFlights();
   }, []);
 
   const loadFlights = async () => {
-    const res = await getFlights();
-    setFlights(res.data);
+    try {
+      const res = await getAllFlights(tenantId, token);
+      setFlights(res.data);
+    } catch (err) {
+      console.error("Failed to load flights", err);
+    }
   };
 
   const handleChange = (e) => {
     setNewFlight({ ...newFlight, [e.target.name]: e.target.value });
   };
 
-  const handleAddFlight = async (e) => {
-    e.preventDefault();
-    await createFlight(newFlight);
-    setNewFlight({
-      flightNumber: '',
-      departureAirport: '',
-      arrivalAirport: '',
-      departureTime: '',
-      arrivalTime: '',
-      flightDate: '',
-      availableSeat: '',
-      price: '',
-      airline: ''
-    });
-    loadFlights();
-  };
+const handleAddFlight = async () => {
+  try {
+    await createFlight(newFlight, tenantId, token);
+    console.log("Flight created!");
+    // Optionally refresh flight list or reset form
+  } catch (error) {
+    console.error("Failed to create flight", error);
+    if (error.response?.status === 401) {
+      alert("You must be logged in as admin to create a flight.");
+    }
+  }
+};
 
   const handleDelete = async (id) => {
-    await deleteFlight(id);
-    loadFlights();
+    try {
+      await deleteFlight(id, tenantId, token);
+      loadFlights();
+    } catch (err) {
+      console.error("Failed to delete flight", err);
+    }
   };
 
   return (
-    <div className="admin-layout">
-      <aside className="sidebar">
-        <div className="logo">MBI RE</div>
-        <nav>
-          <a href="/admin/dashboard">DASHBOARD</a>
-          <a href="/admin/flights" className="active">FLIGHTS</a>
-          <a href="/admin/search">SEARCH</a>
+    <div className="adminflights-layout">
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">SEARCH</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">BOOKING</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">SUPPORT</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">PASSANGERS</a>
+          </div>
         </nav>
       </aside>
 
-      <main className="main-content">
-        <header className="admin-header">
+      <main className="adminflights-main-content">
+        <header className="adminflights-header">
           <h2>FLIGHTS</h2>
-          <div className="admin-title">ADMIN</div>
+          <div className="adminflights-title">ADMIN</div>
         </header>
 
-        <form className="flight-add-form" onSubmit={handleAddFlight}>
-          <div className="form-grid">
+        <form className="adminflights-add-form" onSubmit={handleAddFlight}>
+          <div className="adminflights-form-grid">
             {[
               { name: 'flightNumber', label: 'Flight Number' },
               { name: 'departureAirport', label: 'Departure Airport' },
@@ -81,7 +113,7 @@ export default function AdminFlightsPage() {
               { name: 'price', label: 'Price' },
               { name: 'airline', label: 'Airline' }
             ].map((field) => (
-              <div className="input-group" key={field.name}>
+              <div className="adminflights-input-group" key={field.name}>
                 <label htmlFor={field.name}>{field.label}</label>
                 <input
                   type="text"
@@ -94,11 +126,11 @@ export default function AdminFlightsPage() {
               </div>
             ))}
           </div>
-          <button type="submit" className="add-btn">ADD</button>
+          <button type="submit" className="adminflights-add-btn">ADD</button>
         </form>
 
-        <div className="flights-table">
-          <div className="table-header">
+        <div className="adminflights-table">
+          <div className="adminflights-table-header">
             <span>Flight Number</span>
             <span>Departure Airport</span>
             <span>Arrival Airport</span>
@@ -112,7 +144,7 @@ export default function AdminFlightsPage() {
           </div>
 
           {flights.map((f) => (
-            <div className="table-row" key={f.id}>
+            <div className="adminflights-table-row" key={f.id}>
               <span>{f.flightNumber}</span>
               <span>{f.departureAirport}</span>
               <span>{f.arrivalAirport}</span>
@@ -123,7 +155,7 @@ export default function AdminFlightsPage() {
               <span>{f.price}</span>
               <span>{f.airline}</span>
               <span>
-                <button className="delete-btn" onClick={() => handleDelete(f.id)}>🗑</button>
+                <button className="adminflights-delete-btn" onClick={() => handleDelete(f.id)}>🗑</button>
               </span>
             </div>
           ))}
