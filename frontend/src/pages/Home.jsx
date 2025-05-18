@@ -6,8 +6,7 @@ const HomePage = () => {
     <div className="home-page">
 
       <header className="navbar-section">
-   }
-      </header>
+         </header>
 
       {/* Seksioni 1 */}
       <section className="section welcome-section">
@@ -20,8 +19,8 @@ const HomePage = () => {
       {/* Seksioni 2 */}
      <section className="section search-section">
        <div className="image-group">
-         <img src="/public/plane-bg.jpg" alt="Plane 1" />
-         <img src="/public/plane-bg.jpg" alt="Plane 2" />
+         <img src="/public/edyta.jpg" alt="Plane 1" />
+         <img src="/public/etreta.jpg" alt="Plane 2" />
        </div>
        <form className="search-form" method="GET" action="/filteredflights">
          <input type="text" name="from" placeholder="From" />
@@ -33,7 +32,7 @@ const HomePage = () => {
 
     <section className="section flights-section">
       <div className="plane-image-left">
-        <img src="/public/plane-bg.jpg" alt="Jet" />
+        <img src="/public/ekaterta.jpg" alt="Jet" />
       </div>
 
       <div className="flights-table-right">
@@ -65,7 +64,7 @@ const HomePage = () => {
 
     {/* Seksioni 5*/}
     <section className="section fullscreen-image-section">
-      <img src="/public/plane-bg.jpg" alt="Banner" className="full-img" />
+      <img src="/public/epesta.jpg" alt="Banner" className="full-img" />
     </section>
     </div>
   );

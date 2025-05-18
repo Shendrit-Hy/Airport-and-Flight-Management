@@ -4,7 +4,7 @@
 
 /* Seksioni 1 */
 .welcome-section {
-  background: url('/public/plane-bg.jpg') center/cover no-repeat;
+  background: url('/public/epara.png') center/cover no-repeat;
   height: 100vh;
   display: flex;
   justify-content: center;
