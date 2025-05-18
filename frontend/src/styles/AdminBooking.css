@@ -1,32 +1,25 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
-
-.admin-container {
+.adminbooking-container {
   display: flex;
   height: 100vh;
   background-color: #111;
   color: white;
 }
 
-.sidebar {
-  width: 180px;
-  background-color: #1d1d1d;
+.adminbooking-sidebar {
+  width: 220px;
+  background-color: #111;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding-top: 10px;
+  gap: 20px;
 }
 
-.logo {
+.adminbooking-logo {
   width: 80px;
   margin-bottom: 20px;
 }
 
-.side-button {
+.adminbooking-side-button {
   background-color: #333;
   color: white;
   border: none;
@@ -38,34 +31,19 @@
   transition: background-color 0.3s;
 }
 
-.side-button:hover {
+.adminbooking-side-button:hover {
   background-color: #444;
 }
 
-.content {
+.adminbooking-content {
   flex: 1;
   position: relative;
   padding-bottom: 20px;
-}
-
-/* BOOKINGS PAGE background */
-.bookings-container {
   background: url('/public/Sunset.png') center/cover no-repeat;
   background-size: cover;
 }
 
-/* PAYMENTS PAGE background */
-.payments-container {
-  background: url('/public/Money.png') center/cover no-repeat;
-  background-size: cover;
-}
-
-.users-container {
-  background: url('/public/airport-image.png') center/cover no-repeat;
-  background-size: cover;
-}
-
-.admin-ribbon {
+.adminbooking-ribbon {
   width: 100%;
   background-color: #1d1d1d;
   padding: 10px 20px;
@@ -74,50 +52,50 @@
   height: 55px;
 }
 
-.admin-label {
+.adminbooking-label {
   font-weight: bold;
   font-size: 16px;
 }
 
-.bookings-title {
+.adminbooking-title {
   font-size: 24px;
   margin: 30px 20px 60px 20px;
   color: black;
 }
 
-.bookings-table-container {
+.adminbooking-table-container {
   margin: 0 20px;
   max-height: 400px;
   overflow-y: auto;
   border: 2px solid #ccc;
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 1); /* full opacity */
+  background-color: rgba(0, 0, 0, 1);
 }
 
-.bookings-table {
+.adminbooking-table {
   width: 100%;
   border-collapse: collapse;
   color: white;
 }
 
-.bookings-table th,
-.bookings-table td {
+.adminbooking-table th,
+.adminbooking-table td {
   padding: 10px;
   border-bottom: 1px solid #666;
   text-align: left;
 }
 
-.bookings-table th {
+.adminbooking-table th {
   background-color: #222;
   position: sticky;
   top: 0;
 }
 
-.bookings-table tr:hover {
+.adminbooking-table tr:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.delete-button {
+.adminbooking-delete-btn {
   background-color: #c0392b;
   color: white;
   border: none;
@@ -127,6 +105,138 @@
   transition: background-color 0.2s;
 }
 
-.delete-button:hover {
+.adminbooking-delete-btn:hover {
+  background-color: #e74c3c;
+}
+
+/* ============================= */
+/* ADMIN PAYMENTS & PASSANGERS  */
+/* ============================= */
+
+.adminpayments-container,
+.adminpassangers-container {
+  display: flex;
+  height: 100vh;
+  background-color: #111;
+  color: white;
+}
+
+.adminpayments-sidebar,
+.adminpassangers-sidebar {
+  width: 180px;
+  background-color: #1d1d1d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.adminpayments-logo,
+.adminpassangers-logo {
+  width: 80px;
+  margin-bottom: 20px;
+}
+
+.adminpayments-side-button,
+.adminpassangers-side-button {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px 0;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.3s;
+}
+
+.adminpayments-side-button:hover,
+.adminpassangers-side-button:hover {
+  background-color: #444;
+}
+
+.adminpayments-content,
+.adminpassangers-content {
+  flex: 1;
+  position: relative;
+  padding-bottom: 20px;
+  background: url('/public/Sunset.png') center/cover no-repeat;
+  background-size: cover;
+}
+
+.adminpayments-ribbon,
+.adminpassangers-ribbon {
+  width: 100%;
+  background-color: #1d1d1d;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: flex-end;
+  height: 55px;
+}
+
+.adminpayments-label,
+.adminpassangers-label {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.adminpayments-title,
+.adminpassangers-title {
+  font-size: 24px;
+  margin: 30px 20px 60px 20px;
+  color: black;
+}
+
+.adminpayments-table-container,
+.adminpassangers-table-container {
+  margin: 0 20px;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 1);
+}
+
+.adminpayments-table,
+.adminpassangers-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: white;
+}
+
+.adminpayments-table th,
+.adminpassangers-table th,
+.adminpayments-table td,
+.adminpassangers-table td {
+  padding: 10px;
+  border-bottom: 1px solid #666;
+  text-align: left;
+}
+
+.adminpayments-table th,
+.adminpassangers-table th {
+  background-color: #222;
+  position: sticky;
+  top: 0;
+}
+
+.adminpayments-table tr:hover,
+.adminpassangers-table tr:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.adminpayments-delete-btn,
+.adminpassangers-delete-btn {
+  background-color: #c0392b;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.adminpayments-delete-btn:hover,
+.adminpassangers-delete-btn:hover {
   background-color: #e74c3c;
 }
