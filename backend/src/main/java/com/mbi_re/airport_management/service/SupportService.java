@@ -60,12 +60,18 @@ public class SupportService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found"));
     }
 
-    public List<Support> getAllComplaints() {
-        return supportRepository.findAll();
+    public List<Support> getAllComplaints(String tenantId) {
+        return supportRepository.findByTenantId(tenantId);
     }
 
     private String generateTicketId() {
         return java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+    }
+
+    public void deleteSupport(Long supportId, String tenantId) {
+        Support support = supportRepository.findByIdAndTenantId(supportId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Support not found or access denied"));
+        supportRepository.delete(support);
     }
 }
 

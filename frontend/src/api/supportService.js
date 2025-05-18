@@ -21,3 +21,13 @@ export const getSupportRequests = async (token, tenantId) => {
     },
   });
 };
+
+export const deleteSupportRequest = async (id, token, tenantId) => {
+  return axios.delete(`${SUPPORT_API_BASE}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'X-Tenant-ID': tenantId,
+      'Content-Type': 'application/json',
+    },
+  });
+};
