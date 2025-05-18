@@ -4,7 +4,6 @@ import { useFormik } from 'formik';
 import '../styles/auth.css';
 import registerImage from '../assets/signup.jpg';
 import { register } from '../api/api';
-
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 export default function RegisterPage() {
@@ -18,14 +17,22 @@ export default function RegisterPage() {
       username: '',
       email: '',
       password: '',
+      country: '',
     },
-    onSubmit: async (values) => {
+   onSubmit: async (values) => {
       try {
-        await registerUser(values, 'USER', tenantId);
+        await register(
+          values.username,
+          values.email,
+          values.password,
+          values.fullName,
+          values.country,
+          tenantId
+        );
         navigate('/login');
       } catch (err) {
         console.error('Registration error:', err);
-        setError('Registration failed!');
+        setError('Registration failed! Please try again.');
       }
     },
   });
