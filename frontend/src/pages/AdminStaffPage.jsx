@@ -6,27 +6,43 @@ import {
   addStaff
 } from '../api/staffService';
 
+import { getTenantIdFromSubdomain } from '../utils/getTenantId';
+
 export default function AdminStaffPage() {
   const [staffList, setStaffList] = useState([]);
-  const [newStaff, setNewStaff] = useState({
-    fullName: '',
-    role: '',
-    email: '',
-    shiftTime: ''
-  });
+    const [newStaff, setNewStaff] = useState({
+      name: '',
+      role: '',
+      email: '',
+      shiftStart: '',
+      shiftEnd: ''
+    });
 
-  useEffect(() => {
-    loadStaff();
-  }, []);
+    const token = localStorage.getItem('token');
+    const tenantId = getTenantIdFromSubdomain();
 
-  const loadStaff = async () => {
-    const data = await getStaffList();
-    setStaffList(data);
-  };
+    useEffect(() => {
+      if (token && tenantId) {
+        loadStaff();
+      }
+    }, []);
+
+    const loadStaff = async () => {
+      try {
+        const data = await getStaffList(tenantId, token);
+        setStaffList(data.data);
+      } catch (err) {
+        console.error('Failed to load staff:', err);
+      }
+    };
 
   const handleDelete = async (id) => {
-    await deleteStaffById(id);
-    loadStaff();
+    try {
+      await deleteStaffById(id, tenantId, token);
+      loadStaff();
+    } catch (err) {
+      console.error('Failed to delete staff:', err);
+    }
   };
 
   const handleChange = (e) => {
@@ -35,9 +51,13 @@ export default function AdminStaffPage() {
 
   const handleAddStaff = async (e) => {
     e.preventDefault();
-    await addStaff(newStaff);
-    setNewStaff({ fullName: '', role: '', email: '', shiftTime: '' });
-    loadStaff();
+    try {
+      await addStaff(newStaff, tenantId, token);
+      setNewStaff({ name: '', role: '', email: '', shiftStart: '', shiftEnd: '' });
+      loadStaff();
+    } catch (err) {
+      console.error('Failed to add staff:', err);
+    }
   };
 
   return (
@@ -65,17 +85,25 @@ export default function AdminStaffPage() {
           <div className="adminstaff-form-left">
             <input
               type="text"
-              name="fullName"
+              name="name"
               placeholder="Full Name"
-              value={newStaff.fullName}
+              value={newStaff.name}
               onChange={handleChange}
               required
             />
             <input
-              type="text"
-              name="shiftTime"
-              placeholder="Shift Time"
-              value={newStaff.shiftTime}
+              type="time"
+              name="shiftStart"
+              placeholder="Shift Start"
+              value={newStaff.shiftStart}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="time"
+              name="shiftEnd"
+              placeholder="Shift End"
+              value={newStaff.shiftEnd}
               onChange={handleChange}
               required
             />
@@ -104,16 +132,18 @@ export default function AdminStaffPage() {
             <span>Full Name</span>
             <span>Role</span>
             <span>Email</span>
-            <span>Shift Time</span>
+            <span>Shift Start</span>
+            <span>Shift End</span>
             <span>Actions</span>
           </div>
 
           {staffList.map((staff) => (
             <div className="adminstaff-table-row" key={staff.id}>
-              <span>{staff.fullName}</span>
+              <span>{staff.name}</span>
               <span>{staff.role}</span>
               <span>{staff.email}</span>
-              <span>{staff.shiftTime}</span>
+              <span>{staff.shiftStart}</span>
+              <span>{staff.shiftEnd}</span>
               <span>
                 <button onClick={() => handleDelete(staff.id)} className="adminstaff-delete-btn">🗑</button>
               </span>

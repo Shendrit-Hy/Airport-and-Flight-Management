@@ -1,13 +1,42 @@
-import axios from './axiosInstance';
+import axios from 'axios';
 
-export const getStaffList = async () => {
-  const res = await axios.get('/staff');
-  return res.data;
+const API_URL = 'http://localhost:8080/api/staff';
+
+export const getStaffList = (tenantId, token) => {
+  return axios.get(`${API_URL}/all`, {
+    headers: {
+      'X-Tenant-ID': tenantId,
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
 };
 
-export const deleteStaffById = async (id) => {
-  await axios.delete(`/staff/${id}`);
+export const deleteStaffById = (id, tenantId, token) => {
+  return axios.delete(`${API_URL}/${id}`, {
+    headers: {
+      'X-Tenant-ID': tenantId,
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
 };
-export const addStaff = async (data) => {
-  return await axios.post('/staff', data);
+
+export const addStaff = (staffData, tenantId, token) => {
+  const body = {
+    name: staffData.name,
+    role: staffData.role,
+    email: staffData.email,
+    shiftStart: staffData.shiftStart,
+    shiftEnd: staffData.shiftEnd,
+    tenantId: tenantId
+  };
+
+  return axios.post(API_URL, body, {
+    headers: {
+      'X-Tenant-ID': tenantId,
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
 };
