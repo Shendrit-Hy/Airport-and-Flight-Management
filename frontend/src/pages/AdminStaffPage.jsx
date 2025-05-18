@@ -41,25 +41,48 @@ export default function AdminStaffPage() {
   };
 
   return (
-    <div className="admin-layout">
-      <aside className="sidebar">
-        <div className="logo">MBI RE</div>
-        <nav>
-          <a href="/admin/dashboard">DASHBOARD</a>
-          <a href="/admin/flights">FLIGHTS</a>
-
+    <div className="adminstaff-layout">
+      <aside className="adminstaff-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">SEARCH</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">BOOKING</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">SUPPORT</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">PASSANGERS</a>
+          </div>
         </nav>
       </aside>
 
-      <main className="main-content">
-        <header className="admin-header">
+      <main className="adminstaff-main">
+        <header className="adminstaff-header">
           <h2>STAFF</h2>
-          <div className="admin-title">ADMIN</div>
+          <div className="adminstaff-title">ADMIN</div>
         </header>
 
-        {/* Forma për shtim të stafit */}
-        <form className="staff-add-form" onSubmit={handleAddStaff}>
-          <div className="form-left">
+        <form className="adminstaff-add-form" onSubmit={handleAddStaff}>
+          <div className="adminstaff-form-left">
             <input
               type="text"
               name="fullName"
@@ -93,11 +116,11 @@ export default function AdminStaffPage() {
               required
             />
           </div>
-          <button type="submit" className="add-btn">ADD</button>
+          <button type="submit" className="adminstaff-add-btn">ADD</button>
         </form>
 
-        <div className="staff-table">
-          <div className="table-header">
+        <div className="adminstaff-table">
+          <div className="adminstaff-table-header">
             <span>Full Name</span>
             <span>Role</span>
             <span>Email</span>
@@ -106,13 +129,13 @@ export default function AdminStaffPage() {
           </div>
 
           {staffList.map((staff) => (
-            <div className="table-row" key={staff.id}>
+            <div className="adminstaff-table-row" key={staff.id}>
               <span>{staff.fullName}</span>
               <span>{staff.role}</span>
               <span>{staff.email}</span>
               <span>{staff.shiftTime}</span>
               <span>
-                <button onClick={() => handleDelete(staff.id)} className="delete-btn">🗑</button>
+                <button onClick={() => handleDelete(staff.id)} className="adminstaff-delete-btn">🗑</button>
               </span>
             </div>
           ))}
