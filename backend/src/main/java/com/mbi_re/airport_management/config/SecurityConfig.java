@@ -65,6 +65,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/payments").permitAll()
                         .requestMatchers("/api/staff/all").hasRole("ADMIN")
                         .requestMatchers("/api/flights/filter").permitAll()
+                        .requestMatchers("/api/announcements").permitAll()
                         .requestMatchers("/api/seats/available/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
