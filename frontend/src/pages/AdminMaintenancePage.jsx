@@ -33,19 +33,7 @@ export default function AdminMaintenancePage() {
 
   const handleAdd = async (e) => {
     e.preventDefault();
-
-    const payload = {
-      airportCode: newItem.airportId, // backend pret "airportCode"
-      location: newItem.location,
-      issueType: newItem.issueType,
-      reportedBy: newItem.reportedBy,
-      priority: newItem.priority,
-      status: newItem.status,
-      description: newItem.description
-    };
-
-    await createMaintenance(payload);
-
+    await createMaintenance(newItem);
     setNewItem({
       airportId: '',
       location: '',
@@ -55,7 +43,6 @@ export default function AdminMaintenancePage() {
       status: '',
       description: ''
     });
-
     loadData();
   };
 
@@ -67,14 +54,34 @@ export default function AdminMaintenancePage() {
   return (
     <div className="adminmaintenance-layout">
       <aside className="adminmaintenance-sidebar">
-        <div className="adminmaintenance-logo">MBI RE</div>
-        <nav className="adminmaintenance-nav">
-          <div className="adminmaintenance-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a>
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a> 
+          </div>
+          <div className="airport-nav-row">
             <a href="/admin/search">SEARCH</a>
           </div>
-          <div className="adminmaintenance-nav-row">
-            <a href="/admin/maintenance" className="active">MAINTENANCE</a>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">BOOKING</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">SUPPORT</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">PASSANGERS</a>
           </div>
         </nav>
       </aside>
@@ -126,7 +133,7 @@ export default function AdminMaintenancePage() {
 
           {maintenances.map((item) => (
             <div className="adminmaintenance-table-row" key={item.id}>
-              <span>{item.airportCode}</span> {/* saktësisht sipas emrit nga backend */}
+              <span>{item.airportId}</span>
               <span>{item.location}</span>
               <span>{item.issueType}</span>
               <span>{item.reportedBy}</span>

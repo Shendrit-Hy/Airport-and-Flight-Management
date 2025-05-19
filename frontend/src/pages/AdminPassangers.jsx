@@ -1,40 +1,61 @@
 import React, { useEffect, useState } from 'react';
-
+import axios from 'axios';
 import "../styles/AdminBooking.css";
-import axios from '../utils/axiosInstance'; 
+
 function AdminPassangers() {
   const [users, setUsers] = useState([]);
 
+  useEffect(() => {
+    axios.get('/api/users')
+      .then(response => {
+        const data = Array.isArray(response.data) ? response.data : response.data.users;
+        setUsers(Array.isArray(data) ? data : []);
+      })
+      .catch(error => {
+        console.error('Error fetching users:', error);
+      });
+  }, []);
 
- useEffect(() => {
-   axios.get('/api/passengers')
-     .then(response => {
-       setUsers(response.data);
-     })
-     .catch(error => {
-       console.error('Error fetching passengers:', error);
-     });
- }, []);
-
-const handleDelete = (id) => {
-  axios
-    .delete(`/api/passengers/${id}`)
-    .then(() => {
-      const updated = users.filter(user => user.id !== id);
-      setUsers(updated);
-    })
-    .catch(error => {
-      console.error('Error deleting passenger:', error);
-    });
-};
+  const handleDelete = (id) => {
+    const updated = users.filter((user, index) =>
+      user.id ? user.id !== id : index !== id
+    );
+    setUsers(updated);
+  };
 
   return (
     <div className="adminpassangers-container">
-      <aside className="adminpassangers-sidebar">
-        <img src="/logo.png" alt="Logo" className="adminpassangers-logo" />
-        <button className="adminpassangers-side-button">DASHBOARD</button>
-        <button className="adminpassangers-side-button">SEARCH</button>
-        <button className="adminpassangers-side-button">PASSANGERS</button>
+      <aside className="adminbooking-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">SEARCH</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">BOOKING</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">SUPPORT</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">PASSANGERS</a>
+          </div>
+        </nav>
       </aside>
 
       <main className="adminpassangers-content">

@@ -19,7 +19,6 @@ export default function AdminFlightsPage() {
 
   const tenantId = getTenantIdFromSubdomain();
   const token = localStorage.getItem("token"); // Read JWT token directly
-  console.log(flights);
 
   useEffect(() => {
     loadFlights();
@@ -62,15 +61,35 @@ const handleAddFlight = async () => {
 
   return (
     <div className="adminflights-layout">
-      <aside className="adminflights-sidebar">
-        <div className="adminflights-logo">MBI RE</div>
-        <nav className="adminflights-nav">
-          <div className="adminflights-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a>
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a> 
+          </div>
+          <div className="airport-nav-row">
             <a href="/admin/search">SEARCH</a>
           </div>
-          <div className="adminflights-nav-row">
-            <a href="/admin/flights" className="active">FLIGHTS</a>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">BOOKING</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">SUPPORT</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">PASSANGERS</a>
           </div>
         </nav>
       </aside>
@@ -92,7 +111,7 @@ const handleAddFlight = async () => {
               { name: 'flightDate', label: 'Flight Date' },
               { name: 'availableSeat', label: 'Available Seat' },
               { name: 'price', label: 'Price' },
-              { name: 'airline', label: 'Airline' },
+              { name: 'airline', label: 'Airline' }
             ].map((field) => (
               <div className="adminflights-input-group" key={field.name}>
                 <label htmlFor={field.name}>{field.label}</label>
@@ -121,7 +140,7 @@ const handleAddFlight = async () => {
             <span>Available Seat</span>
             <span>Price</span>
             <span>Airline</span>
-            <span>Status</span>
+            <span>Actions</span>
           </div>
 
           {flights.map((f) => (
@@ -135,7 +154,6 @@ const handleAddFlight = async () => {
               <span>{f.availableSeat}</span>
               <span>{f.price}</span>
               <span>{f.airline}</span>
-              <span>{f.flightStatus}</span>
               <span>
                 <button className="adminflights-delete-btn" onClick={() => handleDelete(f.id)}>🗑</button>
               </span>

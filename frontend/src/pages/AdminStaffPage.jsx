@@ -6,43 +6,27 @@ import {
   addStaff
 } from '../api/staffService';
 
-import { getTenantIdFromSubdomain } from '../utils/getTenantId';
-
 export default function AdminStaffPage() {
   const [staffList, setStaffList] = useState([]);
-    const [newStaff, setNewStaff] = useState({
-      name: '',
-      role: '',
-      email: '',
-      shiftStart: '',
-      shiftEnd: ''
-    });
+  const [newStaff, setNewStaff] = useState({
+    fullName: '',
+    role: '',
+    email: '',
+    shiftTime: ''
+  });
 
-    const token = localStorage.getItem('token');
-    const tenantId = getTenantIdFromSubdomain();
+  useEffect(() => {
+    loadStaff();
+  }, []);
 
-    useEffect(() => {
-      if (token && tenantId) {
-        loadStaff();
-      }
-    }, []);
-
-    const loadStaff = async () => {
-      try {
-        const data = await getStaffList(tenantId, token);
-        setStaffList(data.data);
-      } catch (err) {
-        console.error('Failed to load staff:', err);
-      }
-    };
+  const loadStaff = async () => {
+    const data = await getStaffList();
+    setStaffList(data);
+  };
 
   const handleDelete = async (id) => {
-    try {
-      await deleteStaffById(id, tenantId, token);
-      loadStaff();
-    } catch (err) {
-      console.error('Failed to delete staff:', err);
-    }
+    await deleteStaffById(id);
+    loadStaff();
   };
 
   const handleChange = (e) => {
@@ -51,26 +35,42 @@ export default function AdminStaffPage() {
 
   const handleAddStaff = async (e) => {
     e.preventDefault();
-    try {
-      await addStaff(newStaff, tenantId, token);
-      setNewStaff({ name: '', role: '', email: '', shiftStart: '', shiftEnd: '' });
-      loadStaff();
-    } catch (err) {
-      console.error('Failed to add staff:', err);
-    }
+    await addStaff(newStaff);
+    setNewStaff({ fullName: '', role: '', email: '', shiftTime: '' });
+    loadStaff();
   };
 
   return (
     <div className="adminstaff-layout">
       <aside className="adminstaff-sidebar">
-        <div className="adminstaff-logo">MBI RE</div>
-        <nav className="adminstaff-nav">
-          <div className="adminstaff-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a>
-            <a href="/admin/flights">FLIGHTS</a>
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a> 
           </div>
-          <div className="adminstaff-nav-row">
-            <a href="/admin/staff" className="active">STAFF</a>
+          <div className="airport-nav-row">
+            <a href="/admin/search">SEARCH</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">BOOKING</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">SUPPORT</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">PASSANGERS</a>
           </div>
         </nav>
       </aside>
@@ -85,25 +85,17 @@ export default function AdminStaffPage() {
           <div className="adminstaff-form-left">
             <input
               type="text"
-              name="name"
+              name="fullName"
               placeholder="Full Name"
-              value={newStaff.name}
+              value={newStaff.fullName}
               onChange={handleChange}
               required
             />
             <input
-              type="time"
-              name="shiftStart"
-              placeholder="Shift Start"
-              value={newStaff.shiftStart}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="time"
-              name="shiftEnd"
-              placeholder="Shift End"
-              value={newStaff.shiftEnd}
+              type="text"
+              name="shiftTime"
+              placeholder="Shift Time"
+              value={newStaff.shiftTime}
               onChange={handleChange}
               required
             />
@@ -132,18 +124,16 @@ export default function AdminStaffPage() {
             <span>Full Name</span>
             <span>Role</span>
             <span>Email</span>
-            <span>Shift Start</span>
-            <span>Shift End</span>
+            <span>Shift Time</span>
             <span>Actions</span>
           </div>
 
           {staffList.map((staff) => (
             <div className="adminstaff-table-row" key={staff.id}>
-              <span>{staff.name}</span>
+              <span>{staff.fullName}</span>
               <span>{staff.role}</span>
               <span>{staff.email}</span>
-              <span>{staff.shiftStart}</span>
-              <span>{staff.shiftEnd}</span>
+              <span>{staff.shiftTime}</span>
               <span>
                 <button onClick={() => handleDelete(staff.id)} className="adminstaff-delete-btn">🗑</button>
               </span>
