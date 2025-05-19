@@ -7,10 +7,7 @@ import com.mbi_re.airport_management.repository.UserRepository;
 import com.mbi_re.airport_management.security.CustomUserDetailsService;
 import com.mbi_re.airport_management.security.JwtService;
 import jakarta.validation.Valid;
-import lombok.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +20,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
     @Autowired private AuthenticationManager authenticationManager;
     @Autowired private CustomUserDetailsService customUserDetailsService;
     @Autowired private JwtService jwtService;
@@ -34,7 +32,7 @@ public class AuthController {
             @Valid @RequestBody LoginRequest request,
             @RequestHeader("X-Tenant-ID") String tenantId) {
 
-        TenantContext.setTenantId(tenantId); // Set multi-tenant context
+        TenantContext.setTenantId(tenantId); // multi-tenancy context
 
         Optional<User> userOptional = userRepository.findByUsernameAndTenantId(request.getUsername(), tenantId);
         if (userOptional.isEmpty()) {
@@ -43,24 +41,32 @@ public class AuthController {
 
         User user = userOptional.get();
 
-        // Check password
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return ResponseEntity.status(401).body("Invalid password.");
         }
 
-        // Load user details for JWT (if using authorities/roles)
         UserDetails userDetails = customUserDetailsService.loadUserByUsernameAndTenant(user.getUsername(), tenantId);
-
-        // Generate JWT
         String token = jwtService.generateToken(userDetails.getUsername(), user.getRole().toString(), tenantId);
 
-        return ResponseEntity.ok(new LoginResponse(token));
+        return ResponseEntity.ok(new LoginResponse(
+                token,
+                user.getRole().name(),
+                user.getTenantId(),
+                user.getId()
+        ));
     }
+
     // DTOs
-    @Getter @Setter @NoArgsConstructor @AllArgsConstructor
     public static class LoginRequest {
         private String username;
         private String password;
+
+        public LoginRequest() {}
+
+        public LoginRequest(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
 
         public String getUsername() {
             return username;
@@ -79,12 +85,17 @@ public class AuthController {
         }
     }
 
-    @Getter @Setter
     public static class LoginResponse {
         private String token;
+        private String role;
+        private String tenantId;
+        private Long userId;
 
-        public LoginResponse(String token){
+        public LoginResponse(String token, String role, String tenantId, Long userId) {
             this.token = token;
+            this.role = role;
+            this.tenantId = tenantId;
+            this.userId = userId;
         }
 
         public String getToken() {
@@ -94,6 +105,29 @@ public class AuthController {
         public void setToken(String token) {
             this.token = token;
         }
-    }
 
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+        public String getTenantId() {
+            return tenantId;
+        }
+
+        public void setTenantId(String tenantId) {
+            this.tenantId = tenantId;
+        }
+
+        public Long getUserId() {
+            return userId;
+        }
+
+        public void setUserId(Long userId) {
+            this.userId = userId;
+        }
+    }
 }

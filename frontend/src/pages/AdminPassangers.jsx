@@ -1,27 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import "../styles/AdminBooking.css";
 
+import "../styles/AdminBooking.css";
+import axios from '../utils/axiosInstance'; 
 function AdminPassangers() {
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    axios.get('/api/users')
-      .then(response => {
-        const data = Array.isArray(response.data) ? response.data : response.data.users;
-        setUsers(Array.isArray(data) ? data : []);
-      })
-      .catch(error => {
-        console.error('Error fetching users:', error);
-      });
-  }, []);
 
-  const handleDelete = (id) => {
-    const updated = users.filter((user, index) =>
-      user.id ? user.id !== id : index !== id
-    );
-    setUsers(updated);
-  };
+ useEffect(() => {
+   axios.get('/api/passengers')
+     .then(response => {
+       setUsers(response.data);
+     })
+     .catch(error => {
+       console.error('Error fetching passengers:', error);
+     });
+ }, []);
+
+const handleDelete = (id) => {
+  axios
+    .delete(`/api/passengers/${id}`)
+    .then(() => {
+      const updated = users.filter(user => user.id !== id);
+      setUsers(updated);
+    })
+    .catch(error => {
+      console.error('Error deleting passenger:', error);
+    });
+};
 
   return (
     <div className="adminpassangers-container">
