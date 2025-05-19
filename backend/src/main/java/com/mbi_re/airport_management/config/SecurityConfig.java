@@ -65,6 +65,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/staff/all").hasRole("ADMIN")
                         .requestMatchers("/api/flights/filter").permitAll()
                         .requestMatchers("/api/seats/available/**").permitAll()
+                        .requestMatchers("/api/timezones").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
