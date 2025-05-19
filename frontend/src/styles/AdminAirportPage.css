@@ -31,15 +31,18 @@
   display: flex;
   flex-direction: row;
   gap: 10px;
-  border-left: 3px solid teal;
-
 }
 
 .airport-nav-row a {
   color: white;
   text-decoration: none;
-  padding: 6px 6px;
-  width: 100px;
+  padding: 6px 0;
+}
+
+.airport-nav-row a.active {
+  font-weight: bold;
+  border-left: 3px solid teal;
+  padding-left: 10px;
 }
 
 .airport-main-content {

@@ -6,7 +6,8 @@ export default function AdminAirportPage() {
   const [airports, setAirports] = useState([]);
   const [newAirport, setNewAirport] = useState({
     name: '',
-    location: '',
+    code: '',
+    timezone: '',
     city: '',
     country: ''
   });
@@ -34,7 +35,8 @@ export default function AdminAirportPage() {
       await createAirport(newAirport);
       setNewAirport({
         name: '',
-        location: '',
+        code: '',
+        timezone: '',
         city: '',
         country: ''
       });
@@ -59,31 +61,11 @@ export default function AdminAirportPage() {
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
           <div className="airport-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a> 
-          </div>
-          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a>
             <a href="/admin/search">SEARCH</a>
           </div>
           <div className="airport-nav-row">
-            <a href="/admin/airport" className="active">STAFF</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/dashboard">BOOKING</a> 
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/search">MAINTENANCE</a>
-          </div>
-          <div className="airport-nav-row">
             <a href="/admin/airport" className="active">AIRPORT</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/dashboard">SUPPORT</a> 
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/search">PAYMENTS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/airport" className="active">PASSANGERS</a>
           </div>
         </nav>
       </aside>
@@ -97,7 +79,7 @@ export default function AdminAirportPage() {
         <form className="airport-add-form" onSubmit={handleAdd}>
           <div className="airport-form-grid">
             <div className="airport-input-group">
-              <label htmlFor="airportId">Airport ID</label>
+              <label htmlFor="name">Airport Name</label>
               <input
                 type="text"
                 id="name"
@@ -107,18 +89,32 @@ export default function AdminAirportPage() {
                 required
               />
             </div>
+
             <div className="airport-input-group">
-              <label htmlFor="location">Location</label>
+              <label htmlFor="code">Code</label>
               <input
                 type="text"
-                id="location"
-                name="location"
-                value={newAirport.location}
+                id="code"
+                name="code"
+                value={newAirport.code}
                 onChange={handleChange}
                 required
               />
             </div>
-            <div className="input-group">
+
+            <div className="airport-input-group">
+              <label htmlFor="timezone">Timezone</label>
+              <input
+                type="text"
+                id="timezone"
+                name="timezone"
+                value={newAirport.timezone}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="airport-input-group">
               <label htmlFor="city">City</label>
               <input
                 type="text"
@@ -129,7 +125,8 @@ export default function AdminAirportPage() {
                 required
               />
             </div>
-            <div className="input-group">
+
+            <div className="airport-input-group">
               <label htmlFor="country">Country</label>
               <input
                 type="text"
@@ -146,15 +143,19 @@ export default function AdminAirportPage() {
 
         <div className="airport-table">
           <div className="airport-table-header">
-            <span>Airport Name</span>
-            <span>Airport Location</span>
+            <span>Name</span>
+            <span>Code</span>
+            <span>Timezone</span>
+            <span>City</span>
+            <span>Country</span>
             <span>Actions</span>
           </div>
 
           {airports.map((airport) => (
             <div className="airport-table-row" key={airport.id}>
-              <span>{airport.airportId}</span>
-              <span>{airport.location}</span>
+              <span>{airport.name}</span>
+              <span>{airport.code}</span>
+              <span>{airport.timezone}</span>
               <span>{airport.city}</span>
               <span>{airport.country}</span>
               <span>
