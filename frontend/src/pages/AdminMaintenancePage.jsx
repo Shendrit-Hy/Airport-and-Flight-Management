@@ -54,34 +54,14 @@ export default function AdminMaintenancePage() {
   return (
     <div className="adminmaintenance-layout">
       <aside className="adminmaintenance-sidebar">
-        <div className="airport-logo">MBI RE</div>
-        <nav className="airport-nav-group">
-          <div className="airport-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a> 
-          </div>
-          <div className="airport-nav-row">
+        <div className="adminmaintenance-logo">MBI RE</div>
+        <nav className="adminmaintenance-nav">
+          <div className="adminmaintenance-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a>
             <a href="/admin/search">SEARCH</a>
           </div>
-          <div className="airport-nav-row">
-            <a href="/admin/airport" className="active">STAFF</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/dashboard">BOOKING</a> 
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/search">MAINTENANCE</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/airport" className="active">AIRPORT</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/dashboard">SUPPORT</a> 
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/search">PAYMENTS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/airport" className="active">PASSANGERS</a>
+          <div className="adminmaintenance-nav-row">
+            <a href="/admin/maintenance" className="active">MAINTENANCE</a>
           </div>
         </nav>
       </aside>
