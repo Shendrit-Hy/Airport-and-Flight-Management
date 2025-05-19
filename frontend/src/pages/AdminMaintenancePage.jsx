@@ -33,7 +33,19 @@ export default function AdminMaintenancePage() {
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    await createMaintenance(newItem);
+
+    const payload = {
+      airportCode: newItem.airportId, // backend pret "airportCode"
+      location: newItem.location,
+      issueType: newItem.issueType,
+      reportedBy: newItem.reportedBy,
+      priority: newItem.priority,
+      status: newItem.status,
+      description: newItem.description
+    };
+
+    await createMaintenance(payload);
+
     setNewItem({
       airportId: '',
       location: '',
@@ -43,6 +55,7 @@ export default function AdminMaintenancePage() {
       status: '',
       description: ''
     });
+
     loadData();
   };
 
@@ -113,7 +126,7 @@ export default function AdminMaintenancePage() {
 
           {maintenances.map((item) => (
             <div className="adminmaintenance-table-row" key={item.id}>
-              <span>{item.airportId}</span>
+              <span>{item.airportCode}</span> {/* saktësisht sipas emrit nga backend */}
               <span>{item.location}</span>
               <span>{item.issueType}</span>
               <span>{item.reportedBy}</span>
