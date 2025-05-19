@@ -6,12 +6,12 @@
 }
 
 .adminbooking-sidebar {
-  width: 220px;
-  background-color: #111;
-  padding: 20px;
+  width: 180px;
+  background-color: #1d1d1d;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  padding-top: 10px;
 }
 
 .adminbooking-logo {
