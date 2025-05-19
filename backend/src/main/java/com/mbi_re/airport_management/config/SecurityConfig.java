@@ -66,6 +66,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/staff/all").hasRole("ADMIN")
                         .requestMatchers("/api/flights/filter").permitAll()
                         .requestMatchers("/api/announcements").permitAll()
+                        .requestMatchers("/api/faqs").permitAll()
                         .requestMatchers("/api/seats/available/**").permitAll()
                         .requestMatchers("/api/currencies").permitAll()
                         .requestMatchers("/api/timezones").permitAll()
