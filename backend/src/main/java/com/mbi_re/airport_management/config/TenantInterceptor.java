@@ -10,20 +10,14 @@ public class TenantInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String tenantId = request.getHeader("X-Tenant-ID");
-
-        if (tenantId == null || tenantId.trim().isEmpty()) {
+        String tenantId = request.getHeader("X-Tenant-ID"); // Expecting tenant ID in request headers
+        if (tenantId != null && !tenantId.trim().isEmpty()) {
+            TenantContext.setTenantId(tenantId);
+        } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("Missing X-Tenant-ID header");
             return false;
         }
-
-        TenantContext.setTenantId(tenantId);
         return true;
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        TenantContext.clear(); // Always clear to avoid thread reuse issues
     }
 }
