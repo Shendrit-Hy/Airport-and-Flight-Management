@@ -68,6 +68,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/announcements").permitAll()
                         .requestMatchers("/api/seats/available/**").permitAll()
                         .requestMatchers("/api/timezones").permitAll()
+                        .requestMatchers("/api/policies").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
