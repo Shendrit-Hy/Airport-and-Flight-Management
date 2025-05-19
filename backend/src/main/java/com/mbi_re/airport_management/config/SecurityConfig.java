@@ -63,8 +63,17 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/flights").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/support").permitAll()
                         .requestMatchers("/api/staff/all").hasRole("ADMIN")
+                        .requestMatchers("/api/flights/filter").permitAll()
+                        .requestMatchers("/api/seats/available/**").permitAll()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
                         .anyRequest().authenticated()
+
                 );
+
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

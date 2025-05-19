@@ -1,5 +1,6 @@
 package com.mbi_re.airport_management.dto;
 
+import com.mbi_re.airport_management.model.FlightStatus;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -20,6 +21,16 @@ public class FlightDTO {
     private int availableSeat;
     private double price;
     private String airline;
+    private FlightStatus flightStatus;
+
+    public FlightStatus getFlightStatus() {
+        return flightStatus;
+    }
+
+    public void setFlightStatus(FlightStatus flightStatus) {
+        this.flightStatus = flightStatus;
+    }
+
     private String tenantId;
 
     public String getTenantId() {

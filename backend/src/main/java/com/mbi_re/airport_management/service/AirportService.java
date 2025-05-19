@@ -23,9 +23,10 @@ public class AirportService {
     public Airport createAirport(AirportDTO airportDTO, String tenantId) {
         Airport airport = new Airport();
         airport.setName(airportDTO.getName());
-        airport.setLocation(airportDTO.getLocation());
+        airport.setCode(airportDTO.getCode());
         airport.setCountry(airportDTO.getCountry());
         airport.setCity(airportDTO.getCity());
+        airport.setTimezone(airportDTO.getTimezone());
         airport.setTenantId(tenantId);
         return airportRepository.save(airport);
     }

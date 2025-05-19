@@ -18,6 +18,8 @@ public class Booking {
 
     private String passengerName;
 
+    private Long passengerId;
+
     private String flightNumber;
 
     private String seatNumber;
@@ -28,7 +30,13 @@ public class Booking {
     @Column(nullable = false)
     private String tenantId;
 
+    public Long getPassengerId() {
+        return passengerId;
+    }
 
+    public void setPassengerId(Long passengerId) {
+        this.passengerId = passengerId;
+    }
     public Long getId() {
         return id;
     }
