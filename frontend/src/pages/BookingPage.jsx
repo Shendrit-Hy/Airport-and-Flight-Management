@@ -1,7 +1,9 @@
-import React, { useState, createContext, useContext } from "react";
-import { Formik, Form, Field } from "formik";
+import React, { useState, createContext, useContext, useEffect } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../styles/BookingPage.css";
-import { useNavigate } from "react-router-dom";
 
 const BookingContext = createContext();
 
@@ -14,27 +16,18 @@ function BookingProvider({ children }) {
   );
 }
 
-function BookingNavbar() {
-//   return (
-//     <div className="bookingpage-navbar">
-//       <div className="bookingpage-navbar-left">Flight Booking</div>
-//       <div className="bookingpage-navbar-links">
-//         <a href="#">Home</a>
-//         <a href="#">Contact</a>
-//         <a href="#">Flights</a>
-//       </div>
-//     </div>
-//   );
-}
-
-function BookingDetails({ flightDetails }) {
+function BookingDetails({ flight }) {
   return (
     <div className="bookingpage-details">
-      <h2>Details</h2>
-      <p className="bookingpage-detail-box">{flightDetails.time}</p>
-      <p className="bookingpage-detail-box">FROM: {flightDetails.from}</p>
-      <p className="bookingpage-detail-box">TO: {flightDetails.to}</p>
-      <p className="bookingpage-price">{flightDetails.price}</p>
+      <h2>Flight Details</h2>
+      <p className="bookingpage-detail-box">
+        {new Date(flight.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        {" → "}
+        {new Date(flight.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+      </p>
+      <p className="bookingpage-detail-box">From: {flight.departureAirport}</p>
+      <p className="bookingpage-detail-box">To: {flight.arrivalAirport}</p>
+      <p className="bookingpage-price">€{flight.price}</p>
     </div>
   );
 }
@@ -49,6 +42,12 @@ function UserInfoForm({ next }) {
   return (
     <Formik
       initialValues={{ fullName: "", email: "", age: "", phone: "" }}
+      validationSchema={Yup.object({
+        fullName: Yup.string().required("Required"),
+        email: Yup.string().email("Invalid email").required("Required"),
+        age: Yup.number().min(1).required("Required"),
+        phone: Yup.string().required("Required"),
+      })}
       onSubmit={(values) => {
         setUserInfo({ ...values, ticketCount });
         next();
@@ -56,17 +55,24 @@ function UserInfoForm({ next }) {
     >
       <Form className="bookingpage-form">
         <div className="bookingpage-tab-bar">
-          <span className="bookingpage-tab active">Your info</span>
+          <span className="bookingpage-tab active">Your Info</span>
           <span className="bookingpage-tab">Payment</span>
         </div>
 
         <Field name="fullName" placeholder="Full Name" className="bookingpage-input" />
+        <ErrorMessage name="fullName" component="div" className="bookingpage-error" />
+
         <Field name="email" type="email" placeholder="Email" className="bookingpage-input" />
+        <ErrorMessage name="email" component="div" className="bookingpage-error" />
+
         <Field name="age" placeholder="Age" className="bookingpage-input" />
+        <ErrorMessage name="age" component="div" className="bookingpage-error" />
+
         <Field name="phone" placeholder="Phone Number" className="bookingpage-input" />
+        <ErrorMessage name="phone" component="div" className="bookingpage-error" />
 
         <div className="bookingpage-ticket-control">
-          <span>Add another ticket:</span>
+          <span>Tickets:</span>
           <div className="bookingpage-ticket-buttons">
             <button type="button" onClick={decrease}>−</button>
             <span className="bookingpage-ticket-count">{ticketCount}</span>
@@ -74,59 +80,156 @@ function UserInfoForm({ next }) {
           </div>
         </div>
 
-        <button type="submit" className="bookingpage-button">Continue to payment</button>
+        <button type="submit" className="bookingpage-button">Continue to Payment</button>
       </Form>
     </Formik>
   );
 }
 
-function PaymentForm({ flightDetails }) {
+function PaymentForm({ flight }) {
   const { userInfo } = useContext(BookingContext);
+  const [availableSeats, setAvailableSeats] = useState([]);
+  const [selectedSeats, setSelectedSeats] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const tenantId = localStorage.getItem('tenantId') || 'default-tenant';
+    
+    axios.get(`http://localhost:8080/api/seats/available/${flight.id}`, {
+      headers: {
+        'X-Tenant-ID': tenantId
+      }
+    })
+    .then((res) => {
+      console.log('Available seats response:', res.data);
+      if (Array.isArray(res.data)) {
+        // Filter out seats with null/undefined IDs
+        const validSeats = res.data.filter(seat => seat && seat.id != null);
+        setAvailableSeats(validSeats);
+      } else {
+        console.error('Invalid seats data format:', res.data);
+        setAvailableSeats([]);
+      }
+    })
+    .catch((error) => {
+      console.error('Error fetching available seats:', error);
+      setAvailableSeats([]);
+    });
+  }, [flight.id]);
+
+  const toggleSeat = (seat) => {
+    const seatId = seat.id;
+    const isSelected = selectedSeats.some(s => s.id === seatId);
+    
+    if (isSelected) {
+      setSelectedSeats(selectedSeats.filter(s => s.id !== seatId));
+    } else if (selectedSeats.length < userInfo.ticketCount) {
+      setSelectedSeats([...selectedSeats, seat]);
+    }
+  };
+
+  const isSeatSelected = (seat) => {
+    return selectedSeats.some(s => s.id === seat.id);
+  };
 
   return (
     <Formik
       initialValues={{ cardNumber: "", cvc: "" }}
-      onSubmit={() => {
-        console.log("Booking info:", userInfo);
-        navigate("/checkin");
+      validationSchema={Yup.object({
+        cardNumber: Yup.string().required("Required"),
+        cvc: Yup.string().required("Required"),
+      })}
+      onSubmit={async () => {
+        try {
+          const tenantId = localStorage.getItem('tenantId') || 'default-tenant';
+          
+          await axios.post("/api/bookings", {
+            ...userInfo,
+            flightId: flight.id,
+            seats: selectedSeats.map(seat => seat.id),
+            totalPrice: flight.price * userInfo.ticketCount,
+          }, {
+            headers: {
+              'X-Tenant-ID': tenantId
+            }
+          });
+          navigate("/checkin");
+        } catch (error) {
+          console.error('Booking failed:', error);
+          alert("Booking failed. Please try again.");
+        }
       }}
     >
       <Form className="bookingpage-form">
         <div className="bookingpage-tab-bar">
-          <span className="bookingpage-tab">Your info</span>
+          <span className="bookingpage-tab">Your Info</span>
           <span className="bookingpage-tab active">Payment</span>
         </div>
+
         <Field name="cardNumber" placeholder="Card Number" className="bookingpage-input" />
+        <ErrorMessage name="cardNumber" component="div" className="bookingpage-error" />
+
         <Field name="cvc" placeholder="CVC" className="bookingpage-input" />
-        <p className="bookingpage-price">Total: {flightDetails.price}</p>
-        <button type="submit" className="bookingpage-button">Buy</button>
+        <ErrorMessage name="cvc" component="div" className="bookingpage-error" />
+
+        <div className="bookingpage-seats">
+          <h3>Select {userInfo.ticketCount} Seat(s):</h3>
+          <div className="bookingpage-seat-grid">
+            {availableSeats.map(seat => (
+              <button
+                key={seat.id}  // Now guaranteed to be non-null
+                type="button"
+                className={`bookingpage-seat ${isSeatSelected(seat) ? "selected" : ""}`}
+                onClick={() => toggleSeat(seat)}
+              >
+                {seat.seatNumber || `${seat.seatRow}${seat.seatColumn}` || seat.id}
+              </button>
+            ))}
+          </div>
+          {availableSeats.length === 0 && (
+            <p className="bookingpage-no-seats">No available seats found.</p>
+          )}
+        </div>
+
+        {selectedSeats.length !== userInfo.ticketCount && (
+          <div className="bookingpage-error">Please select exactly {userInfo.ticketCount} seats.</div>
+        )}
+
+        <p className="bookingpage-price">
+          Total: €{(flight.price * userInfo.ticketCount).toFixed(2)}
+        </p>
+
+        <button
+          type="submit"
+          className="bookingpage-button"
+          disabled={selectedSeats.length !== userInfo.ticketCount}
+        >
+          Buy
+        </button>
       </Form>
     </Formik>
   );
 }
 
-function BookingPage() {
+function Book() {
+  const { state } = useLocation();
   const [step, setStep] = useState(0);
+  const flight = state?.flight;
 
-  const flightDetails = {
-    time: "20:35PRN→08:55CDG",
-    from: "Pristina, Pristina International - Kosovo",
-    to: "Istanbul, Istanbul - Turkey",
-    price: "€907.04",
-  };
+  if (!flight) {
+    return <p>No flight selected. Please go back and choose a flight.</p>;
+  }
 
   return (
     <BookingProvider>
-      <BookingNavbar />
       <div className="bookingpage-container">
-        <h1 className="bookingpage-title">Booking Page</h1>
+        <h1 className="bookingpage-title">Book Your Flight</h1>
         <div className="bookingpage-content">
-          <BookingDetails flightDetails={flightDetails} />
+          <BookingDetails flight={flight} />
           {step === 0 ? (
             <UserInfoForm next={() => setStep(1)} />
           ) : (
-            <PaymentForm flightDetails={flightDetails} />
+            <PaymentForm flight={flight} />
           )}
         </div>
       </div>
@@ -134,4 +237,4 @@ function BookingPage() {
   );
 }
 
-export default BookingPage;
+export default Book;

@@ -23,6 +23,7 @@ public class BookingService {
     public Booking createBooking(BookingDTO dto, String tenantId) {
         Booking booking = new Booking();
         booking.setPassengerName(dto.getPassengerName());
+        booking.setPassengerId(dto.getPassengerId());
         booking.setFlightNumber(dto.getFlightNumber());
         booking.setSeatNumber(dto.getSeatNumber());
         booking.setStatus(dto.getStatus() != null ? dto.getStatus() : "BOOKED");
@@ -45,6 +46,7 @@ public class BookingService {
     public Booking updateBooking(Long id, BookingDTO dto) {
         return repository.findById(id).map(b -> {
             b.setPassengerName(dto.getPassengerName());
+            b.setPassengerId(dto.getPassengerId());
             b.setFlightNumber(dto.getFlightNumber());
             b.setSeatNumber(dto.getSeatNumber());
             b.setStatus(dto.getStatus());

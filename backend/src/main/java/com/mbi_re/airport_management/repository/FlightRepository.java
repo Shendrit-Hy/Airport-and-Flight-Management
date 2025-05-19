@@ -15,4 +15,6 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     Optional<Flight> findByIdAndTenantId(Long id, String tenantId);
 
     List<Flight> findByTenantId(String tenantId);
+
+    List<Flight> findByTenantIdAndDepartureAirportIgnoreCaseAndArrivalAirportIgnoreCaseAndFlightDateBetweenAndAvailableSeatGreaterThanEqual(String tenantId, String from, String to, LocalDate start, LocalDate end, int passengers);
 }

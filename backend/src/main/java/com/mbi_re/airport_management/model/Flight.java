@@ -30,8 +30,19 @@ public class Flight {
 
     private String airline;
 
+    @Enumerated(EnumType.STRING)
+    private FlightStatus flightStatus;
+
     @Column(name = "tenant_id", nullable = false)
     private String tenantId;
+
+    public FlightStatus getFlightStatus() {
+        return flightStatus;
+    }
+
+    public void setFlightStatus(FlightStatus flightStatus) {
+        this.flightStatus = flightStatus;
+    }
 
     public String getTenantId() {
         return tenantId;

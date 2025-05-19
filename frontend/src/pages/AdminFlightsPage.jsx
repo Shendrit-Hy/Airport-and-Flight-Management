@@ -19,6 +19,7 @@ export default function AdminFlightsPage() {
 
   const tenantId = getTenantIdFromSubdomain();
   const token = localStorage.getItem("token"); // Read JWT token directly
+  console.log(flights);
 
   useEffect(() => {
     loadFlights();
@@ -91,7 +92,7 @@ const handleAddFlight = async () => {
               { name: 'flightDate', label: 'Flight Date' },
               { name: 'availableSeat', label: 'Available Seat' },
               { name: 'price', label: 'Price' },
-              { name: 'airline', label: 'Airline' }
+              { name: 'airline', label: 'Airline' },
             ].map((field) => (
               <div className="adminflights-input-group" key={field.name}>
                 <label htmlFor={field.name}>{field.label}</label>
@@ -120,7 +121,7 @@ const handleAddFlight = async () => {
             <span>Available Seat</span>
             <span>Price</span>
             <span>Airline</span>
-            <span>Actions</span>
+            <span>Status</span>
           </div>
 
           {flights.map((f) => (
@@ -134,6 +135,7 @@ const handleAddFlight = async () => {
               <span>{f.availableSeat}</span>
               <span>{f.price}</span>
               <span>{f.airline}</span>
+              <span>{f.flightStatus}</span>
               <span>
                 <button className="adminflights-delete-btn" onClick={() => handleDelete(f.id)}>🗑</button>
               </span>

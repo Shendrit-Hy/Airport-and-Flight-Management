@@ -1,11 +1,51 @@
-import axiosInstance from './axiosInstance';
+import axios from 'axios';
 
-// Merr të gjithë përdoruesit
-export const getUsers = () => axiosInstance.get('/api/users');
+const API_URL = 'https://localhost:8080/api/auth/profile';
 
-// Merr profilin e përdoruesit të kyçur
-export const getProfile = () => axiosInstance.get('/api/auth/profile');
+export const getUserProfile = (tenantId, token) => {
+  return axios.get(`${API_URL}/me`, {
+    headers: {
+      'X-Tenant-ID': tenantId,
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+};
 
-// Regjistro një përdorues të ri me rol specifik
-export const registerUser = (data, role) =>
-  axiosInstance.post(`/api/auth/register?role=${role}`, data);
+export const getUserFlights = (tenantId, token) => {
+  return axios.get(`${API_URL}/flights`, {
+    headers: {
+      'X-Tenant-ID': tenantId,
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+};
+
+export const cancelFlight = (flightId, tenantId, token) => {
+  return axios.post(
+    `${API_URL}/flights/${flightId}/cancel`,
+    {},
+    {
+      headers: {
+        'X-Tenant-ID': tenantId,
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+};
+
+export const checkInFlight = (flightId, tenantId, token) => {
+  return axios.post(
+    `${API_URL}/flights/${flightId}/checkin`,
+    {},
+    {
+      headers: {
+        'X-Tenant-ID': tenantId,
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+};
