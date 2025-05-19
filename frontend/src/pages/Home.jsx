@@ -18,6 +18,7 @@ const SearchSchema = Yup.object().shape({
 
 const HomePage = () => {
   const [airports, setAirports] = useState([]);
+  const [language, setLanguage] = useState(localStorage.getItem('language') || 'en');
 
   useEffect(() => {
     const fetchAirports = async () => {
@@ -31,6 +32,8 @@ const HomePage = () => {
     fetchAirports();
   }, []);
 
+  const t = (en, sq) => (language === 'sq' ? sq : en);
+
   return (
     <div className="home-page">
       <header className="navbar-section">
@@ -40,8 +43,8 @@ const HomePage = () => {
       {/* Section 1 */}
       <section className="section welcome-section">
         <div className="overlay-text">
-          <h1>Welcome to MBI RE</h1>
-          <p>Explore the skies with premium experiences.</p>
+          <h1>{t('Welcome to MBI RE', 'Mirë se vini në MBI RE')}</h1>
+          <p>{t('Explore the skies with premium experiences.', 'Eksploro qiellin me eksperienca premium.')}</p>
         </div>
       </section>
 
@@ -69,7 +72,7 @@ const HomePage = () => {
           {() => (
             <Form className="search-form">
               <Field as="select" name="from">
-                <option value="">Select Departure Airport</option>
+                <option value="">{t('Select Departure Airport', 'Zgjedh Aeroportin e Nisjes')}</option>
                 {airports.map((airport) => (
                   <option key={airport.id} value={airport.city}>
                     {airport.city}
@@ -79,7 +82,7 @@ const HomePage = () => {
               <ErrorMessage name="from" component="div" className="error" />
 
               <Field as="select" name="to">
-                <option value="">Select Arrival Airport</option>
+                <option value="">{t('Select Arrival Airport', 'Zgjedh Aeroportin e Mberritjes')}</option>
                 {airports.map((airport) => (
                   <option key={airport.id} value={airport.city}>
                     {airport.city}
@@ -94,10 +97,10 @@ const HomePage = () => {
               <Field type="date" name="endDate" />
               <ErrorMessage name="endDate" component="div" className="error" />
 
-              <Field type="number" name="passengers" min="1" placeholder="Passengers" />
+              <Field type="number" name="passengers" min="1" placeholder={t('Passengers', 'Pasagjerë')} />
               <ErrorMessage name="passengers" component="div" className="error" />
 
-              <button type="submit">Search</button>
+              <button type="submit">{t('Search', 'Kërko')}</button>
             </Form>
           )}
         </Formik>
@@ -113,12 +116,12 @@ const HomePage = () => {
           <table className="flight-table">
             <thead>
               <tr>
-                <th>FLIGHT NO</th>
-                <th>ORIGIN</th>
-                <th>DESTINATION</th>
-                <th>DEPARTURE TIME</th>
-                <th>ARRIVAL TIME</th>
-                <th>ACTIVE</th>
+                <th>{t('FLIGHT NO', 'NR. I FLUTURIMIT')}</th>
+                <th>{t('ORIGIN', 'NISJA')}</th>
+                <th>{t('DESTINATION', 'DESTINACIONI')}</th>
+                <th>{t('DEPARTURE TIME', 'KOHA E NISJES')}</th>
+                <th>{t('ARRIVAL TIME', 'KOHA E MBERITJES')}</th>
+                <th>{t('ACTIVE', 'AKTIV')}</th>
               </tr>
             </thead>
             <tbody>
@@ -126,7 +129,7 @@ const HomePage = () => {
             </tbody>
           </table>
           <button className="view-flights-btn" onClick={() => window.location.href = "/flights"}>
-            View All Flights
+            {t('View All Flights', 'Shiko të gjitha fluturimet')}
           </button>
         </div>
       </section>
