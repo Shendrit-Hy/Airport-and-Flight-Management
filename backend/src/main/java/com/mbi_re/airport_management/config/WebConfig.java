@@ -9,27 +9,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final TenantInterceptor tenantInterceptor;
-
     @Autowired
-    public WebConfig(TenantInterceptor tenantInterceptor) {
-        this.tenantInterceptor = tenantInterceptor;
-    }
+    private TenantInterceptor tenantInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(tenantInterceptor)
-                .addPathPatterns("/api/**")   // Apply only to API routes
-                .excludePathPatterns("/api/auth/**"); // Optional: exclude public auth endpoints
+        registry.addInterceptor(tenantInterceptor).addPathPatterns("/api/**");
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173")  // React frontend dev server
+                .allowedOrigins("http://localhost:5173") // Allow your frontend origin
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .exposedHeaders("Authorization", "X-Tenant-ID") // If needed
-                .allowCredentials(true);
+                .allowedHeaders("*") // Allow any headers
+                .allowCredentials(true); // Allow credentials if you are using cookies or authorization headers
     }
 }
