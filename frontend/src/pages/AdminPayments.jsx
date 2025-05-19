@@ -21,12 +21,39 @@ function AdminPayments() {
 
   return (
     <div className="adminpayments-container">
-      <aside className="adminpayments-sidebar">
-        <img src="/logo.png" alt="Logo" className="adminpayments-logo" />
-        <button className="adminpayments-side-button">DASHBOARD</button>
-        <button className="adminpayments-side-button">SEARCH</button>
-        <button className="adminpayments-side-button">PAYMENTS</button>
+      <aside className="adminbooking-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">SEARCH</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">BOOKING</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">SUPPORT</a> 
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/search">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport" className="active">PASSANGERS</a>
+          </div>
+        </nav>
       </aside>
+
       <main className="adminpayments-content">
         <div className="adminpayments-ribbon">
           <span className="adminpayments-label">ADMIN</span>
