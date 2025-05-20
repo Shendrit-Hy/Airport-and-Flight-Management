@@ -8,14 +8,14 @@ import {
   submitBooking,
   toggleSeatSelection,
   isSeatSelectedHelper,
-  createPassenger
+  createPassenger,
+  createBooking
 } from "../api/bookedService";
 import { getUserProfile } from "../utils/auth";
 
 const BookingContext = createContext();
 
 function BookingProvider({ children }) {
-  const [userProfile, setUserProfile] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   return (
     <BookingContext.Provider value={{ userInfo, setUserInfo }}>
@@ -138,14 +138,13 @@ useEffect(() => {
         onSubmit={async () => {
           try {
             const userProfile = await getUserProfile(localStorage.getItem("token"));
-            await createBooking(userProfile, selectedSeats)
-            // const bookingResult 
-            // = await submitBooking(userInfo, flight, selectedSeats);
             console.log(selectedSeats);
             console.log(userInfo);
             console.log(flight);
-            // console.log(userProfile.id);
             console.log(userProfile);
+            await createBooking(userProfile, userInfo, selectedSeats, flight);
+
+
             
             // Then create the passenger record using the userInfo data
             const passengerData = {
