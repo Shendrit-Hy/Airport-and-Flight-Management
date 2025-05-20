@@ -25,6 +25,7 @@ public class BookingService {
         booking.setPassengerName(dto.getPassengerName());
         booking.setPassengerId(dto.getPassengerId());
         booking.setFlightNumber(dto.getFlightNumber());
+        booking.setBookingId(dto.getBookingId());
         booking.setSeatNumber(dto.getSeatNumber());
         booking.setStatus(dto.getStatus() != null ? dto.getStatus() : "BOOKED");
         booking.setBookingTime(LocalDateTime.now());
@@ -47,6 +48,7 @@ public class BookingService {
         return repository.findById(id).map(b -> {
             b.setPassengerName(dto.getPassengerName());
             b.setPassengerId(dto.getPassengerId());
+            b.setBookingId(dto.getBookingId());
             b.setFlightNumber(dto.getFlightNumber());
             b.setSeatNumber(dto.getSeatNumber());
             b.setStatus(dto.getStatus());
