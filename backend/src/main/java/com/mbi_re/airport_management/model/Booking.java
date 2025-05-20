@@ -26,9 +26,20 @@ public class Booking {
 
     private LocalDateTime bookingTime;
 
+    @Column(name = "booking_id")
+    private String bookingId;
+
     private String status; // e.g. BOOKED, CANCELLED
     @Column(nullable = false)
     private String tenantId;
+
+    public String getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(String bookingId) {
+        this.bookingId = bookingId;
+    }
 
     public Long getPassengerId() {
         return passengerId;
