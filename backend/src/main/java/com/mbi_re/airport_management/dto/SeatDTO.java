@@ -1,36 +1,23 @@
 package com.mbi_re.airport_management.dto;
 
-import com.mbi_re.airport_management.model.Flight;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-
 public class SeatDTO {
     private Long id;
-
     private String seatNumber;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "flight_id")
-    private Flight flight;
-
+    private Long flightId;
+    private String flightNumber;
     private String tenantId;
-
-    @Column(name = "booked")
     private boolean booked;
 
-    public SeatDTO(Long id, String seatNumber, Long id1, String flightNumber, String tenantId, boolean booked) {
-    }
+    public SeatDTO() {}
 
-    public boolean isBooked() {
-        return booked;
-    }
-
-    public void setBooked(boolean booked) {
+    public SeatDTO(Long id, String seatNumber, Long flightId, String flightNumber, String tenantId, boolean booked) {
+        this.id = id;
+        this.seatNumber = seatNumber;
+        this.flightId = flightId;
+        this.flightNumber = flightNumber;
+        this.tenantId = tenantId;
         this.booked = booked;
     }
-
 
     public Long getId() {
         return id;
@@ -48,12 +35,20 @@ public class SeatDTO {
         this.seatNumber = seatNumber;
     }
 
-    public Flight getFlight() {
-        return flight;
+    public Long getFlightId() {
+        return flightId;
     }
 
-    public void setFlight(Flight flight) {
-        this.flight = flight;
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
+
+    public String getFlightNumber() {
+        return flightNumber;
+    }
+
+    public void setFlightNumber(String flightNumber) {
+        this.flightNumber = flightNumber;
     }
 
     public String getTenantId() {
@@ -62,5 +57,13 @@ public class SeatDTO {
 
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public boolean isBooked() {
+        return booked;
+    }
+
+    public void setBooked(boolean booked) {
+        this.booked = booked;
     }
 }
