@@ -36,6 +36,15 @@ public class PassengerController {
         return ResponseEntity.ok(passengerService.update(id, updated, tenantId));
     }
 
+    @PostMapping
+    public ResponseEntity<PassengerDTO> savePassenger(
+            @RequestBody PassengerDTO passengerDTO,
+            @RequestHeader("X-Tenant-ID") String tenantId) {
+        passengerDTO.setTenantId(tenantId);
+        return ResponseEntity.ok(passengerService.savePassenger(passengerDTO));
+    }
+
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
