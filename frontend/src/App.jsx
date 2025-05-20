@@ -28,6 +28,8 @@ import AdminPayments from './pages/AdminPayments';
 import AnnouncementManager from './pages/AnnouncementManager';
 import UserAnnouncements from './pages/UserAnnouncements';
 import AdminFaqs from './pages/AdminFaqs';
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 
 
 
