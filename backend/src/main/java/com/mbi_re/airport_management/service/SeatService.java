@@ -41,4 +41,13 @@ public class SeatService {
                 seat.isBooked()
         );
     }
+
+    public SeatDTO markSeatAsUnavailable(Long seatId, String tenantId) {
+        Seat seat = seatRepository.findByIdAndTenantId(seatId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Seat not found"));
+        seat.setBooked(true);
+        Seat updatedSeat = seatRepository.save(seat);
+        return convertToDTO(updatedSeat);
+    }
+
 }

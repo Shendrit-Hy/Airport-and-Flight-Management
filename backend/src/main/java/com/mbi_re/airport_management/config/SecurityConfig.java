@@ -60,6 +60,7 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/users").permitAll()
+                        .requestMatchers("/api/auth/profile").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/flights").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/support").permitAll()
                         .requestMatchers("/api/payments").permitAll()
@@ -69,6 +70,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/faqs").permitAll()
                         .requestMatchers("/api/seats/available/**").permitAll()
                         .requestMatchers("/api/currencies").permitAll()
+                        .requestMatchers("/api/passengers").permitAll()
                         .requestMatchers("/api/timezones").permitAll()
                         .requestMatchers("/api/policies").permitAll()
                         .requestMatchers(

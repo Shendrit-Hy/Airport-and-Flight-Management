@@ -31,4 +31,14 @@ public class SeatController {
     ) {
         return seatService.getAllSeats(flightId, tenantId);
     }
+
+    @PutMapping("/{seatId}/unavailable")
+    public SeatDTO markSeatAsUnavailable(
+            @RequestHeader("X-Tenant-ID") String tenantId,
+            @PathVariable Long seatId
+    ) {
+        return seatService.markSeatAsUnavailable(seatId, tenantId);
+    }
+
+
 }

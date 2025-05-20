@@ -2,12 +2,20 @@ import React, { useState, createContext, useContext, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import "../styles/BookingPage.css";
+import {
+  fetchAvailableSeats,
+  submitBooking,
+  toggleSeatSelection,
+  isSeatSelectedHelper,
+  createPassenger
+} from "../api/bookedService";
+import { getUserProfile } from "../utils/auth";
 
 const BookingContext = createContext();
 
 function BookingProvider({ children }) {
+  const [userProfile, setUserProfile] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   return (
     <BookingContext.Provider value={{ userInfo, setUserInfo }}>
@@ -16,14 +24,23 @@ function BookingProvider({ children }) {
   );
 }
 
+function parseTimeString(timeStr) {
+  const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+  const now = new Date();
+  now.setHours(hours, minutes, seconds || 0, 0);
+  return now;
+}
+
+
 function BookingDetails({ flight }) {
+  console.log(flight)
+  const departureTime = parseTimeString(flight.departureTime);
+  const arrivalTime = parseTimeString(flight.arrivalTime);
   return (
     <div className="bookingpage-details">
       <h2>Flight Details</h2>
       <p className="bookingpage-detail-box">
-        {new Date(flight.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        {" → "}
-        {new Date(flight.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        {new Date(departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} → {new Date(arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
       </p>
       <p className="bookingpage-detail-box">From: {flight.departureAirport}</p>
       <p className="bookingpage-detail-box">To: {flight.arrivalAirport}</p>
@@ -92,44 +109,23 @@ function PaymentForm({ flight }) {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const tenantId = localStorage.getItem('tenantId') || 'default-tenant';
-    
-    axios.get(`http://localhost:8080/api/seats/available/${flight.id}`, {
-      headers: {
-        'X-Tenant-ID': tenantId
-      }
-    })
-    .then((res) => {
-      console.log('Available seats response:', res.data);
-      if (Array.isArray(res.data)) {
-        // Filter out seats with null/undefined IDs
-        const validSeats = res.data.filter(seat => seat && seat.id != null);
-        setAvailableSeats(validSeats);
-      } else {
-        console.error('Invalid seats data format:', res.data);
-        setAvailableSeats([]);
-      }
+useEffect(() => {
+  console.log("Flight object:", flight);
+
+  fetchAvailableSeats(flight.id)
+    .then((seats) => {
+      console.log("Available seats:", seats);
+      setAvailableSeats(seats);
     })
     .catch((error) => {
-      console.error('Error fetching available seats:', error);
+      console.error("Failed to fetch seats:", error);
       setAvailableSeats([]);
     });
-  }, [flight.id]);
+}, [flight.id]);
 
-  const toggleSeat = (seat) => {
-    const seatId = seat.id;
-    const isSelected = selectedSeats.some(s => s.id === seatId);
-    
-    if (isSelected) {
-      setSelectedSeats(selectedSeats.filter(s => s.id !== seatId));
-    } else if (selectedSeats.length < userInfo.ticketCount) {
-      setSelectedSeats([...selectedSeats, seat]);
-    }
-  };
 
-  const isSeatSelected = (seat) => {
-    return selectedSeats.some(s => s.id === seat.id);
+  const handleSeatClick = (seat) => {
+    setSelectedSeats(toggleSeatSelection(seat, selectedSeats, userInfo.ticketCount));
   };
 
   return (
@@ -139,26 +135,36 @@ function PaymentForm({ flight }) {
         cardNumber: Yup.string().required("Required"),
         cvc: Yup.string().required("Required"),
       })}
-      onSubmit={async () => {
-        try {
-          const tenantId = localStorage.getItem('tenantId') || 'default-tenant';
-          
-          await axios.post("/api/bookings", {
-            ...userInfo,
-            flightId: flight.id,
-            seats: selectedSeats.map(seat => seat.id),
-            totalPrice: flight.price * userInfo.ticketCount,
-          }, {
-            headers: {
-              'X-Tenant-ID': tenantId
-            }
-          });
-          navigate("/checkin");
-        } catch (error) {
-          console.error('Booking failed:', error);
-          alert("Booking failed. Please try again.");
-        }
-      }}
+        onSubmit={async () => {
+          try {
+            const userProfile = await getUserProfile(localStorage.getItem("token"));
+            await createBooking(userProfile, selectedSeats)
+            // const bookingResult 
+            // = await submitBooking(userInfo, flight, selectedSeats);
+            console.log(selectedSeats);
+            console.log(userInfo);
+            console.log(flight);
+            // console.log(userProfile.id);
+            console.log(userProfile);
+            
+            // Then create the passenger record using the userInfo data
+            const passengerData = {
+              fullName: userInfo.fullName,
+              email: userInfo.email,
+              age: userInfo.age,
+              phone: userInfo.phone
+              // Add any other needed fields
+            };
+            
+            await createPassenger(passengerData);
+            
+            // Navigate to checkin page after both operations succeed
+            navigate("/checkin");
+          } catch (err) {
+            alert("Booking failed. Please try again.");
+            console.error(err);
+          }
+        }}
     >
       <Form className="bookingpage-form">
         <div className="bookingpage-tab-bar">
@@ -177,10 +183,10 @@ function PaymentForm({ flight }) {
           <div className="bookingpage-seat-grid">
             {availableSeats.map(seat => (
               <button
-                key={seat.id}  // Now guaranteed to be non-null
+                key={seat.id}
                 type="button"
-                className={`bookingpage-seat ${isSeatSelected(seat) ? "selected" : ""}`}
-                onClick={() => toggleSeat(seat)}
+                className={`bookingpage-seat ${isSeatSelectedHelper(seat, selectedSeats) ? "selected" : ""}`}
+                onClick={() => handleSeatClick(seat)}
               >
                 {seat.seatNumber || `${seat.seatRow}${seat.seatColumn}` || seat.id}
               </button>
