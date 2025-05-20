@@ -13,7 +13,7 @@ public class Passenger {
     private String fullName;
     private String email;
     private String phone;
-    private String nationality;
+    private Long age;
 
     @Column(name = "tenant_id")
     private String tenantId;
@@ -21,12 +21,12 @@ public class Passenger {
     // Constructors
     public Passenger() {}
 
-    public Passenger(Long id, String fullName, String email, String phone, String nationality, String tenantId) {
+    public Passenger(Long id, String fullName, String email, String phone, Long age, String tenantId) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
-        this.nationality = nationality;
+        this.age = age;
         this.tenantId = tenantId;
     }
 
@@ -63,12 +63,12 @@ public class Passenger {
         this.phone = phone;
     }
 
-    public String getNationality() {
-        return nationality;
+    public Long getAge() {
+        return age;
     }
 
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
+    public void setAge(Long age) {
+        this.age = age;
     }
 
     public String getTenantId() {
