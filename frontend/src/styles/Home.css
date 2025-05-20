@@ -1,5 +1,6 @@
 .home-page {
   font-family: sans-serif;
+  background-color: white;
 }
 
 /* Seksioni 1 */
@@ -48,11 +49,17 @@
   gap: 10px;
   width: 400px;
   height: 450px;
-  /* padding-top: 180px;
-  padding-left: 90px; */
+  padding-top: 30px;
   background-color: rgb(30, 30, 30);
   border-radius: 25px;
 }
+
+.search-form-field {
+  border-radius: 5px;
+  height: 30px;
+}
+
+
 .search-section-title{
   color: white;
   font-weight: bold;
@@ -96,7 +103,6 @@
 
 .flights-table-right {
   flex: 1;
-  margin-left: 2rem;
 }
 
 .flight-table {
@@ -130,38 +136,31 @@
 }
 .submit{
  cursor: pointer;}
-/* DIZAJN */
-.placeholder-section {
+
+.parking-price-section{
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 300px;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 4rem 4rem 4rem 4rem;
+  height: 450px;
 }
-
-.placeholder-box {
-  border: 2px solid red;
-  padding: 2rem;
-  border-radius: 20px;
-  font-size: 1.5rem;
-}
-
-/* Foto që mbulon tërë ekranin */
-.fullscreen-image-section {
-  width: 100%;
-}
-
-.full-img {
-  width: 100%;
-  height: auto;
-  display: block;
+.parking-price-right-section{
+  width: 50%;
+  height: 100%;
+  padding:1rem;
+  background: url('/public/epesta.jpg') center/cover no-repeat;
+  border-radius: 25px;
 }
 
 
+
+/* Weather Section */
 .weather-section {
-  background-color: #0f172a;
+  background-color: #0a0f1c;
   color: white;
   text-align: center;
-  padding: 3rem;
+  padding: 3rem 1rem;
+  border-top: 4px solid #1e90ff;
 }
 
 .weather-title {
@@ -170,17 +169,17 @@
 }
 
 .weather-info {
-  font-size: 1.2rem;
-  text-transform: capitalize;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .weather-temp {
   font-size: 2rem;
   font-weight: bold;
-  margin-top: 0.5rem;
 }
-.weather-icon {
-  margin-top: 1rem;
-  width: 64px;
-  height: 64px;
+
+.weather-section img {
+  width: 80px;
+  height: 80px;
 }
+

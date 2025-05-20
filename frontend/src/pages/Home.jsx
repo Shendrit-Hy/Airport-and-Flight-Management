@@ -3,6 +3,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import '../styles/Home.css';
 import { getAirports } from '../api/airportService';
+import axios from '../utils/axiosInstance';
+import ImageSlider from './ImageSlider';
 
 const SearchSchema = Yup.object().shape({
   from: Yup.string().required('Departure airport is required'),
@@ -20,6 +22,7 @@ const HomePage = () => {
   const [airports, setAirports] = useState([]);
   const [language, setLanguage] = useState(localStorage.getItem('language') || 'en');
   const [price, setPrice] = useState(null);
+  const [weather, setWeather] = useState(null);
 
   useEffect(() => {
     const fetchAirports = async () => {
@@ -33,40 +36,47 @@ const HomePage = () => {
     fetchAirports();
   }, []);
 
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const apiKey = "YOUR_API_KEY"; // Replace with your actual API key
+        const response = await fetch(
+          `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=Prishtina`
+        );
+        const data = await response.json();
+        if (data.error) {
+          console.error('Weather API Error:', data.error.message);
+          setWeather(null);
+        } else {
+          setWeather({
+            temp: data.current.temp_c,
+            description: data.current.condition.text,
+            icon: data.current.condition.icon
+          });
+        }
+      } catch (error) {
+        console.error("Weather fetch failed", error);
+        setWeather(null);
+      }
+    };
+
+    fetchWeather();
+  }, []);
+
   const t = (en, sq) => (language === 'sq' ? sq : en);
 
- const handlePriceCheck = async (values) => {
-   try {
-     const entry = new Date(0, 0, 0, values.entryHour, values.entryMinute);
-     const exit = new Date(0, 0, 0, values.exitHour, values.exitMinute);
-     if (exit < entry) exit.setDate(exit.getDate() + 1);
-
-     const diffMinutes = (exit - entry) / 60000;
-     let calculatedPrice = 0;
-
-     if (diffMinutes <= 15) {
-       calculatedPrice = 0;
-     } else if (diffMinutes <= 120) {
-       calculatedPrice = 2;
-     } else if (diffMinutes <= 360) {
-       calculatedPrice = 4;
-     } else if (diffMinutes <= 720) {
-       calculatedPrice = 6;
-     } else if (diffMinutes <= 1440) {
-       calculatedPrice = 8;
-     } else {
-       calculatedPrice = 10 * Math.ceil(diffMinutes / 1440);
-     }
-
-     const isNight = values.entryHour >= 18 || values.entryHour < 6;
-     if (isNight && calculatedPrice > 0) calculatedPrice += 1;
-
-     setPrice(calculatedPrice);
-   } catch (err) {
-     console.error("Error calculating price", err);
-     setPrice(null);
-   }
- };
+  const handlePriceCheck = async (values) => {
+    try {
+      const response = await axios.post("/api/parking/calculate", {
+        ...values,
+        tenantId: localStorage.getItem("tenantId") || "1"
+      });
+      setPrice(response.data.price);
+    } catch (err) {
+      console.error("Error calculating price", err);
+      setPrice(null);
+    }
+  };
 
   return (
     <div className="home-page">
@@ -74,8 +84,8 @@ const HomePage = () => {
 
       <section className="section welcome-section">
         <div className="overlay-text">
-          <h1>{t('Welcome to MBI RE', 'Mirë se vini në MBI RE')}</h1>
-          <p>{t('Explore the skies with premium experiences.', 'Eksploro qiellin me eksperienca premium.')}</p>
+          <h1 className="home-title">{t('Welcome to MBI RE', 'Mirë se vini në MBI RE')}</h1>
+          <p className="home-text">{t('Explore the skies with premium experiences.', 'Eksploro qiellin me eksperienca premium.')}</p>
         </div>
       </section>
 
@@ -95,14 +105,14 @@ const HomePage = () => {
         >
           {() => (
             <Form className="search-form">
-              <Field as="select" name="from">
+              <Field as="select" name="from" className='search-form-field'>
                 <option value="">{t('Select Departure Airport', 'Zgjedh Aeroportin e Nisjes')}</option>
                 {airports.map((airport) => (
                   <option key={airport.id} value={airport.city}>{airport.city}</option>
                 ))}
               </Field>
               <ErrorMessage name="from" component="div" className="error" />
-              <Field as="select" name="to">
+              <Field as="select" name="to" className='search-form-field'>
                 <option value="">{t('Select Arrival Airport', 'Zgjedh Aeroportin e Mberritjes')}</option>
                 {airports.map((airport) => (
                   <option key={airport.id} value={airport.city}>{airport.city}</option>
@@ -122,9 +132,6 @@ const HomePage = () => {
       </section>
 
       <section className="section flights-section">
-        <div className="plane-image-left">
-          <img src="/public/ekaterta.jpg" alt="Jet" />
-        </div>
         <div className="flights-table-right">
           <table className="flight-table">
             <thead>
@@ -143,17 +150,14 @@ const HomePage = () => {
             {t('View All Flights', 'Shiko të gjitha fluturimet')}
           </button>
         </div>
+        
+        <div className="plane-image-left">
+          <img src="/public/ekaterta.jpg" alt="Jet" />
+        </div>
       </section>
 
-      <section className="section placeholder-section">
-        <div className="placeholder-box">DIZAJN</div>
-      </section>
+      <ImageSlider />
 
-      <section className="section fullscreen-image-section">
-        <img src="/public/epesta.jpg" alt="Banner" className="full-img" />
-      </section>
-
-      {/* Section 6 - Parking Calculator */}
       <section className="section parking-price-section">
         <div className="search-form">
           <h2 style={{ color: 'white' }}>{t('Calculate Parking Price', 'Llogarit Çmimin e Parkingut')}</h2>
@@ -162,7 +166,7 @@ const HomePage = () => {
             onSubmit={handlePriceCheck}
           >
             {() => (
-              <Form>
+              <Form className='search-form'>
                 <Field type="number" name="entryHour" placeholder={t('Entry Hour (0-23)', 'Ora e Hyrjes (0-23)')} />
                 <Field type="number" name="entryMinute" placeholder={t('Entry Minute', 'Minuta e Hyrjes')} />
                 <Field type="number" name="exitHour" placeholder={t('Exit Hour (0-23)', 'Ora e Daljes (0-23)')} />
@@ -177,6 +181,21 @@ const HomePage = () => {
             </div>
           )}
         </div>
+        <div className="parking-price-right-section"></div>
+      </section>
+
+      {/* 🌤️ Weather Section */}
+      <section className="section weather-section">
+        <h2 className="weather-title">Current Weather in Prishtina</h2>
+        {weather ? (
+          <>
+            <p className="weather-info">{weather.description}</p>
+            <p className="weather-temp">{weather.temp}°C</p>
+            <img src={weather.icon} alt="Weather Icon" />
+          </>
+        ) : (
+          <p className="weather-info">Failed To Load Weather Data.</p>
+        )}
       </section>
     </div>
   );
