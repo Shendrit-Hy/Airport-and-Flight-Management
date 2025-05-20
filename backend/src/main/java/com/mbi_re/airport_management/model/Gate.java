@@ -3,7 +3,6 @@ package com.mbi_re.airport_management.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "gates")
 public class Gate {
 
     @Id
@@ -12,14 +11,17 @@ public class Gate {
 
     private String gateNumber;
 
-    // Nëse do e lidhim me Flight, përdor ManyToOne, por mund ta lëmë thjesht për fillim
-    // @ManyToOne
-    // @JoinColumn(name = "flight_id")
-    // private Flight flight;
+    private String status;
 
-    private String tenantId; // Nëse ke multi-tenant
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "terminal_id", nullable = false)
+    private Terminal terminal;
 
-    // Getters dhe Setters
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "flight_id")
+    private Flight flight;
+
+    private String tenantId;
 
     public Long getId() {
         return id;
@@ -37,6 +39,30 @@ public class Gate {
         this.gateNumber = gateNumber;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Terminal getTerminal() {
+        return terminal;
+    }
+
+    public void setTerminal(Terminal terminal) {
+        this.terminal = terminal;
+    }
+
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
+
     public String getTenantId() {
         return tenantId;
     }
@@ -45,3 +71,4 @@ public class Gate {
         this.tenantId = tenantId;
     }
 }
+

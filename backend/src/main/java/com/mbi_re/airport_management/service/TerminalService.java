@@ -21,13 +21,20 @@ public class TerminalService {
         this.airportRepository = airportRepository;
     }
 
-    public List<TerminalDTO> getAllTerminals() {
-        return terminalRepository.findAll().stream()
-                .map(t -> new TerminalDTO(t.getId(), t.getName(), t.getAirport().getId()))
+    public List<TerminalDTO> getAllTerminals(String tenantId) {
+        return terminalRepository.findByTenantId(tenantId).stream()
+                .map(t -> {
+                    TerminalDTO dto = new TerminalDTO();
+                    dto.setId(t.getId());
+                    dto.setName(t.getName());
+                    dto.setAirportId(t.getAirport().getId());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
-    public TerminalDTO createTerminal(TerminalDTO dto) {
+
+    public TerminalDTO createTerminal(TerminalDTO dto, String tenantId) {
         if (dto.getAirportId() == null) {
             throw new IllegalArgumentException("Airport ID must not be null");
         }
@@ -38,8 +45,17 @@ public class TerminalService {
         Terminal terminal = new Terminal();
         terminal.setName(dto.getName());
         terminal.setAirport(airport);
+        terminal.setTenantId(tenantId);
 
         Terminal saved = terminalRepository.save(terminal);
-        return new TerminalDTO(saved.getId(), saved.getName(), saved.getAirport().getId());
+
+        // Map saved terminal back to DTO
+        TerminalDTO responseDto = new TerminalDTO();
+        responseDto.setId(saved.getId());
+        responseDto.setName(saved.getName());
+        responseDto.setAirportId(saved.getAirport().getId());
+
+        return responseDto;
     }
+
 }

@@ -4,7 +4,9 @@ import com.mbi_re.airport_management.dto.FlightDTO;
 import com.mbi_re.airport_management.model.Flight;
 import com.mbi_re.airport_management.model.Seat;
 import com.mbi_re.airport_management.repository.FlightRepository;
+import com.mbi_re.airport_management.repository.GateRepository;
 import com.mbi_re.airport_management.repository.SeatRepository;
+import com.mbi_re.airport_management.repository.TerminalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,13 @@ public class FlightService {
 
     @Autowired
     private SeatRepository seatRepository;
+
+    @Autowired
+    private GateRepository gateRepository;
+
+    @Autowired
+    private TerminalRepository terminalRepository;
+
 
     public List<FlightDTO> getTodayAndUpcomingFlights(String tenantId) {
         LocalDate today = LocalDate.now();
@@ -84,8 +93,17 @@ public class FlightService {
         dto.setFlightStatus(flight.getFlightStatus());
         dto.setAirline(flight.getAirline());
         dto.setTenantId(flight.getTenantId());
+
+        if (flight.getGate() != null) {
+            dto.setGateId(flight.getGate().getId());
+        }
+        if (flight.getTerminal() != null) {
+            dto.setTerminalId(flight.getTerminal().getId());
+        }
+
         return dto;
     }
+
 
     private Flight mapToEntity(FlightDTO dto) {
         Flight flight = new Flight();
@@ -100,8 +118,20 @@ public class FlightService {
         flight.setFlightStatus(dto.getFlightStatus());
         flight.setAirline(dto.getAirline());
         flight.setTenantId(dto.getTenantId());
+
+        if (dto.getGateId() != null) {
+            flight.setGate(gateRepository.findByIdAndTenantId(dto.getGateId(), dto.getTenantId())
+                    .orElseThrow(() -> new RuntimeException("Gate not found")));
+        }
+
+        if (dto.getTerminalId() != null) {
+            flight.setTerminal(terminalRepository.findByIdAndTenantId(dto.getTerminalId(), dto.getTenantId())
+                    .orElseThrow(() -> new RuntimeException("Terminal not found")));
+        }
+
         return flight;
     }
+
 
     public void deleteFlight(Long flightId, String tenantId) {
         Flight flight = flightRepository.findByIdAndTenantId(flightId, tenantId)

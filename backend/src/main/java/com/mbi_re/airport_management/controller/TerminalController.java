@@ -2,6 +2,7 @@ package com.mbi_re.airport_management.controller;
 
 import com.mbi_re.airport_management.dto.TerminalDTO;
 import com.mbi_re.airport_management.service.TerminalService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,12 +18,14 @@ public class TerminalController {
     }
 
     @GetMapping
-    public List<TerminalDTO> getAllTerminals() {
-        return terminalService.getAllTerminals();
+    public List<TerminalDTO> getAllTerminals(@RequestHeader("X-Tenant-ID") String tenantId) {
+        return terminalService.getAllTerminals(tenantId);
     }
 
     @PostMapping
-    public TerminalDTO createTerminal(@RequestBody TerminalDTO dto) {
-        return terminalService.createTerminal(dto);
+    @PreAuthorize("hasRole('ADMIN')")
+    public TerminalDTO createTerminal(@RequestBody TerminalDTO dto, @RequestHeader("X-Tenant-ID") String tenantId) {
+        return terminalService.createTerminal(dto, tenantId);
     }
+
 }

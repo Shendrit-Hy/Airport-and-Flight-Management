@@ -17,8 +17,19 @@ public class Terminal {
     @JoinColumn(name = "airport_id", nullable = false)
     private Airport airport;
 
-    // Getters and Setters
+    @Column(nullable = false)
+    private String tenantId;
 
+    // Constructors
+    public Terminal() {}
+
+    public Terminal(String name, Airport airport, String tenantId) {
+        this.name = name;
+        this.airport = airport;
+        this.tenantId = tenantId;
+    }
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -41,5 +52,13 @@ public class Terminal {
 
     public void setAirport(Airport airport) {
         this.airport = airport;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }
