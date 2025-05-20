@@ -5,6 +5,9 @@ import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 export default function AdminFlightsPage() {
   const [flights, setFlights] = useState([]);
+  const [terminals, setTerminals] = useState([]);
+  const [gates, setGates] = useState([]);
+
   const [newFlight, setNewFlight] = useState({
     flightNumber: '',
     departureAirport: '',
@@ -14,15 +17,18 @@ export default function AdminFlightsPage() {
     flightDate: '',
     availableSeat: '',
     price: '',
-    airline: ''
+    airline: '',
+    terminalId: '',
+    gateId: ''
   });
 
   const tenantId = getTenantIdFromSubdomain();
-  const token = localStorage.getItem("token"); // Read JWT token directly
-  console.log(flights);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     loadFlights();
+    loadTerminals();
+    loadGates();
   }, []);
 
   const loadFlights = async () => {
@@ -34,22 +40,66 @@ export default function AdminFlightsPage() {
     }
   };
 
+  const loadTerminals = async () => {
+    try {
+      const res = await fetch(`/api/terminals`, {
+        headers: {
+          "X-Tenant-ID": tenantId,
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      setTerminals(data);
+    } catch (err) {
+      console.error("Failed to load terminals", err);
+    }
+  };
+
+  const loadGates = async () => {
+    try {
+      const res = await fetch(`/api/gates`, {
+        headers: {
+          "X-Tenant-ID": tenantId,
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      setGates(data);
+    } catch (err) {
+      console.error("Failed to load gates", err);
+    }
+  };
+
   const handleChange = (e) => {
     setNewFlight({ ...newFlight, [e.target.name]: e.target.value });
   };
 
-const handleAddFlight = async () => {
-  try {
-    await createFlight(newFlight, tenantId, token);
-    console.log("Flight created!");
-    // Optionally refresh flight list or reset form
-  } catch (error) {
-    console.error("Failed to create flight", error);
-    if (error.response?.status === 401) {
-      alert("You must be logged in as admin to create a flight.");
+  const handleAddFlight = async (e) => {
+    e.preventDefault();
+    try {
+      await createFlight(newFlight, tenantId, token);
+      console.log("Flight created!");
+      loadFlights();
+      setNewFlight({
+        flightNumber: '',
+        departureAirport: '',
+        arrivalAirport: '',
+        departureTime: '',
+        arrivalTime: '',
+        flightDate: '',
+        availableSeat: '',
+        price: '',
+        airline: '',
+        terminalId: '',
+        gateId: ''
+      });
+    } catch (error) {
+      console.error("Failed to create flight", error);
+      if (error.response?.status === 401) {
+        alert("You must be logged in as admin to create a flight.");
+      }
     }
-  }
-};
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -106,7 +156,30 @@ const handleAddFlight = async () => {
                 />
               </div>
             ))}
+
+            {/* Terminal Selection */}
+            <div className="adminflights-input-group">
+              <label htmlFor="terminalId">Terminal</label>
+              <select name="terminalId" value={newFlight.terminalId} onChange={handleChange} required>
+                <option value="">Select Terminal</option>
+                {terminals.map((t) => (
+                  <option key={t.id} value={t.id}>{t.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Gate Selection */}
+            <div className="adminflights-input-group">
+              <label htmlFor="gateId">Gate</label>
+              <select name="gateId" value={newFlight.gateId} onChange={handleChange} required>
+                <option value="">Select Gate</option>
+                {gates.map((g) => (
+                  <option key={g.id} value={g.id}>{g.name}</option>
+                ))}
+              </select>
+            </div>
           </div>
+
           <button type="submit" className="adminflights-add-btn">ADD</button>
         </form>
 
@@ -122,6 +195,7 @@ const handleAddFlight = async () => {
             <span>Price</span>
             <span>Airline</span>
             <span>Status</span>
+            <span>Actions</span>
           </div>
 
           {flights.map((f) => (
