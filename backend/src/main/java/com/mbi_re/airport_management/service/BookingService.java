@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 
@@ -22,14 +23,18 @@ public class BookingService {
 
     public Booking createBooking(BookingDTO dto, String tenantId) {
         Booking booking = new Booking();
-        booking.setPassengerName(dto.getPassengerName());
-        booking.setPassengerId(dto.getPassengerId());
+
         booking.setFlightNumber(dto.getFlightNumber());
-        booking.setBookingId(dto.getBookingId());
-        booking.setSeatNumber(dto.getSeatNumber());
-        booking.setStatus(dto.getStatus() != null ? dto.getStatus() : "BOOKED");
+        booking.setPassengerName(dto.getPassengerName());
+        booking.setSeatNumber(String.join(",", dto.getSeatNumber()));  // Convert list to comma-separated
+        booking.setPassengerId(dto.getPassengerId());
+
         booking.setBookingTime(LocalDateTime.now());
+        booking.setStatus("PAID");
+        booking.setBookingId(generateBookingId());
         booking.setTenantId(tenantId);
+
+        // Optional: store tenant ID in the entity if needed
 
         return repository.save(booking);
     }
@@ -54,6 +59,10 @@ public class BookingService {
             b.setStatus(dto.getStatus());
             return repository.save(b);
         }).orElse(null);
+    }
+
+    private String generateBookingId() {
+        return "BOOK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
     public void deleteBooking(Long id) {

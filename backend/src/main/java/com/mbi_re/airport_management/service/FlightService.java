@@ -48,14 +48,24 @@ public class FlightService {
         Flight saved = flightRepository.save(flight);
 
         // Auto-generate seats
-        for (int i = 1; i <= saved.getAvailableSeat(); i++) {
-            Seat seat = new Seat();
-            seat.setSeatNumber("A" + i);
-            seat.setBooked(false);
-            seat.setFlight(saved);
-            seat.setTenantId(saved.getTenantId());
-            seatRepository.save(seat);
+        int totalSeats = saved.getAvailableSeat();
+        int seatsPerRow = 6; // You can adjust this number
+        char row = 'A';
+        int seatCount = 0;
+
+        while (seatCount < totalSeats) {
+            for (int col = 1; col <= seatsPerRow && seatCount < totalSeats; col++) {
+                Seat seat = new Seat();
+                seat.setSeatNumber("" + row + col);
+                seat.setBooked(false);
+                seat.setFlight(saved);
+                seat.setTenantId(saved.getTenantId());
+                seatRepository.save(seat);
+                seatCount++;
+            }
+            row++;
         }
+
 
         return mapToDTO(saved);
     }

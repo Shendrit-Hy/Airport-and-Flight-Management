@@ -71,6 +71,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/seats/available/**").permitAll()
                         .requestMatchers("/api/currencies").permitAll()
                         .requestMatchers("/api/passengers").permitAll()
+                        .requestMatchers("/api/bookings").permitAll()
                         .requestMatchers("/api/timezones").permitAll()
                         .requestMatchers("/api/policies").permitAll()
                         .requestMatchers(

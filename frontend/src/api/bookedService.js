@@ -37,9 +37,23 @@ export const toggleSeatSelection = (seat, selectedSeats, maxSeats) => {
   return selectedSeats;
 };
 
+export const createBooking = async (userProfile, userInfo, selectedSeats, flight) => {
+  // Join multiple seat numbers into a single string (e.g. "12A,12B,12C")
+  const seatNumbers = selectedSeats.map(seat => seat.seat_number).join(',');
+  await axios.post("http://localhost:8080/api/bookings", {
+    flight_number: flight.flightNumber,
+    passenger_name: userInfo.fullName,
+    seat_number: seatNumbers,
+    passenger_id: userProfile.data.id
+  }, {
+    headers: {
+      'X-Tenant-ID': tenantId
+    }
+  });
+};
+
 export const createPassenger = async (passengerData) => {
   try {
-    console.log(passengerData);
     const response = await fetch('http://localhost:8080/api/passengers', {
       method: 'POST',
       headers: {
