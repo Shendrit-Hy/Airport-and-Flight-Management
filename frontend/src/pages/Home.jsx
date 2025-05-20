@@ -24,6 +24,7 @@ const HomePage = () => {
   const [price, setPrice] = useState(null);
   const [forecast, setForecast] = useState([]);
 
+
   useEffect(() => {
     const fetchAirports = async () => {
       try {
@@ -34,6 +35,33 @@ const HomePage = () => {
       }
     };
     fetchAirports();
+  }, []);
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const apiKey = "YOUR_API_KEY"; // Replace with your actual API key
+        const response = await fetch(
+          `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=Prishtina`
+        );
+        const data = await response.json();
+        if (data.error) {
+          console.error('Weather API Error:', data.error.message);
+          setWeather(null);
+        } else {
+          setWeather({
+            temp: data.current.temp_c,
+            description: data.current.condition.text,
+            icon: data.current.condition.icon
+          });
+        }
+      } catch (error) {
+        console.error("Weather fetch failed", error);
+        setWeather(null);
+      }
+    };
+
+    fetchWeather();
   }, []);
 
   const t = (en, sq) => (language === 'sq' ? sq : en);
@@ -50,7 +78,6 @@ const HomePage = () => {
       setPrice(null);
     }
   };
-
   useEffect(() => {
     const fetchForecast = async () => {
       try {
@@ -69,7 +96,6 @@ const HomePage = () => {
     };
     fetchForecast();
   }, []);
-
   return (
     <div className="home-page">
       <header className="navbar-section"></header>
@@ -174,7 +200,6 @@ const HomePage = () => {
         </div>
         <div className="parking-price-right-section"></div>
       </section>
-
       {/* Weather Section */}
       <section className="section weather-section">
         <h2 className="weather-title">{t('5-Day Forecast', 'Parashikimi 5-Ditor')}</h2>

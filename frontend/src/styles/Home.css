@@ -153,6 +153,7 @@
 }
 
 
+/* Weather Section */
 .weather-section {
   padding: 4rem;
   background-color: rgb(0, 31, 143);
@@ -180,3 +181,4 @@
   width: 150px;
   text-align: center;
 }
+
