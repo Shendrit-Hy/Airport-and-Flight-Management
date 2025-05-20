@@ -153,33 +153,30 @@
 }
 
 
-
-/* Weather Section */
 .weather-section {
-  background-color: #0a0f1c;
-  color: white;
+  padding: 4rem;
+  background-color: rgb(0, 31, 143);
   text-align: center;
-  padding: 3rem 1rem;
-  border-top: 4px solid #1e90ff;
 }
 
 .weather-title {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 32px;
+  margin-bottom: 2rem;
+  color: white;
 }
 
-.weather-info {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
+.weather-cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.weather-temp {
-  font-size: 2rem;
-  font-weight: bold;
+.weather-card {
+  background-color: white;
+  border-radius: 15px;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width: 150px;
+  text-align: center;
 }
-
-.weather-section img {
-  width: 80px;
-  height: 80px;
-}
-

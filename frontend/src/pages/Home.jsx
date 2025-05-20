@@ -22,7 +22,7 @@ const HomePage = () => {
   const [airports, setAirports] = useState([]);
   const [language, setLanguage] = useState(localStorage.getItem('language') || 'en');
   const [price, setPrice] = useState(null);
-  const [weather, setWeather] = useState(null);
+  const [forecast, setForecast] = useState([]);
 
   useEffect(() => {
     const fetchAirports = async () => {
@@ -34,33 +34,6 @@ const HomePage = () => {
       }
     };
     fetchAirports();
-  }, []);
-
-  useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        const apiKey = "YOUR_API_KEY"; // Replace with your actual API key
-        const response = await fetch(
-          `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=Prishtina`
-        );
-        const data = await response.json();
-        if (data.error) {
-          console.error('Weather API Error:', data.error.message);
-          setWeather(null);
-        } else {
-          setWeather({
-            temp: data.current.temp_c,
-            description: data.current.condition.text,
-            icon: data.current.condition.icon
-          });
-        }
-      } catch (error) {
-        console.error("Weather fetch failed", error);
-        setWeather(null);
-      }
-    };
-
-    fetchWeather();
   }, []);
 
   const t = (en, sq) => (language === 'sq' ? sq : en);
@@ -77,6 +50,25 @@ const HomePage = () => {
       setPrice(null);
     }
   };
+
+  useEffect(() => {
+    const fetchForecast = async () => {
+      try {
+        const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+        const lat = '42.665440';
+        const lon = '21.165319';
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
+        const data = await response.json();
+        if (data.list) {
+          const dailyData = data.list.filter(item => item.dt_txt.includes('12:00:00')).slice(0, 5);
+          setForecast(dailyData);
+        }
+      } catch (err) {
+        console.error('Error fetching forecast:', err);
+      }
+    };
+    fetchForecast();
+  }, []);
 
   return (
     <div className="home-page">
@@ -150,7 +142,6 @@ const HomePage = () => {
             {t('View All Flights', 'Shiko të gjitha fluturimet')}
           </button>
         </div>
-        
         <div className="plane-image-left">
           <img src="/public/ekaterta.jpg" alt="Jet" />
         </div>
@@ -184,18 +175,19 @@ const HomePage = () => {
         <div className="parking-price-right-section"></div>
       </section>
 
-      {/* 🌤️ Weather Section */}
+      {/* Weather Section */}
       <section className="section weather-section">
-        <h2 className="weather-title">Current Weather in Prishtina</h2>
-        {weather ? (
-          <>
-            <p className="weather-info">{weather.description}</p>
-            <p className="weather-temp">{weather.temp}°C</p>
-            <img src={weather.icon} alt="Weather Icon" />
-          </>
-        ) : (
-          <p className="weather-info">Failed To Load Weather Data.</p>
-        )}
+        <h2 className="weather-title">{t('5-Day Forecast', 'Parashikimi 5-Ditor')}</h2>
+        <div className="weather-cards">
+          {forecast.map((day, index) => (
+            <div className="weather-card" key={index}>
+              <p><strong>{new Date(day.dt_txt).toLocaleDateString()}</strong></p>
+              <img src={`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`} alt="weather" />
+              <p>{Math.round(day.main.temp)}°C</p>
+              <p>{day.weather[0].main}</p>
+            </div>
+          ))}
+        </div>
       </section>
     </div>
   );
