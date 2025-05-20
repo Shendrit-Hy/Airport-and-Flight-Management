@@ -1,18 +1,31 @@
 package com.mbi_re.airport_management.dto;
 
 public class PassengerDTO {
+
+    private Long id;
     private String fullName;
     private String email;
     private String phone;
-    private String nationality;
+    private Long age;
+
+    private String tenantId;
 
     public PassengerDTO() {}
 
-    public PassengerDTO(String fullName, String email, String phone, String nationality) {
-        this.fullName = fullName;
-        this.email = email;
-        this.phone = phone;
-        this.nationality = nationality;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 
     public String getFullName() {
@@ -39,11 +52,11 @@ public class PassengerDTO {
         this.phone = phone;
     }
 
-    public String getNationality() {
-        return nationality;
+    public Long getAge() {
+        return age;
     }
 
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
+    public void setAge(Long age) {
+        this.age = age;
     }
 }
