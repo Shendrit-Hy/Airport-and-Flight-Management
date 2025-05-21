@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/SupportPage.css';
 import { sendSupportRequest } from '../api/supportService';
@@ -8,19 +9,17 @@ import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 const SupportPage = () => {
   const { user } = useContext(AuthContext);
 
-  const validate = (values) => {
-    const errors = {};
-    if (!values.subject) errors.subject = 'Subjekti është i detyrueshëm';
-    if (!values.message) errors.message = 'Mesazhi është i detyrueshëm';
-    if (!values.email) errors.email = 'Email-i është i detyrueshëm';
-    if (
-      (values.type === 'Baggage' || values.type === 'Lost Item') &&
-      !values.flightNumber
-    ) {
-      errors.flightNumber = 'Numri i fluturimit është i detyrueshëm për këtë kategori';
-    }
-    return errors;
-  };
+  const validationSchema = Yup.object().shape({
+    type: Yup.string().required(),
+    subject: Yup.string().required('Subjekti është i detyrueshëm'),
+    message: Yup.string().required('Mesazhi është i detyrueshëm'),
+    email: Yup.string().email('Email i pavlefshëm').required('Email-i është i detyrueshëm'),
+    flightNumber: Yup.string().when('type', {
+      is: (type) => type === 'Baggage' || type === 'Lost Item',
+      then: (schema) => schema.required('Numri i fluturimit është i detyrueshëm për këtë kategori'),
+      otherwise: (schema) => schema.notRequired()
+    })
+  });
 
   const handleSubmit = async (values, { resetForm }) => {
     const tenantId = getTenantIdFromSubdomain();
@@ -52,7 +51,7 @@ const SupportPage = () => {
               email: user?.email || '',
               flightNumber: '',
             }}
-            validate={validate}
+            validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
             {({ values }) => (
