@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { getTenantIdFromSubdomain } from "../utils/getTenantId";
 import "../styles/AdminBooking.css";
+import "../styles/AdminAirportPage.css"
 
 function AdminFaqs() {
   const [faqs, setFaqs] = useState([]);
@@ -49,19 +50,50 @@ function AdminFaqs() {
 
   return (
     <div className="adminbooking-container">
-      <aside className="adminbooking-sidebar">
-        <img src="/logo.png" alt="Logo" className="adminbooking-logo" />
-        <button className="adminbooking-side-button">DASHBOARD</button>
-        <button className="adminbooking-side-button">SEARCH</button>
-        <button className="adminbooking-side-button">FAQS</button>
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/booking">BOOKING</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/faqs">FAQ'S</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/flightspage">FLIGHTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/maintenance">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/passangers">PASSANGERS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/payments">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/staff">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/support">SUPPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/announcements">ANNOUNCEMENTS</a>
+          </div>
+        </nav>
       </aside>
 
       <main className="adminbooking-content">
-        <div className="adminbooking-ribbon">
-          <span className="adminbooking-label">ADMIN</span>
-        </div>
-
-        <h2 className="adminbooking-title">FAQ Management</h2>
+        <header className="adminbooking-header">
+          <h2>FAQS</h2>
+          <div className="adminbooking-title">ADMIN</div>
+        </header>
 
         <div style={{ maxWidth: 600, margin: "0 20px 30px 20px" }}>
           <input
@@ -71,7 +103,7 @@ function AdminFaqs() {
             value={form.question}
             onChange={handleInputChange}
             style={{
-              backgroundColor: "#1d1d1d",
+              backgroundColor: "rgb(27,27,27)",
               border: "none",
               borderRadius: 8,
               padding: 12,
@@ -88,7 +120,7 @@ function AdminFaqs() {
             onChange={handleInputChange}
             rows={4}
             style={{
-              backgroundColor: "#1d1d1d",
+              backgroundColor: "rgb(27,27,27)",
               border: "none",
               borderRadius: 8,
               padding: 12,
@@ -102,7 +134,7 @@ function AdminFaqs() {
           <button
             onClick={handleAddFaq}
             style={{
-              backgroundColor: "#333",
+              backgroundColor: "rgb(0,13,255)",
               color: "white",
               border: "none",
               padding: "12px 20px",

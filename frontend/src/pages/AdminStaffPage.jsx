@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/AdminStaffPage.css';
+import "../styles/AdminAirportPage.css"
+
 import {
   getStaffList,
   deleteStaffById,
@@ -62,15 +64,41 @@ export default function AdminStaffPage() {
 
   return (
     <div className="adminstaff-layout">
-      <aside className="adminstaff-sidebar">
-        <div className="adminstaff-logo">MBI RE</div>
-        <nav className="adminstaff-nav">
-          <div className="adminstaff-nav-row">
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
             <a href="/admin/dashboard">DASHBOARD</a>
-            <a href="/admin/flights">FLIGHTS</a>
           </div>
-          <div className="adminstaff-nav-row">
-            <a href="/admin/staff" className="active">STAFF</a>
+          <div className="airport-nav-row">
+            <a href="/admin/airport">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/booking">BOOKING</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/faqs">FAQ'S</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/flightspage">FLIGHTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/maintenance">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/passangers">PASSANGERS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/payments">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/staff">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/support">SUPPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/announcements">ANNOUNCEMENTS</a>
           </div>
         </nav>
       </aside>

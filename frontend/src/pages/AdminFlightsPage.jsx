@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import '../styles/AdminFlightsPage.css';
 import { getAllFlights, createFlight, deleteFlight } from '../api/flightService';
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
+import "../styles/AdminAirportPage.css"
+
 
 export default function AdminFlightsPage() {
   const [flights, setFlights] = useState([]);
@@ -112,15 +114,41 @@ export default function AdminFlightsPage() {
 
   return (
     <div className="adminflights-layout">
-      <aside className="adminflights-sidebar">
-        <div className="adminflights-logo">MBI RE</div>
-        <nav className="adminflights-nav">
-          <div className="adminflights-nav-row">
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
             <a href="/admin/dashboard">DASHBOARD</a>
-            <a href="/admin/search">SEARCH</a>
           </div>
-          <div className="adminflights-nav-row">
-            <a href="/admin/flights" className="active">FLIGHTS</a>
+          <div className="airport-nav-row">
+            <a href="/admin/airport">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/booking">BOOKING</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/faqs">FAQ'S</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/flightspage">FLIGHTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/maintenance">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/passangers">PASSANGERS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/payments">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/staff">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/support">SUPPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/announcements">ANNOUNCEMENTS</a>
           </div>
         </nav>
       </aside>

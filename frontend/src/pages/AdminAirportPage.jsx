@@ -62,10 +62,36 @@ export default function AdminAirportPage() {
         <nav className="airport-nav-group">
           <div className="airport-nav-row">
             <a href="/admin/dashboard">DASHBOARD</a>
-            <a href="/admin/search">SEARCH</a>
           </div>
           <div className="airport-nav-row">
-            <a href="/admin/airport" className="active">AIRPORT</a>
+            <a href="/admin/airport">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/booking">BOOKING</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/faqs">FAQ'S</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/flightspage">FLIGHTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/maintenance">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/passangers">PASSANGERS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/payments">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/staff">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/support">SUPPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/announcements">ANNOUNCEMENTS</a>
           </div>
         </nav>
       </aside>
@@ -79,7 +105,7 @@ export default function AdminAirportPage() {
         <form className="airport-add-form" onSubmit={handleAdd}>
           <div className="airport-form-grid">
             <div className="airport-input-group">
-              <label htmlFor="name">Airport Name</label>
+              {/* <label htmlFor="name">Airport Name</label> */}
               <input
                 type="text"
                 id="name"
@@ -87,11 +113,12 @@ export default function AdminAirportPage() {
                 value={newAirport.name}
                 onChange={handleChange}
                 required
+                placeholder='Airport Name'
               />
             </div>
 
             <div className="airport-input-group">
-              <label htmlFor="code">Code</label>
+              {/* <label htmlFor="code">Code</label> */}
               <input
                 type="text"
                 id="code"
@@ -99,11 +126,13 @@ export default function AdminAirportPage() {
                 value={newAirport.code}
                 onChange={handleChange}
                 required
+                placeholder='Code'
+
               />
             </div>
 
             <div className="airport-input-group">
-              <label htmlFor="timezone">Timezone</label>
+              {/* <label htmlFor="timezone">Timezone</label> */}
               <input
                 type="text"
                 id="timezone"
@@ -111,11 +140,13 @@ export default function AdminAirportPage() {
                 value={newAirport.timezone}
                 onChange={handleChange}
                 required
+                placeholder='Timezone'
+
               />
             </div>
 
             <div className="airport-input-group">
-              <label htmlFor="city">City</label>
+              {/* <label htmlFor="city">City</label> */}
               <input
                 type="text"
                 id="city"
@@ -123,11 +154,13 @@ export default function AdminAirportPage() {
                 value={newAirport.city}
                 onChange={handleChange}
                 required
+                placeholder='City'
+
               />
             </div>
 
             <div className="airport-input-group">
-              <label htmlFor="country">Country</label>
+              {/* <label htmlFor="country">Country</label> */}
               <input
                 type="text"
                 id="country"
@@ -135,6 +168,8 @@ export default function AdminAirportPage() {
                 value={newAirport.country}
                 onChange={handleChange}
                 required
+                placeholder='Country'
+
               />
             </div>
           </div>

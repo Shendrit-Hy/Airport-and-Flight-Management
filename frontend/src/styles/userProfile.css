@@ -1,35 +1,12 @@
 .userprofile-page {
   display: flex;
-  min-height: 100vh;
+  min-height: 91vh;
   font-family: sans-serif;
   background-image: url('./efoto.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   color: white;
-}
-
-.userprofile-sidebar {
-  width: 180px;
-  background-color: #1f1f1f;
-  color: white;
-  padding: 10px;
-}
-
-.userprofile-logo {
-  font-weight: bold;
-  font-style: italic;
-  font-size: 20px;
-  background: #e0e0e0;
-  padding: 10px;
-  text-align: center;
-  color: black;
-}
-
-.userprofile-sidebar-item {
-  padding: 10px;
-  margin-top: 20px;
-  background-color: #333;
 }
 
 .userprofile-main {
@@ -49,8 +26,9 @@
 
 .userprofile-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   padding: 40px 60px;
+  margin: 50px;
 }
 
 .userprofile-left {
@@ -91,6 +69,14 @@
   margin: 30px 350px;
   border-radius: 10px;
   padding: 20px;
+}
+.userprofile-table table button{
+  background-color: blue;
+  border-radius: 15px;
+  border: none;
+  color: white;
+  width: 90%;
+  margin-bottom: 10px;
 }
 
 .userprofile-table table {

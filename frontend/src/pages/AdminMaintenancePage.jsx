@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/AdminMaintenancePage.css';
+import "../styles/AdminAirportPage.css"
+
 import {
   getMaintenances,
   createMaintenance,
@@ -66,15 +68,41 @@ export default function AdminMaintenancePage() {
 
   return (
     <div className="adminmaintenance-layout">
-      <aside className="adminmaintenance-sidebar">
-        <div className="adminmaintenance-logo">MBI RE</div>
-        <nav className="adminmaintenance-nav">
-          <div className="adminmaintenance-nav-row">
+     <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
             <a href="/admin/dashboard">DASHBOARD</a>
-            <a href="/admin/search">SEARCH</a>
           </div>
-          <div className="adminmaintenance-nav-row">
-            <a href="/admin/maintenance" className="active">MAINTENANCE</a>
+          <div className="airport-nav-row">
+            <a href="/admin/airport">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/booking">BOOKING</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/faqs">FAQ'S</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/flightspage">FLIGHTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/maintenance">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/passangers">PASSANGERS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/payments">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/staff">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/support">SUPPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/announcements">ANNOUNCEMENTS</a>
           </div>
         </nav>
       </aside>
@@ -97,7 +125,7 @@ export default function AdminMaintenancePage() {
               { name: 'description', label: 'Description' }
             ].map((field) => (
               <div className="adminmaintenance-input-group" key={field.name}>
-                <label htmlFor={field.name}>{field.label}</label>
+                {/* <label htmlFor={field.name}>{field.label}</label> */}
                 <input
                   type="text"
                   id={field.name}
@@ -105,7 +133,8 @@ export default function AdminMaintenancePage() {
                   value={newItem[field.name]}
                   onChange={handleChange}
                   required
-                />
+                  placeholder={field.label}
+                  style={{ backgroundColor: 'rgb(53,53,53)' }}                 />
               </div>
             ))}
           </div>

@@ -2,7 +2,7 @@
   display: flex;
   height: 100vh;
   width: 100vw;
-  background: url('/assets/airport-bg.jpg') center/cover no-repeat;
+  background: url('/public/AdminAirport.png') center/cover no-repeat;
   color: white;
 }
 
@@ -36,13 +36,18 @@
 .airport-nav-row a {
   color: white;
   text-decoration: none;
-  padding: 6px 0;
-}
-
-.airport-nav-row a.active {
-  font-weight: bold;
+  font-weight: 500;
   border-left: 3px solid teal;
+  padding: 2px;
   padding-left: 10px;
+  margin: 5px;
+  width: 80%;
+  height: 24px;
+  border-radius: 0px 5px 5px 0px;
+}
+.airport-nav-row a:hover{
+  cursor: pointer;
+  background-color: #3a3a3a;
 }
 
 .airport-main-content {
@@ -67,7 +72,7 @@
 .airport-add-form {
   display: flex;
   flex-direction: column;
-  background-color: #1f1f1f;
+  background-color: rgba(27, 27, 27, 1);
   padding: 20px;
   border-radius: 15px;
   margin-bottom: 30px;
@@ -96,13 +101,13 @@
   padding: 10px;
   border: none;
   border-radius: 20px;
-  background-color: #e2e9ff;
-  color: black;
+  background-color: rgba(53, 53, 53, 1);
+  color: white;
   outline: none;
 }
 
 .airport-add-btn {
-  background-color: #0066ff;
+  background-color: rgba(0, 13, 255, 1);
   color: white;
   padding: 12px 24px;
   border: none;
@@ -114,7 +119,7 @@
 }
 
 .airport-table {
-  background-color: #1f1f1f;
+  background-color: rgba(27, 27, 27, 1);
   border-radius: 10px;
   padding: 20px;
 }
@@ -122,13 +127,15 @@
 .airport-table-header,
 .airport-table-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 80px;
+  grid-template-columns: repeat(6, 1fr);
   padding: 10px 0;
   border-bottom: 1px solid #444;
 }
 
 .airport-table-header {
   font-weight: bold;
+  background-color: rgba(53, 53, 53, 1);
+  padding-left: 5px;
 }
 
 .airport-delete-btn {

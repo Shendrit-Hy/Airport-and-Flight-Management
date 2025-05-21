@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/AdminBooking.css";
+import "../styles/AdminAirportPage.css";
 import axios from "axios";
 
 function AdminBooking() {
@@ -55,17 +56,49 @@ function AdminBooking() {
 
   return (
     <div className="adminbooking-container">
-      <aside className="adminbooking-sidebar">
-        <img src="/logo.png" alt="Logo" className="adminbooking-logo" />
-        <button className="adminbooking-side-button">DASHBOARD</button>
-        <button className="adminbooking-side-button">SEARCH</button>
-        <button className="adminbooking-side-button">BOOKINGS</button>
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/booking">BOOKING</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/faqs">FAQ'S</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/flightspage">FLIGHTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/maintenance">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/passangers">PASSANGERS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/payments">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/staff">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/support">SUPPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/announcements">ANNOUNCEMENTS</a>
+          </div>
+        </nav>
       </aside>
       <main className="adminbooking-content">
-        <div className="adminbooking-ribbon">
-          <span className="adminbooking-label">ADMIN</span>
-        </div>
-        <h2 className="adminbooking-title">BOOKINGS</h2>
+        <header className="adminbooking-header">
+          <h2>BOOKING</h2>
+          <div className="adminbooking-title">ADMIN</div>
+        </header>
 
         <div className="adminbooking-table-container">
           <table className="adminbooking-table">
