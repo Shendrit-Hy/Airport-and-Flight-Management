@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import '../styles/AdminAirportPage.css';
 import { getAirports, createAirport, deleteAirport } from '../api/airportService';
 
 export default function AdminAirportPage() {
   const [airports, setAirports] = useState([]);
-  const [newAirport, setNewAirport] = useState({
-    name: '',
-    code: '',
-    timezone: '',
-    city: '',
-    country: ''
-  });
 
   useEffect(() => {
     loadAirports();
@@ -25,21 +20,10 @@ export default function AdminAirportPage() {
     }
   };
 
-  const handleChange = (e) => {
-    setNewAirport({ ...newAirport, [e.target.name]: e.target.value });
-  };
-
-  const handleAdd = async (e) => {
-    e.preventDefault();
+  const handleAdd = async (values, { resetForm }) => {
     try {
-      await createAirport(newAirport);
-      setNewAirport({
-        name: '',
-        code: '',
-        timezone: '',
-        city: '',
-        country: ''
-      });
+      await createAirport(values);
+      resetForm();
       loadAirports();
     } catch (err) {
       console.error('Error creating airport:', err);
@@ -60,13 +44,11 @@ export default function AdminAirportPage() {
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
-          <div className="airport-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a>
-            <a href="/admin/search">SEARCH</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/airport" className="active">AIRPORT</a>
-          </div>
+          {['dashboard', 'airport', 'booking', 'faqs', 'flightspage', 'maintenance', 'passangers', 'payments', 'staff', 'support', 'announcements'].map((item) => (
+            <div className="airport-nav-row" key={item}>
+              <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
+            </div>
+          ))}
         </nav>
       </aside>
 
@@ -76,70 +58,35 @@ export default function AdminAirportPage() {
           <div className="airport-admin-title">ADMIN</div>
         </header>
 
-        <form className="airport-add-form" onSubmit={handleAdd}>
-          <div className="airport-form-grid">
-            <div className="airport-input-group">
-              <label htmlFor="name">Airport Name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={newAirport.name}
-                onChange={handleChange}
-                required
-              />
+        <Formik
+          initialValues={{ name: '', code: '', timezone: '', city: '', country: '' }}
+          validationSchema={Yup.object({
+            name: Yup.string().required('Required'),
+            code: Yup.string().required('Required'),
+            timezone: Yup.string().required('Required'),
+            city: Yup.string().required('Required'),
+            country: Yup.string().required('Required'),
+          })}
+          onSubmit={handleAdd}
+        >
+          <Form className="airport-add-form">
+            <div className="airport-form-grid">
+              {['name', 'code', 'timezone', 'city', 'country'].map((field) => (
+                <div className="airport-input-group" key={field}>
+                  <Field
+                    type="text"
+                    id={field}
+                    name={field}
+                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                    className="airport-input"
+                  />
+                  <ErrorMessage name={field} component="div" className="airport-error" />
+                </div>
+              ))}
             </div>
-
-            <div className="airport-input-group">
-              <label htmlFor="code">Code</label>
-              <input
-                type="text"
-                id="code"
-                name="code"
-                value={newAirport.code}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="airport-input-group">
-              <label htmlFor="timezone">Timezone</label>
-              <input
-                type="text"
-                id="timezone"
-                name="timezone"
-                value={newAirport.timezone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="airport-input-group">
-              <label htmlFor="city">City</label>
-              <input
-                type="text"
-                id="city"
-                name="city"
-                value={newAirport.city}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="airport-input-group">
-              <label htmlFor="country">Country</label>
-              <input
-                type="text"
-                id="country"
-                name="country"
-                value={newAirport.country}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-          <button type="submit" className="airport-add-btn">ADD</button>
-        </form>
+            <button type="submit" className="airport-add-btn">ADD</button>
+          </Form>
+        </Formik>
 
         <div className="airport-table">
           <div className="airport-table-header">

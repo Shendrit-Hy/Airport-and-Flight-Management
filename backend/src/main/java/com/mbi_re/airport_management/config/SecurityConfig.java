@@ -60,12 +60,23 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/users").permitAll()
+                        .requestMatchers("/api/auth/profile").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/flights").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/support").permitAll()
                         .requestMatchers("/api/payments").permitAll()
                         .requestMatchers("/api/staff/all").hasRole("ADMIN")
                         .requestMatchers("/api/flights/filter").permitAll()
+                        .requestMatchers("/api/announcements").permitAll()
+                        .requestMatchers("/api/faqs").permitAll()
+                        .requestMatchers("/api/countries").permitAll()
+                        .requestMatchers("/api/terminals").permitAll()
+                        .requestMatchers("/api/gates").permitAll()
                         .requestMatchers("/api/seats/available/**").permitAll()
+                        .requestMatchers("/api/currencies").permitAll()
+                        .requestMatchers("/api/passengers").permitAll()
+                        .requestMatchers("/api/bookings").permitAll()
+                        .requestMatchers("/api/timezones").permitAll()
+                        .requestMatchers("/api/policies").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",

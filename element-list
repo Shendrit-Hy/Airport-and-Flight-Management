@@ -1,0 +1,9 @@
+com.mbi_re.airport_management
+com.mbi_re.airport_management.config
+com.mbi_re.airport_management.controller
+com.mbi_re.airport_management.dto
+com.mbi_re.airport_management.model
+com.mbi_re.airport_management.repository
+com.mbi_re.airport_management.security
+com.mbi_re.airport_management.service
+com.mbi_re.airport_management.utils

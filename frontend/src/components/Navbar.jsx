@@ -6,6 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 const Navbar = () => {
   const [selectedLanguage, setSelectedLanguage] = useState(localStorage.getItem('language') || 'en');
+
   const { t } = useLanguage();
 
   const toggleLanguage = () => {
@@ -13,6 +14,7 @@ const Navbar = () => {
     setSelectedLanguage(newLang);
     localStorage.setItem('language', newLang);
     window.location.reload(); // mund të zëvendësohet me setLanguage() nëse bëhet me context live
+
   };
 
   return (

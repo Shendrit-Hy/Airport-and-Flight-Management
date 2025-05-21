@@ -1,0 +1,86 @@
+.adminfaqs-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #111;
+  color: white;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.adminfaqs-title {
+  font-size: 24px;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.adminfaqs-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  margin-bottom: 30px;
+}
+
+.adminfaqs-form input,
+.adminfaqs-form textarea {
+  background-color: #1d1d1d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.adminfaqs-form input::placeholder,
+.adminfaqs-form textarea::placeholder {
+  color: #888;
+}
+
+.adminfaqs-form button {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 140px;
+  align-self: flex-start;
+}
+
+.adminfaqs-form button:hover {
+  background-color: #444;
+}
+
+.adminfaqs-list-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 1);
+  max-width: 800px;
+}
+
+.adminfaqs-item {
+  background-color: #1d1d1d;
+  padding: 16px 20px;
+  margin: 10px 20px;
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.8);
+}
+
+.adminfaqs-item strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.adminfaqs-item p {
+  white-space: pre-wrap; /* ensure text wraps */
+  font-size: 1rem;
+  line-height: 1.4;
+}

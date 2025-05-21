@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/SupportPage.css';
 import { sendSupportRequest } from '../api/supportService';
@@ -10,7 +11,7 @@ const SupportPage = () => {
   const { user } = useContext(AuthContext);
   const { t } = useLanguage(); // ✅ përdor për përkthim
 
-<<<<<<< Updated upstream
+
   const validate = (values) => {
     const errors = {};
     if (!values.subject) errors.subject = 'Subjekti është i detyrueshëm';
@@ -24,7 +25,6 @@ const SupportPage = () => {
     }
     return errors;
   };
-=======
   const validationSchema = Yup.object().shape({
     type: Yup.string().required(),
     subject: Yup.string().required(t('Subject is required', 'Subjekti është i detyrueshëm')),
@@ -36,7 +36,7 @@ const SupportPage = () => {
       otherwise: (schema) => schema.notRequired()
     })
   });
->>>>>>> Stashed changes
+
 
   const handleSubmit = async (values, { resetForm }) => {
     const tenantId = getTenantIdFromSubdomain();
@@ -68,7 +68,7 @@ const SupportPage = () => {
               email: user?.email || '',
               flightNumber: '',
             }}
-            validate={validate}
+            validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
             {({ values }) => (

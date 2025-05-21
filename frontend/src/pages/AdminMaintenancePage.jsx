@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import '../styles/AdminMaintenancePage.css';
+import "../styles/AdminAirportPage.css";
 import {
   getMaintenances,
   createMaintenance,
@@ -8,15 +11,6 @@ import {
 
 export default function AdminMaintenancePage() {
   const [maintenances, setMaintenances] = useState([]);
-  const [newItem, setNewItem] = useState({
-    airportId: '',
-    location: '',
-    issueType: '',
-    reportedBy: '',
-    priority: '',
-    status: '',
-    description: ''
-  });
 
   useEffect(() => {
     loadData();
@@ -27,35 +21,19 @@ export default function AdminMaintenancePage() {
     setMaintenances(res.data);
   };
 
-  const handleChange = (e) => {
-    setNewItem({ ...newItem, [e.target.name]: e.target.value });
-  };
-
-  const handleAdd = async (e) => {
-    e.preventDefault();
-
+  const handleAdd = async (values, { resetForm }) => {
     const payload = {
-      airportCode: newItem.airportId, // backend pret "airportCode"
-      location: newItem.location,
-      issueType: newItem.issueType,
-      reportedBy: newItem.reportedBy,
-      priority: newItem.priority,
-      status: newItem.status,
-      description: newItem.description
+      airportCode: values.airportId,
+      location: values.location,
+      issueType: values.issueType,
+      reportedBy: values.reportedBy,
+      priority: values.priority,
+      status: values.status,
+      description: values.description
     };
 
     await createMaintenance(payload);
-
-    setNewItem({
-      airportId: '',
-      location: '',
-      issueType: '',
-      reportedBy: '',
-      priority: '',
-      status: '',
-      description: ''
-    });
-
+    resetForm();
     loadData();
   };
 
@@ -66,16 +44,14 @@ export default function AdminMaintenancePage() {
 
   return (
     <div className="adminmaintenance-layout">
-      <aside className="adminmaintenance-sidebar">
-        <div className="adminmaintenance-logo">MBI RE</div>
-        <nav className="adminmaintenance-nav">
-          <div className="adminmaintenance-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a>
-            <a href="/admin/search">SEARCH</a>
-          </div>
-          <div className="adminmaintenance-nav-row">
-            <a href="/admin/maintenance" className="active">MAINTENANCE</a>
-          </div>
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
+            <div className="airport-nav-row" key={item}>
+              <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
+            </div>
+          ))}
         </nav>
       </aside>
 
@@ -85,32 +61,45 @@ export default function AdminMaintenancePage() {
           <div className="adminmaintenance-title">ADMIN</div>
         </header>
 
-        <form className="adminmaintenance-form" onSubmit={handleAdd}>
-          <div className="adminmaintenance-form-grid">
-            {[
-              { name: 'airportId', label: 'Airport ID' },
-              { name: 'location', label: 'Location' },
-              { name: 'issueType', label: 'Issue Type' },
-              { name: 'reportedBy', label: 'Reported By' },
-              { name: 'priority', label: 'Priority' },
-              { name: 'status', label: 'Status' },
-              { name: 'description', label: 'Description' }
-            ].map((field) => (
-              <div className="adminmaintenance-input-group" key={field.name}>
-                <label htmlFor={field.name}>{field.label}</label>
-                <input
-                  type="text"
-                  id={field.name}
-                  name={field.name}
-                  value={newItem[field.name]}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            ))}
-          </div>
-          <button type="submit" className="adminmaintenance-add-btn">ADD</button>
-        </form>
+        <Formik
+          initialValues={{
+            airportId: '',
+            location: '',
+            issueType: '',
+            reportedBy: '',
+            priority: '',
+            status: '',
+            description: ''
+          }}
+          validationSchema={Yup.object({
+            airportId: Yup.string().required('Required'),
+            location: Yup.string().required('Required'),
+            issueType: Yup.string().required('Required'),
+            reportedBy: Yup.string().required('Required'),
+            priority: Yup.string().required('Required'),
+            status: Yup.string().required('Required'),
+            description: Yup.string().required('Required')
+          })}
+          onSubmit={handleAdd}
+        >
+          <Form className="adminmaintenance-form">
+            <div className="adminmaintenance-form-grid">
+              {["airportId", "location", "issueType", "reportedBy", "priority", "status", "description"].map((field) => (
+                <div className="adminmaintenance-input-group" key={field}>
+                  <Field
+                    type="text"
+                    name={field}
+                    placeholder={field.replace(/([A-Z])/g, ' $1')}
+                    className="adminmaintenance-input"
+                    style={{ backgroundColor: 'rgb(53,53,53)' }}
+                  />
+                  <ErrorMessage name={field} component="div" className="adminmaintenance-error" />
+                </div>
+              ))}
+            </div>
+            <button type="submit" className="adminmaintenance-add-btn">ADD</button>
+          </Form>
+        </Formik>
 
         <div className="adminmaintenance-table">
           <div className="adminmaintenance-table-header">
@@ -126,7 +115,7 @@ export default function AdminMaintenancePage() {
 
           {maintenances.map((item) => (
             <div className="adminmaintenance-table-row" key={item.id}>
-              <span>{item.airportCode}</span> {/* saktësisht sipas emrit nga backend */}
+              <span>{item.airportCode}</span>
               <span>{item.location}</span>
               <span>{item.issueType}</span>
               <span>{item.reportedBy}</span>

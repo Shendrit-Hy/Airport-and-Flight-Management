@@ -1,6 +1,9 @@
 package com.mbi_re.airport_management.dto;
 
 import com.mbi_re.airport_management.model.FlightStatus;
+import com.mbi_re.airport_management.model.Gate;
+import com.mbi_re.airport_management.model.Terminal;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -12,34 +15,24 @@ import java.time.LocalTime;
 @Builder
 public class FlightDTO {
     private Long id;
+
     private String flightNumber;
     private String departureAirport;
     private String arrivalAirport;
+
     private LocalTime departureTime;
     private LocalTime arrivalTime;
     private LocalDate flightDate;
+
     private int availableSeat;
     private double price;
-    private String airline;
+
     private FlightStatus flightStatus;
-
-    public FlightStatus getFlightStatus() {
-        return flightStatus;
-    }
-
-    public void setFlightStatus(FlightStatus flightStatus) {
-        this.flightStatus = flightStatus;
-    }
-
     private String tenantId;
 
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
+    private Long gateId;
+    private Long terminalId;
+    private Long airlineId;
 
     public Long getId() {
         return id;
@@ -113,11 +106,43 @@ public class FlightDTO {
         this.price = price;
     }
 
-    public String getAirline() {
-        return airline;
+    public FlightStatus getFlightStatus() {
+        return flightStatus;
     }
 
-    public void setAirline(String airline) {
-        this.airline = airline;
+    public void setFlightStatus(FlightStatus flightStatus) {
+        this.flightStatus = flightStatus;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public Long getGateId() {
+        return gateId;
+    }
+
+    public void setGateId(Long gateId) {
+        this.gateId = gateId;
+    }
+
+    public Long getTerminalId() {
+        return terminalId;
+    }
+
+    public void setTerminalId(Long terminalId) {
+        this.terminalId = terminalId;
+    }
+
+    public Long getAirlineId() {
+        return airlineId;
+    }
+
+    public void setAirlineId(Long airlineId) {
+        this.airlineId = airlineId;
     }
 }

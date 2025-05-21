@@ -1,28 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import '../styles/AdminFlightsPage.css';
 import { getAllFlights, createFlight, deleteFlight } from '../api/flightService';
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
+import "../styles/AdminAirportPage.css"
 
 export default function AdminFlightsPage() {
   const [flights, setFlights] = useState([]);
-  const [newFlight, setNewFlight] = useState({
-    flightNumber: '',
-    departureAirport: '',
-    arrivalAirport: '',
-    departureTime: '',
-    arrivalTime: '',
-    flightDate: '',
-    availableSeat: '',
-    price: '',
-    airline: ''
-  });
+  const [terminals, setTerminals] = useState([]);
+  const [gates, setGates] = useState([]);
 
   const tenantId = getTenantIdFromSubdomain();
-  const token = localStorage.getItem("token"); // Read JWT token directly
-  console.log(flights);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     loadFlights();
+    loadTerminals();
+    loadGates();
   }, []);
 
   const loadFlights = async () => {
@@ -34,22 +29,49 @@ export default function AdminFlightsPage() {
     }
   };
 
-  const handleChange = (e) => {
-    setNewFlight({ ...newFlight, [e.target.name]: e.target.value });
+  const loadTerminals = async () => {
+    try {
+      const res = await fetch(`/api/terminals`, {
+        headers: {
+          "X-Tenant-ID": tenantId,
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      setTerminals(data);
+    } catch (err) {
+      console.error("Failed to load terminals", err);
+    }
   };
 
-const handleAddFlight = async () => {
-  try {
-    await createFlight(newFlight, tenantId, token);
-    console.log("Flight created!");
-    // Optionally refresh flight list or reset form
-  } catch (error) {
-    console.error("Failed to create flight", error);
-    if (error.response?.status === 401) {
-      alert("You must be logged in as admin to create a flight.");
+  const loadGates = async () => {
+    try {
+      const res = await fetch(`/api/gates`, {
+        headers: {
+          "X-Tenant-ID": tenantId,
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      setGates(data);
+    } catch (err) {
+      console.error("Failed to load gates", err);
     }
-  }
-};
+  };
+
+  const handleAddFlight = async (values, { resetForm }) => {
+    try {
+      await createFlight(values, tenantId, token);
+      console.log("Flight created!");
+      loadFlights();
+      resetForm();
+    } catch (error) {
+      console.error("Failed to create flight", error);
+      if (error.response?.status === 401) {
+        alert("You must be logged in as admin to create a flight.");
+      }
+    }
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -62,16 +84,14 @@ const handleAddFlight = async () => {
 
   return (
     <div className="adminflights-layout">
-      <aside className="adminflights-sidebar">
-        <div className="adminflights-logo">MBI RE</div>
-        <nav className="adminflights-nav">
-          <div className="adminflights-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a>
-            <a href="/admin/search">SEARCH</a>
-          </div>
-          <div className="adminflights-nav-row">
-            <a href="/admin/flights" className="active">FLIGHTS</a>
-          </div>
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
+            <div className="airport-nav-row" key={item}>
+              <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
+            </div>
+          ))}
         </nav>
       </aside>
 
@@ -81,34 +101,70 @@ const handleAddFlight = async () => {
           <div className="adminflights-title">ADMIN</div>
         </header>
 
-        <form className="adminflights-add-form" onSubmit={handleAddFlight}>
-          <div className="adminflights-form-grid">
-            {[
-              { name: 'flightNumber', label: 'Flight Number' },
-              { name: 'departureAirport', label: 'Departure Airport' },
-              { name: 'arrivalAirport', label: 'Arrival Airport' },
-              { name: 'departureTime', label: 'Departure Time' },
-              { name: 'arrivalTime', label: 'Arrival Time' },
-              { name: 'flightDate', label: 'Flight Date' },
-              { name: 'availableSeat', label: 'Available Seat' },
-              { name: 'price', label: 'Price' },
-              { name: 'airline', label: 'Airline' },
-            ].map((field) => (
-              <div className="adminflights-input-group" key={field.name}>
-                <label htmlFor={field.name}>{field.label}</label>
-                <input
-                  type="text"
-                  id={field.name}
-                  name={field.name}
-                  value={newFlight[field.name]}
-                  onChange={handleChange}
-                  required
-                />
+        <Formik
+          initialValues={{
+            flightNumber: '',
+            departureAirport: '',
+            arrivalAirport: '',
+            departureTime: '',
+            arrivalTime: '',
+            flightDate: '',
+            availableSeat: '',
+            price: '',
+            airline: '',
+            terminalId: '',
+            gateId: ''
+          }}
+          validationSchema={Yup.object({
+            flightNumber: Yup.string().required('Required'),
+            departureAirport: Yup.string().required('Required'),
+            arrivalAirport: Yup.string().required('Required'),
+            departureTime: Yup.string().required('Required'),
+            arrivalTime: Yup.string().required('Required'),
+            flightDate: Yup.string().required('Required'),
+            availableSeat: Yup.number().required('Required'),
+            price: Yup.number().required('Required'),
+            airline: Yup.string().required('Required'),
+            terminalId: Yup.string().required('Required'),
+            gateId: Yup.string().required('Required')
+          })}
+          onSubmit={handleAddFlight}
+        >
+          <Form className="adminflights-add-form">
+            <div className="adminflights-form-grid">
+              {["flightNumber", "departureAirport", "arrivalAirport", "departureTime", "arrivalTime", "flightDate", "availableSeat", "price", "airline"].map((field) => (
+                <div className="adminflights-input-group" key={field}>
+                  <label htmlFor={field}>{field.replace(/([A-Z])/g, ' $1')}</label>
+                  <Field type="text" name={field} id={field} required />
+                  <ErrorMessage name={field} component="div" className="adminflights-error" />
+                </div>
+              ))}
+
+              <div className="adminflights-input-group">
+                <label htmlFor="terminalId">Terminal</label>
+                <Field as="select" name="terminalId" required>
+                  <option value="">Select Terminal</option>
+                  {terminals.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </Field>
+                <ErrorMessage name="terminalId" component="div" className="adminflights-error" />
               </div>
-            ))}
-          </div>
-          <button type="submit" className="adminflights-add-btn">ADD</button>
-        </form>
+
+              <div className="adminflights-input-group">
+                <label htmlFor="gateId">Gate</label>
+                <Field as="select" name="gateId" required>
+                  <option value="">Select Gate</option>
+                  {gates.map((g) => (
+                    <option key={g.id} value={g.id}>{g.name}</option>
+                  ))}
+                </Field>
+                <ErrorMessage name="gateId" component="div" className="adminflights-error" />
+              </div>
+            </div>
+            <button type="submit" className="adminflights-add-btn">ADD</button>
+          </Form>
+        </Formik>
 
         <div className="adminflights-table">
           <div className="adminflights-table-header">
@@ -122,6 +178,7 @@ const handleAddFlight = async () => {
             <span>Price</span>
             <span>Airline</span>
             <span>Status</span>
+            <span>Actions</span>
           </div>
 
           {flights.map((f) => (

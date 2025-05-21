@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import '../styles/AdminSupportPage.css';
 import { getSupportRequests, deleteSupportRequest } from '../api/supportService';
 import { getTenantIdFromSubdomain } from '../utils/getTenantId'; // adjust path if needed
+import "../styles/AdminAirportPage.css"
+
 
 export default function AdminSupportPage() {
   const [tickets, setTickets] = useState([]);
@@ -34,15 +36,41 @@ export default function AdminSupportPage() {
 
   return (
     <div className="adminsupport-layout">
-      <aside className="adminsupport-sidebar">
-        <div className="adminsupport-logo">MBI RE</div>
-        <nav className="adminsupport-nav">
-          <div className="adminsupport-nav-row">
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
             <a href="/admin/dashboard">DASHBOARD</a>
-            <a href="/admin/search">SEARCH</a>
           </div>
-          <div className="adminsupport-nav-row">
-            <a href="/admin/support" className="active">SUPPORT TICKETS</a>
+          <div className="airport-nav-row">
+            <a href="/admin/airport">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/booking">BOOKING</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/faqs">FAQ'S</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/flightspage">FLIGHTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/maintenance">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/passangers">PASSANGERS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/payments">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/staff">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/support">SUPPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/announcements">ANNOUNCEMENTS</a>
           </div>
         </nav>
       </aside>
@@ -56,7 +84,7 @@ export default function AdminSupportPage() {
         <div className="adminsupport-table">
           <div className="adminsupport-table-header">
             <span>Ticket</span>
-            <span>flight</span>
+            <span>Flight</span>
             <span>Issue Type</span>
             <span>Subject</span>
             <span>Reported By</span>

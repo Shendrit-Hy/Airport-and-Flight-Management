@@ -6,11 +6,19 @@ import lombok.Data;
 public class BookingDTO {
     private String passengerName;
     private String flightNumber;
-
+    private String bookingId;
     private Long passengerId;
     private String seatNumber;
     private String status;
     private String tenantId;
+
+    public String getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(String bookingId) {
+        this.bookingId = bookingId;
+    }
 
     public Long getPassengerId() {
         return passengerId;

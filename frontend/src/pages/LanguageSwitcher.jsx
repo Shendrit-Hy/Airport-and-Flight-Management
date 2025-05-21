@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../utils/axiosInstance';
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLanguage } from '../context/LanguageContext'; // kjo lidhet me LanguageProvider
@@ -21,15 +22,19 @@ const LanguageSwitcher = () => {
           { code: 'sq', name: 'Shqip' }
         ]);
       });
+
+
   }, []);
 
   const handleChange = (e) => {
     const lang = e.target.value;
+
     setLanguage(lang); // përditëson context-in dhe localStorage përmes useEffect-it të LanguageProvider-it
   };
 
   return (
     <select value={language} onChange={handleChange}>
+
       {languages.map(lang => (
         <option key={lang.code} value={lang.code}>
           {lang.name}

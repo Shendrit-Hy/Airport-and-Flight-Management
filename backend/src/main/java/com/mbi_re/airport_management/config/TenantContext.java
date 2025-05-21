@@ -4,7 +4,7 @@ public class TenantContext {
     private static final ThreadLocal<String> currentTenant = new ThreadLocal<>();
 
     public static void setTenantId(String tenantId) {
-        currentTenant.set(tenantId);
+        currentTenant.set(tenantId.toLowerCase());
     }
 
     public static String getTenantId() {
@@ -14,7 +14,9 @@ public class TenantContext {
     public static void clear() {
         currentTenant.remove();
     }
+
     public static boolean hasTenant() {
         return currentTenant.get() != null;
     }
 }
+

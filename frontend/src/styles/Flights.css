@@ -1,6 +1,6 @@
 .flights-page-container {
-  min-height: 100vh;
-  width: 100vw;
+  min-height: 93vh;
+  width: 99vw;
   overflow-x: hidden;
   background: url("/public/efoto.jpg") no-repeat center center fixed;
   background-size: cover;

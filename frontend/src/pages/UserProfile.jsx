@@ -54,11 +54,6 @@ export default function UserProfile() {
 
   return (
     <div className="userprofile-page">
-      <aside className="userprofile-sidebar">
-        <div className="userprofile-logo">LOGO</div>
-        <div className="userprofile-sidebar-item">Profile</div>
-      </aside>
-
       <div className="userprofile-main">
         <header className="userprofile-topbar">
           <span>{t(user.role, user.role)}</span>
