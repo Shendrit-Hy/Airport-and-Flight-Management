@@ -14,6 +14,7 @@ public class Language {
     private String code;  // "en", "sq", "de"
     private String name;  // "English", "Shqip", "Deutsch"
 
+
     @Column(name = "tenant_id", nullable = false)
     private String tenantId;
 
@@ -48,4 +49,5 @@ public class Language {
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
     }
+
 }

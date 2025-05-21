@@ -32,6 +32,11 @@ import AdminFaqs from './pages/AdminFaqs';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
+import { LanguageProvider } from './context/LanguageContext';
+
+<LanguageProvider>
+  <App />
+</LanguageProvider>
 
 
 function LayoutWithNavbar({ children }) {
@@ -61,6 +66,7 @@ function LayoutWithNavbar({ children }) {
 function App() {
   return (
     <BrowserRouter>
+          <LanguageProvider>
       <AuthProvider>
         <LayoutWithNavbar>
           <Routes>
@@ -112,6 +118,7 @@ function App() {
                      </Routes>
                    </LayoutWithNavbar>
                  </AuthProvider>
+                   </LanguageProvider>
                </BrowserRouter>
              );
            }

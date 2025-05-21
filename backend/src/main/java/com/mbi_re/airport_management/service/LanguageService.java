@@ -1,9 +1,11 @@
 package com.mbi_re.airport_management.service;
 
+
 import com.mbi_re.airport_management.config.TenantContext;
 import com.mbi_re.airport_management.model.Language;
 import com.mbi_re.airport_management.repository.LanguageRepository;
 import org.springframework.cache.annotation.Cacheable;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +18,7 @@ public class LanguageService {
     public LanguageService(LanguageRepository languageRepository) {
         this.languageRepository = languageRepository;
     }
+
 
     /**
      * Retrieves all languages associated with the current tenant.
@@ -53,5 +56,6 @@ public class LanguageService {
             throw new IllegalArgumentException("Language not found or does not belong to current tenant");
         }
         languageRepository.delete(language);
+
     }
 }

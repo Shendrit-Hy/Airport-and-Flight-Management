@@ -3,25 +3,27 @@ import axios from "axios";
 import { getTenantIdFromSubdomain } from "../utils/getTenantId";
 import "../styles/UserAnnouncements.css";
 
+import { useLanguage } from "../context/LanguageContext"; // ✅
+
+
 function UserAnnouncements() {
   const [announcements, setAnnouncements] = useState([]);
   const [faqs, setFaqs] = useState([]);
   const tenantId = getTenantIdFromSubdomain();
 
+  const { t } = useLanguage(); // ✅
+
   useEffect(() => {
-    // Fetch announcements
-    axios
-      .get("http://localhost:8080/api/announcements", {
-        headers: { "X-Tenant-ID": tenantId },
-      })
+    axios.get("http://localhost:8080/api/announcements", {
+      headers: { "X-Tenant-ID": tenantId },
+    })
       .then((res) => setAnnouncements(res.data))
       .catch((err) => console.error("Error fetching announcements:", err));
 
-    // Fetch FAQs
-    axios
-      .get("http://localhost:8080/api/faqs", {
-        headers: { "X-Tenant-ID": tenantId },
-      })
+    axios.get("http://localhost:8080/api/faqs", {
+      headers: { "X-Tenant-ID": tenantId },
+    })
+
       .then((res) => setFaqs(res.data))
       .catch((err) => console.error("Error fetching FAQs:", err));
   }, [tenantId]);
@@ -29,10 +31,14 @@ function UserAnnouncements() {
   return (
     <div className="announcements-container" style={{ backgroundColor: "#525252", padding: 20, minHeight: "100vh" }}>
       {/* Announcements Section */}
-      <h2 className="announcements-title" style={{ color: "white", marginBottom: 15 }}>📢 Announcements</h2>
+
+      <h2 className="announcements-title" style={{ color: "white", marginBottom: 15 }}>
+        📢 {t("Announcements", "Njoftime")}
+      </h2>
       {announcements.length === 0 ? (
         <p style={{ textAlign: "center", color: "#ccc" }}>
-          No announcements found.
+          {t("No announcements found.", "Asnjë njoftim nuk u gjet.")}
+
         </p>
       ) : (
         <div className="announcements-grid">
@@ -49,10 +55,14 @@ function UserAnnouncements() {
       <hr style={{ borderColor: "#777", margin: "40px 0" }} />
 
       {/* FAQs Section */}
-      <h2 className="announcements-title" style={{ color: "white", marginBottom: 15 }}>❓ Frequently Asked Questions</h2>
+
+      <h2 className="announcements-title" style={{ color: "white", marginBottom: 15 }}>
+        ❓ {t("Frequently Asked Questions", "Pyetjet e Bëra Shpesh")}
+      </h2>
       {faqs.length === 0 ? (
         <p style={{ textAlign: "center", color: "#ccc" }}>
-          No FAQs found.
+          {t("No FAQs found.", "Asnjë pyetje nuk u gjet.")}
+
         </p>
       ) : (
         <div className="faqs-grid" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
