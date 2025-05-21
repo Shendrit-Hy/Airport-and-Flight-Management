@@ -1,20 +1,16 @@
 package com.mbi_re.airport_management.dto;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class GateDTO {
-
+public class GateResponseDTO {
     private Long id;
     private String gateNumber;
     private String status;
+    private String terminalName;
     private Long terminalId;
     private Long flightId;
-    private String tenantId;
 
     public Long getId() {
         return id;
@@ -40,6 +36,14 @@ public class GateDTO {
         this.status = status;
     }
 
+    public String getTerminalName() {
+        return terminalName;
+    }
+
+    public void setTerminalName(String terminalName) {
+        this.terminalName = terminalName;
+    }
+
     public Long getTerminalId() {
         return terminalId;
     }
@@ -54,14 +58,6 @@ public class GateDTO {
 
     public void setFlightId(Long flightId) {
         this.flightId = flightId;
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
     }
 }
 

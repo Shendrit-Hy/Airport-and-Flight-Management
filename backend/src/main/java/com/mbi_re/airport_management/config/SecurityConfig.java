@@ -68,6 +68,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/flights/filter").permitAll()
                         .requestMatchers("/api/announcements").permitAll()
                         .requestMatchers("/api/faqs").permitAll()
+                        .requestMatchers("/api/terminals").permitAll()
+                        .requestMatchers("/api/gates").permitAll()
                         .requestMatchers("/api/seats/available/**").permitAll()
                         .requestMatchers("/api/currencies").permitAll()
                         .requestMatchers("/api/passengers").permitAll()
