@@ -28,6 +28,11 @@ public class CountryService {
 
         Country country = new Country();
         country.setName(dto.getName());
+<<<<<<< Updated upstream
+=======
+        country.setCode(dto.getCode());
+        country.setTenantId(tenantId);
+>>>>>>> Stashed changes
 
         Country saved = countryRepository.save(country);
         return new CountryDTO(saved.getId(), saved.getName());
