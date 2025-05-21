@@ -5,11 +5,16 @@ import com.mbi_re.airport_management.model.Airport;
 import com.mbi_re.airport_management.model.Terminal;
 import com.mbi_re.airport_management.repository.AirportRepository;
 import com.mbi_re.airport_management.repository.TerminalRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service layer for managing terminals.
+ * Provides business logic for retrieving and creating terminals within a tenant context.
+ */
 @Service
 public class TerminalService {
 
@@ -21,19 +26,34 @@ public class TerminalService {
         this.airportRepository = airportRepository;
     }
 
+    /**
+     * Retrieves all terminals for a specific tenant.
+     *
+     * @param tenantId the ID of the tenant
+     * @return list of terminal DTOs
+     */
+    @Cacheable(value = "terminals", key = "#tenantId")
     public List<TerminalDTO> getAllTerminals(String tenantId) {
         return terminalRepository.findByTenantId(tenantId).stream()
-                .map(t -> {
+                .map(terminal -> {
                     TerminalDTO dto = new TerminalDTO();
-                    dto.setId(t.getId());
-                    dto.setName(t.getName());
-                    dto.setAirportId(t.getAirport().getId());
+                    dto.setId(terminal.getId());
+                    dto.setName(terminal.getName());
+                    dto.setAirportId(terminal.getAirport().getId());
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
 
-
+    /**
+     * Creates a new terminal associated with a specific airport and tenant.
+     *
+     * @param dto      terminal data
+     * @param tenantId the ID of the tenant
+     * @return created terminal DTO
+     * @throws IllegalArgumentException if the airport ID is null
+     * @throws RuntimeException         if the associated airport is not found
+     */
     public TerminalDTO createTerminal(TerminalDTO dto, String tenantId) {
         if (dto.getAirportId() == null) {
             throw new IllegalArgumentException("Airport ID must not be null");
@@ -47,15 +67,13 @@ public class TerminalService {
         terminal.setAirport(airport);
         terminal.setTenantId(tenantId);
 
-        Terminal saved = terminalRepository.save(terminal);
+        Terminal savedTerminal = terminalRepository.save(terminal);
 
-        // Map saved terminal back to DTO
         TerminalDTO responseDto = new TerminalDTO();
-        responseDto.setId(saved.getId());
-        responseDto.setName(saved.getName());
-        responseDto.setAirportId(saved.getAirport().getId());
+        responseDto.setId(savedTerminal.getId());
+        responseDto.setName(savedTerminal.getName());
+        responseDto.setAirportId(savedTerminal.getAirport().getId());
 
         return responseDto;
     }
-
 }
