@@ -26,6 +26,11 @@ import AdminSupportPage from './pages/AdminSupportPage';
 import AdminPassangers from './pages/AdminPassangers';
 import AdminPayments from './pages/AdminPayments';
 
+import { LanguageProvider } from './context/LanguageContext';
+
+<LanguageProvider>
+  <App />
+</LanguageProvider>
 
 
 function LayoutWithNavbar({ children }) {
@@ -55,6 +60,7 @@ function LayoutWithNavbar({ children }) {
 function App() {
   return (
     <BrowserRouter>
+          <LanguageProvider>
       <AuthProvider>
         <LayoutWithNavbar>
           <Routes>
@@ -102,6 +108,7 @@ function App() {
                      </Routes>
                    </LayoutWithNavbar>
                  </AuthProvider>
+                   </LanguageProvider>
                </BrowserRouter>
              );
            }

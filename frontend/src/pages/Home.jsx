@@ -19,6 +19,11 @@ const SearchSchema = Yup.object().shape({
 const HomePage = () => {
   const [airports, setAirports] = useState([]);
   const [language, setLanguage] = useState(localStorage.getItem('language') || 'en');
+<<<<<<< Updated upstream
+=======
+  const [price, setPrice] = useState(null);
+  const [forecast, setForecast] = useState([]);
+>>>>>>> Stashed changes
 
   useEffect(() => {
     const fetchAirports = async () => {
@@ -32,8 +37,64 @@ const HomePage = () => {
     fetchAirports();
   }, []);
 
+<<<<<<< Updated upstream
   const t = (en, sq) => (language === 'sq' ? sq : en);
 
+=======
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const apiKey = "YOUR_API_KEY";
+        const response = await fetch(
+          `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=Prishtina`
+        );
+        const data = await response.json();
+        if (data.error) {
+          console.error('Weather API Error:', data.error.message);
+        }
+      } catch (error) {
+        console.error("Weather fetch failed", error);
+      }
+    };
+
+    fetchWeather();
+  }, []);
+
+  const t = (en, sq) => (language === 'sq' ? sq : en);
+
+  const handlePriceCheck = async (values) => {
+    try {
+      const response = await axios.post("/api/parking/calculate", {
+        ...values,
+        tenantId: localStorage.getItem("tenantId") || "1"
+      });
+      setPrice(response.data.price);
+    } catch (err) {
+      console.error("Error calculating price", err);
+      setPrice(null);
+    }
+  };
+
+  useEffect(() => {
+    const fetchForecast = async () => {
+      try {
+        const apiKey = 'YOUR_API_KEY';
+        const lat = '42.665440';
+        const lon = '21.165319';
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
+        const data = await response.json();
+        if (data.list) {
+          const dailyData = data.list.filter(item => item.dt_txt.includes('12:00:00')).slice(0, 5);
+          setForecast(dailyData);
+        }
+      } catch (err) {
+        console.error('Error fetching forecast:', err);
+      }
+    };
+    fetchForecast();
+  }, []);
+
+>>>>>>> Stashed changes
   return (
     <div className="home-page">
       <header className="navbar-section">
@@ -124,9 +185,13 @@ const HomePage = () => {
                 <th>{t('ACTIVE', 'AKTIV')}</th>
               </tr>
             </thead>
+<<<<<<< Updated upstream
             <tbody>
               {/* Flights will be dynamically inserted here */}
             </tbody>
+=======
+            <tbody></tbody>
+>>>>>>> Stashed changes
           </table>
           <button className="view-flights-btn" onClick={() => window.location.href = "/flights"}>
             {t('View All Flights', 'Shiko të gjitha fluturimet')}
@@ -139,9 +204,24 @@ const HomePage = () => {
         <div className="placeholder-box">DIZAJN</div>
       </section>
 
+<<<<<<< Updated upstream
       {/* Section 5 */}
       <section className="section fullscreen-image-section">
         <img src="/public/epesta.jpg" alt="Banner" className="full-img" />
+=======
+      <section className="section weather-section">
+        <h2 className="weather-title">{t('5-Day Forecast', 'Parashikimi 5-Ditor')}</h2>
+        <div className="weather-cards">
+          {forecast.map((day, index) => (
+            <div className="weather-card" key={index}>
+              <p><strong>{new Date(day.dt_txt).toLocaleDateString()}</strong></p>
+              <img src={`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`} alt="weather" />
+              <p>{Math.round(day.main.temp)}°C</p>
+              <p>{day.weather[0].main}</p>
+            </div>
+          ))}
+        </div>
+>>>>>>> Stashed changes
       </section>
     </div>
   );

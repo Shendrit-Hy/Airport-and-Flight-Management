@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import "../styles/Flights.css";
 import { getFlights } from "../api/api";
 import { getTenantIdFromSubdomain } from "../utils/getTenantId";
+import { useLanguage } from "../context/LanguageContext"; // ✅ importo përkthimin
 
 const Flights = () => {
   const [flights, setFlights] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const { t } = useLanguage(); // ✅ përdor kontekstin
 
   useEffect(() => {
     const tenantId = getTenantIdFromSubdomain();
@@ -31,12 +33,12 @@ const Flights = () => {
   return (
     <div className="flights-page-container">
       <div className="flights-main-container">
-        <h2 className="flights-title">FLIGHTS</h2>
+        <h2 className="flights-title">{t("FLIGHTS", "FLUTURIMET")}</h2>
 
         <div className="flights-search-bar">
           <input
             type="text"
-            placeholder="SEARCH BY FLIGHT, CITY OR AIRLINE"
+            placeholder={t("SEARCH BY FLIGHT, CITY OR AIRLINE", "KËRKO SIPAS FLUTURIMIT, QYTETIT APO KOMPANISË")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="flights-search-input"
@@ -50,12 +52,12 @@ const Flights = () => {
           <table className="flights-table">
             <thead>
               <tr>
-                <th>FLIGHT NO</th>
-                <th>ORIGIN</th>
-                <th>DESTINATION</th>
-                <th>DEPARTURE TIME</th>
-                <th>ARRIVAL TIME</th>
-                <th>AIRLINE</th>
+                <th>{t("FLIGHT NO", "NR. FLUTURIMIT")}</th>
+                <th>{t("ORIGIN", "PREJARDHJA")}</th>
+                <th>{t("DESTINATION", "DESTINACIONI")}</th>
+                <th>{t("DEPARTURE TIME", "KOHA E NISJES")}</th>
+                <th>{t("ARRIVAL TIME", "KOHA E ARDHJES")}</th>
+                <th>{t("AIRLINE", "KOMPANIA AJRORE")}</th>
               </tr>
             </thead>
             <tbody>
