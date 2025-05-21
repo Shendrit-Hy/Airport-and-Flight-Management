@@ -1,5 +1,6 @@
 package com.mbi_re.airport_management.controller;
 
+import com.mbi_re.airport_management.config.TenantContext;
 import com.mbi_re.airport_management.dto.CountryDTO;
 import com.mbi_re.airport_management.service.CountryService;
 import com.mbi_re.airport_management.utils.TenantUtil;
@@ -43,6 +44,8 @@ public class CountryController {
             @ApiResponse(responseCode = "403", description = "Invalid or missing tenant ID")
     })
     @GetMapping
+    public List<CountryDTO> getAllCountries() {
+        return countryService.getAllCountries();
     @Cacheable(value = "countries", key = "#tenantId")
     public ResponseEntity<List<CountryDTO>> getAllCountries(
             @RequestHeader("X-Tenant-ID")

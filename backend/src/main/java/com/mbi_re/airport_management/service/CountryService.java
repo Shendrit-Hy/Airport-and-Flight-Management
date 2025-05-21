@@ -56,6 +56,7 @@ public class CountryService {
 
         Country country = new Country();
         country.setName(dto.getName());
+        country.setCode(dto.getCode());
         country.setTenantId(tenantId);
 
         Country saved = countryRepository.save(country);
