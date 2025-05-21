@@ -9,26 +9,16 @@ public class Airport {
     private Long id;
     private String name;
     private String code;
-    private String country;
-    private String city;
+
+    @ManyToOne
+    @JoinColumn(name = "country_id", nullable = false)
+    private Country country;
+
+    @ManyToOne
+    @JoinColumn(name = "city_id", nullable = false)
+    private City city;
     private String timezone;
     private String tenantId;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getTimezone() {
-        return timezone;
-    }
-
-    public void setTimezone(String timezone) {
-        this.timezone = timezone;
-    }
 
     public Long getId() {
         return id;
@@ -46,20 +36,36 @@ public class Airport {
         this.name = name;
     }
 
-    public String getCountry() {
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Country getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(Country country) {
         this.country = country;
     }
 
-    public String getCity() {
+    public City getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(City city) {
         this.city = city;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
     }
 
     public String getTenantId() {

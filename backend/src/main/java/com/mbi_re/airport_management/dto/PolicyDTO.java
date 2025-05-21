@@ -4,9 +4,18 @@ import lombok.Data;
 
 @Data
 public class PolicyDTO {
+    private String tenantId;
     private String title;
     private String content;
     private String type;
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
     public String getTitle() {
         return title;
