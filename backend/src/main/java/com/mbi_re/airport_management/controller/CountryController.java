@@ -44,8 +44,6 @@ public class CountryController {
             @ApiResponse(responseCode = "403", description = "Invalid or missing tenant ID")
     })
     @GetMapping
-    public List<CountryDTO> getAllCountries() {
-        return countryService.getAllCountries();
     @Cacheable(value = "countries", key = "#tenantId")
     public ResponseEntity<List<CountryDTO>> getAllCountries(
             @RequestHeader("X-Tenant-ID")
@@ -100,3 +98,4 @@ public class CountryController {
         return ResponseEntity.noContent().build();
     }
 }
+
