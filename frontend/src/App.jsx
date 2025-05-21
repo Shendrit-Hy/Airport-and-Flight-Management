@@ -29,8 +29,8 @@ import AnnouncementManager from './pages/AnnouncementManager';
 import UserAnnouncements from './pages/UserAnnouncements';
 import TrendingPlaces from './pages/TrendingPlaces';
 import AdminFaqs from './pages/AdminFaqs';
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 
 
