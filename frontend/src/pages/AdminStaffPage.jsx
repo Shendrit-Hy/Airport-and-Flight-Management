@@ -1,42 +1,34 @@
 import React, { useEffect, useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import '../styles/AdminStaffPage.css';
-import "../styles/AdminAirportPage.css"
-
+import "../styles/AdminAirportPage.css";
 import {
   getStaffList,
   deleteStaffById,
   addStaff
 } from '../api/staffService';
-
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 export default function AdminStaffPage() {
   const [staffList, setStaffList] = useState([]);
-    const [newStaff, setNewStaff] = useState({
-      name: '',
-      role: '',
-      email: '',
-      shiftStart: '',
-      shiftEnd: ''
-    });
+  const token = localStorage.getItem('token');
+  const tenantId = getTenantIdFromSubdomain();
 
-    const token = localStorage.getItem('token');
-    const tenantId = getTenantIdFromSubdomain();
+  useEffect(() => {
+    if (token && tenantId) {
+      loadStaff();
+    }
+  }, []);
 
-    useEffect(() => {
-      if (token && tenantId) {
-        loadStaff();
-      }
-    }, []);
-
-    const loadStaff = async () => {
-      try {
-        const data = await getStaffList(tenantId, token);
-        setStaffList(data.data);
-      } catch (err) {
-        console.error('Failed to load staff:', err);
-      }
-    };
+  const loadStaff = async () => {
+    try {
+      const data = await getStaffList(tenantId, token);
+      setStaffList(data.data);
+    } catch (err) {
+      console.error('Failed to load staff:', err);
+    }
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -47,15 +39,10 @@ export default function AdminStaffPage() {
     }
   };
 
-  const handleChange = (e) => {
-    setNewStaff({ ...newStaff, [e.target.name]: e.target.value });
-  };
-
-  const handleAddStaff = async (e) => {
-    e.preventDefault();
+  const handleAddStaff = async (values, { resetForm }) => {
     try {
-      await addStaff(newStaff, tenantId, token);
-      setNewStaff({ name: '', role: '', email: '', shiftStart: '', shiftEnd: '' });
+      await addStaff(values, tenantId, token);
+      resetForm();
       loadStaff();
     } catch (err) {
       console.error('Failed to add staff:', err);
@@ -67,39 +54,11 @@ export default function AdminStaffPage() {
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
-          <div className="airport-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/airport">AIRPORT</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/booking">BOOKING</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/faqs">FAQ'S</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/flightspage">FLIGHTS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/maintenance">MAINTENANCE</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/passangers">PASSANGERS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/payments">PAYMENTS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/staff">STAFF</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/support">SUPPORT</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/announcements">ANNOUNCEMENTS</a>
-          </div>
+          {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
+            <div className="airport-nav-row" key={item}>
+              <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
+            </div>
+          ))}
         </nav>
       </aside>
 
@@ -109,51 +68,43 @@ export default function AdminStaffPage() {
           <div className="adminstaff-title">ADMIN</div>
         </header>
 
-        <form className="adminstaff-add-form" onSubmit={handleAddStaff}>
-          <div className="adminstaff-form-left">
-            <input
-              type="text"
-              name="name"
-              placeholder="Full Name"
-              value={newStaff.name}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="time"
-              name="shiftStart"
-              placeholder="Shift Start"
-              value={newStaff.shiftStart}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="time"
-              name="shiftEnd"
-              placeholder="Shift End"
-              value={newStaff.shiftEnd}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="role"
-              placeholder="Role"
-              value={newStaff.role}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={newStaff.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <button type="submit" className="adminstaff-add-btn">ADD</button>
-        </form>
+        <Formik
+          initialValues={{
+            name: '',
+            role: '',
+            email: '',
+            shiftStart: '',
+            shiftEnd: ''
+          }}
+          validationSchema={Yup.object({
+            name: Yup.string().required('Required'),
+            role: Yup.string().required('Required'),
+            email: Yup.string().email('Invalid email').required('Required'),
+            shiftStart: Yup.string().required('Required'),
+            shiftEnd: Yup.string().required('Required')
+          })}
+          onSubmit={handleAddStaff}
+        >
+          <Form className="adminstaff-add-form">
+            <div className="adminstaff-form-left">
+              <Field type="text" name="name" placeholder="Full Name" required />
+              <ErrorMessage name="name" component="div" className="adminstaff-error" />
+
+              <Field type="time" name="shiftStart" placeholder="Shift Start" required />
+              <ErrorMessage name="shiftStart" component="div" className="adminstaff-error" />
+
+              <Field type="time" name="shiftEnd" placeholder="Shift End" required />
+              <ErrorMessage name="shiftEnd" component="div" className="adminstaff-error" />
+
+              <Field type="text" name="role" placeholder="Role" required />
+              <ErrorMessage name="role" component="div" className="adminstaff-error" />
+
+              <Field type="email" name="email" placeholder="Email" required />
+              <ErrorMessage name="email" component="div" className="adminstaff-error" />
+            </div>
+            <button type="submit" className="adminstaff-add-btn">ADD</button>
+          </Form>
+        </Formik>
 
         <div className="adminstaff-table">
           <div className="adminstaff-table-header">
