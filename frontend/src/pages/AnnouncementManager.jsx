@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { getTenantIdFromSubdomain } from "../utils/getTenantId";
 import "../styles/AdminBooking.css"; // Reuse your admin CSS
+import "../styles/AdminAirportPage.css"
+
 
 function AdminAnnouncements() {
   const [announcements, setAnnouncements] = useState([]);
@@ -52,19 +54,58 @@ function AdminAnnouncements() {
 
   return (
     <div className="adminpayments-container">
-      <aside className="adminpayments-sidebar">
-        <img src="/logo.png" alt="Logo" className="adminpayments-logo" />
-        <button className="adminpayments-side-button">DASHBOARD</button>
-        <button className="adminpayments-side-button">SEARCH</button>
-        <button className="adminpayments-side-button">ANNOUNCEMENTS</button>
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/booking">BOOKING</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/faqs">FAQ'S</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/flightspage">FLIGHTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/maintenance">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/passangers">PASSANGERS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/payments">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/staff">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/support">SUPPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/announcements">ANNOUNCEMENTS</a>
+          </div>
+        </nav>
       </aside>
 
-      <main className="adminpayments-content">
-        <div className="adminpayments-ribbon">
-          <span className="adminpayments-label">ADMIN</span>
-        </div>
-
-        <h2 className="adminpayments-title">ANNOUNCEMENTS</h2>
+      <main
+        className="adminpayments-content"
+        style={{
+          backgroundImage: "url('/AdminAnnouncements.png')",
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat"
+        }}
+>
+        <header className="adminbooking-header">
+          <h2>ANNOUNCEMENTS</h2>
+          <div className="adminbooking-title">ADMIN</div>
+        </header>
 
         {/* Add Announcement Form */}
         <div className="adminpayments-form">
@@ -73,6 +114,16 @@ function AdminAnnouncements() {
             placeholder="Title"
             value={form.title}
             onChange={handleInputChange}
+            style={{
+              marginLeft: 20,
+              height: 30,
+              borderRadius: 10,
+              border: 0,
+              backgroundColor: "rgb(27, 27, 27)",
+              color: "white",
+              padding:10
+            }}
+
           />
           <textarea
             name="message"
@@ -80,9 +131,10 @@ function AdminAnnouncements() {
             value={form.message}
             onChange={handleInputChange}
             rows={3}
-            style={{ resize: "none", width: "100%", marginTop: 8 }}
+            style={{ resize: "none", width: "96%", marginTop: 8,marginLeft: 20,borderRadius:10, border: 0, backgroundColor: "rgb(27, 27, 27)",color:"white",padding:10  }}
           />
-          <button className="adminpayments-add-btn" onClick={handleAddAnnouncement}>
+          <button className="adminpayments-add-btn" onClick={handleAddAnnouncement} 
+            style={{padding:10, marginLeft: 20,marginBottom: 20, borderRadius:10, border: 0, backgroundColor: "rgb(0,13,255)", height:30, color:"white", backgroundColor:"blue" }}> 
             Add Announcement
           </button>
         </div>

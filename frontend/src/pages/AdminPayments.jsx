@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {getTenantIdFromSubdomain} from "../utils/getTenantId"; // assume this returns the current tenantId
 import "../styles/AdminBooking.css"; // shared CSS for admin pages
+import "../styles/AdminAirportPage.css"
+
 
 function AdminPayments() {
   const [payments, setPayments] = useState([]);
@@ -71,17 +73,49 @@ const handleDeletePayment = (reference) => {
 
   return (
     <div className="adminpayments-container">
-      <aside className="adminpayments-sidebar">
-        <img src="/logo.png" alt="Logo" className="adminpayments-logo" />
-        <button className="adminpayments-side-button">DASHBOARD</button>
-        <button className="adminpayments-side-button">SEARCH</button>
-        <button className="adminpayments-side-button">PAYMENTS</button>
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          <div className="airport-nav-row">
+            <a href="/admin/dashboard">DASHBOARD</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/airport">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/booking">BOOKING</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/faqs">FAQ'S</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/flightspage">FLIGHTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/maintenance">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/passangers">PASSANGERS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/payments">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/staff">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/support">SUPPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/announcements">ANNOUNCEMENTS</a>
+          </div>
+        </nav>
       </aside>
       <main className="adminpayments-content">
-        <div className="adminpayments-ribbon">
-          <span className="adminpayments-label">ADMIN</span>
-        </div>
-        <h2 className="adminpayments-title">PAYMENTS</h2>
+        <header className="adminbooking-header">
+          <h2>PAYMENTS</h2>
+          <div className="adminbooking-title">ADMIN</div>
+        </header>
 
         {/* Add Payment Form */}
         <div className="adminpayments-form">
