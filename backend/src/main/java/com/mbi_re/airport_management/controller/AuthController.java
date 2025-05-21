@@ -13,9 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,10 +25,17 @@ import java.util.Optional;
 @Tag(name = "Authentication", description = "Endpoints for user login and token generation")
 public class AuthController {
 
-    @Autowired private CustomUserDetailsService customUserDetailsService;
-    @Autowired private JwtService jwtService;
-    @Autowired private UserRepository userRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Authenticates a user and returns a JWT token if credentials are valid.
@@ -58,10 +62,8 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Missing X-Tenant-ID header.");
         }
 
-        // Set tenant context
         TenantContext.setTenantId(tenantId.toLowerCase());
 
-        // Check user existence in current tenant
         Optional<User> userOptional = userRepository.findByUsernameAndTenantId(request.getUsername(), tenantId);
         if (userOptional.isEmpty()) {
             return ResponseEntity.status(401).body("Invalid username or tenant.");
@@ -73,7 +75,6 @@ public class AuthController {
             return ResponseEntity.status(401).body("Invalid password.");
         }
 
-        // Load user details and generate JWT
         var userDetails = customUserDetailsService.loadUserByUsernameAndTenant(user.getUsername(), tenantId);
         String token = jwtService.generateToken(userDetails.getUsername(), user.getRole().toString(), tenantId);
 
@@ -85,30 +86,48 @@ public class AuthController {
         ));
     }
 
-    // DTOs for request and response
-
     /**
      * Request body for login.
      */
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
     @Schema(description = "Login request payload")
     public static class LoginRequest {
+
         @Schema(description = "Username", example = "john.doe")
         private String username;
 
         @Schema(description = "Password", example = "password123")
         private String password;
+
+        public LoginRequest() {}
+
+        public LoginRequest(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
     }
 
     /**
      * Response returned after successful login.
      */
-    @Data
-    @AllArgsConstructor
     @Schema(description = "Login response containing JWT and user details")
     public static class LoginResponse {
+
         @Schema(description = "JWT Token")
         private String token;
 
@@ -120,5 +139,46 @@ public class AuthController {
 
         @Schema(description = "User ID", example = "42")
         private Long userId;
+
+        public LoginResponse() {}
+
+        public LoginResponse(String token, String role, String tenantId, Long userId) {
+            this.token = token;
+            this.role = role;
+            this.tenantId = tenantId;
+            this.userId = userId;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+        public String getTenantId() {
+            return tenantId;
+        }
+
+        public void setTenantId(String tenantId) {
+            this.tenantId = tenantId;
+        }
+
+        public Long getUserId() {
+            return userId;
+        }
+
+        public void setUserId(Long userId) {
+            this.userId = userId;
+        }
     }
 }

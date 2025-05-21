@@ -13,8 +13,19 @@ public class Country {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false, unique = true)
+    private String code;
+
     @Column(name = "tenant_id", nullable = false)
     private String tenantId;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public String getTenantId() {
         return tenantId;

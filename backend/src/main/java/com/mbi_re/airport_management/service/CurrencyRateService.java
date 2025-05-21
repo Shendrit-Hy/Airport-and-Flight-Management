@@ -4,6 +4,7 @@ import com.mbi_re.airport_management.config.TenantContext;
 import com.mbi_re.airport_management.model.CurrencyRate;
 import com.mbi_re.airport_management.repository.CurrencyRateRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CurrencyRateService {
 
-    private final CurrencyRateRepository currencyRateRepository;
+    @Autowired
+    private CurrencyRateRepository currencyRateRepository;
 
     /**
      * Retrieves all currency rates for the current tenant.

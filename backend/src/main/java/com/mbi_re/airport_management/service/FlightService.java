@@ -6,6 +6,7 @@ import com.mbi_re.airport_management.model.Flight;
 import com.mbi_re.airport_management.model.Seat;
 import com.mbi_re.airport_management.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -22,11 +23,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FlightService {
 
-    private final FlightRepository flightRepository;
-    private final SeatRepository seatRepository;
-    private final GateRepository gateRepository;
-    private final TerminalRepository terminalRepository;
-    private final AirlineRepository airlineRepository;
+
+    @Autowired
+    private FlightRepository flightRepository;
+    @Autowired
+    private SeatRepository seatRepository;
+    @Autowired
+    private GateRepository gateRepository;
+    @Autowired
+    private TerminalRepository terminalRepository;
+    @Autowired
+    private AirlineRepository airlineRepository;
 
     /**
      * Retrieves today's and upcoming flights for a given tenant.

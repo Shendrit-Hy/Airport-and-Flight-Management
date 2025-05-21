@@ -4,6 +4,7 @@ import com.mbi_re.airport_management.dto.SeatDTO;
 import com.mbi_re.airport_management.model.Seat;
 import com.mbi_re.airport_management.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SeatService {
 
-    private final SeatRepository seatRepository;
+    @Autowired
+    private SeatRepository seatRepository;
 
     /**
      * Retrieves all available (unbooked) seats for a given flight and tenant.

@@ -5,6 +5,7 @@ import com.mbi_re.airport_management.dto.AnnouncementDTO;
 import com.mbi_re.airport_management.model.Announcement;
 import com.mbi_re.airport_management.repository.AnnouncementRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AnnouncementService {
 
-    private final AnnouncementRepository announcementRepository;
+    @Autowired
+    private AnnouncementRepository announcementRepository;
 
     /**
      * Retrieves all announcements associated with the given tenant.

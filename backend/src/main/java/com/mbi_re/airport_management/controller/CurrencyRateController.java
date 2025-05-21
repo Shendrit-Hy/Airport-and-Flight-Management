@@ -6,6 +6,7 @@ import com.mbi_re.airport_management.service.CurrencyRateService;
 import com.mbi_re.airport_management.utils.TenantUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CurrencyRateController {
 
-    private final CurrencyRateService currencyRateService;
+    @Autowired
+    private CurrencyRateService currencyRateService;
 
     /**
      * Retrieves all currency rates for the current tenant.

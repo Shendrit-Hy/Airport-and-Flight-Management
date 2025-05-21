@@ -43,7 +43,7 @@ public class UserService {
         List<User> existingUsers = userRepository.findAllByTenantId(tenantId);
         Role assignedRole = existingUsers.isEmpty() ? Role.ADMIN : Role.USER;
 
-        Country country = countryRepository.findByName(userDTO.getCountry())
+        Country country = countryRepository.findByNameAndTenantId(userDTO.getCountry(), tenantId)
                 .orElseThrow(() -> new RuntimeException("Country not found: " + userDTO.getCountry()));
 
         User user = new User();
@@ -92,7 +92,7 @@ public class UserService {
         User user = userRepository.findByUsernameAndTenantId(username, tenantId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Country country = countryRepository.findByName(updatedUserDTO.getCountry())
+        Country country = countryRepository.findByNameAndTenantId(updatedUserDTO.getCountry(), tenantId)
                 .orElseThrow(() -> new RuntimeException("Country not found: " + updatedUserDTO.getCountry()));
 
         user.setFullName(updatedUserDTO.getFullname());

@@ -106,7 +106,8 @@ public class PassengerController {
             @ApiResponse(responseCode = "403", description = "Forbidden - unauthorized"),
             @ApiResponse(responseCode = "404", description = "Passenger not found")
     })
-    public void delete(@PathVariable Long id) {
-        passengerService.deleteById(id);
+    public void delete(@PathVariable Long id, @RequestAttribute("jwtTenantId") String jwtTenantId) {
+        TenantUtil.validateTenant(jwtTenantId);
+        passengerService.deleteById(id, jwtTenantId);
     }
 }

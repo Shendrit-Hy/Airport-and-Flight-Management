@@ -41,7 +41,7 @@ public class AirlineController {
             @Parameter(description = "Tenant ID in request header", required = true) String tenantId) {
 
         TenantUtil.validateTenantFromContext();
-        return airlineService.getAllAirlines();
+        return airlineService.getAllAirlines(tenantId);
     }
 
     /**
@@ -66,6 +66,6 @@ public class AirlineController {
             @Parameter(description = "Tenant ID in request header", required = true) String tenantId) {
 
         TenantUtil.validateTenant(tenantId);
-        return airlineService.createAirline(dto);
+        return airlineService.createAirline(dto, tenantId);
     }
 }

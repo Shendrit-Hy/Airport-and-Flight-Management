@@ -4,6 +4,7 @@ import com.mbi_re.airport_management.dto.PassengerDTO;
 import com.mbi_re.airport_management.model.Passenger;
 import com.mbi_re.airport_management.repository.PassengerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PassengerService {
 
-    private final PassengerRepository passengerRepository;
+    @Autowired
+    private PassengerRepository passengerRepository;
 
     /**
      * Retrieves all passengers for a given tenant.
