@@ -64,8 +64,8 @@ function AdminAnnouncements() {
           backgroundPosition: "center",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat"
-        }}
-
+        }}>
+           
         <header className="adminbooking-header">
           <h2>ANNOUNCEMENTS</h2>
           <div className="adminbooking-title">ADMIN</div>
