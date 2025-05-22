@@ -118,40 +118,7 @@ const handleDeletePayment = (reference) => {
           <h2>PAYMENTS</h2>
           <div className="adminbooking-title">ADMIN</div>
         </header>
-
-        {/* Add Payment Form */}
-        <div className="adminpayments-form">
-          <input
-            name="method"
-            placeholder="Method (e.g., CREDIT_CARD)"
-            value={form.method}
-            onChange={handleInputChange}
-          />
-          <input
-            name="amount"
-            type="number"
-            placeholder="Amount"
-            value={form.amount}
-            onChange={handleInputChange}
-          />
-          <input
-            name="status"
-            placeholder="Status (e.g., PAID)"
-            value={form.status}
-            onChange={handleInputChange}
-          />
-          <input
-            name="reference"
-            placeholder="Reference (Booking ID)"
-            value={form.reference}
-            onChange={handleInputChange}
-          />
-          <button className="adminpayments-add-btn" onClick={handleAddPayment}>
-            Add Payment
-          </button>
-        </div>
-
-
+        
         <div className="adminpayments-table-container">
           <table className="adminpayments-table">
             <thead>
