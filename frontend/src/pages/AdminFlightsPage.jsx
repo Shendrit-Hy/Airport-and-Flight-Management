@@ -104,6 +104,36 @@ export default function AdminFlightsPage() {
           <div className="adminflights-title">ADMIN</div>
         </header>
 
+
+        <form className="adminflights-add-form" onSubmit={handleAddFlight}>
+          <div className="adminflights-form-grid">
+            {[
+              { name: 'flightNumber', label: 'Flight Number' },
+              { name: 'departureAirport', label: 'Departure Airport' },
+              { name: 'arrivalAirport', label: 'Arrival Airport' },
+              { name: 'departureTime', label: 'Departure Time' },
+              { name: 'arrivalTime', label: 'Arrival Time' },
+              { name: 'flightDate', label: 'Flight Date' },
+              { name: 'availableSeat', label: 'Available Seat' },
+              { name: 'price', label: 'Price' },
+              { name: 'airline', label: 'Airline' }
+            ].map((field) => (
+              <div className="adminflights-input-group" key={field.name}>
+                <label htmlFor={field.name}>{field.label}</label>
+                <input
+                  type="text"
+                  id={field.name}
+                  name={field.name}
+                  value={newFlight[field.name]}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            ))}
+          </div>
+          <button type="submit" className="adminflights-add-btn">ADD</button>
+        </form>
+
         <Formik
           initialValues={{
             flightNumber: '',
@@ -137,15 +167,27 @@ export default function AdminFlightsPage() {
             <div className="adminflights-form-grid">
               {["flightNumber", "departureAirport", "arrivalAirport", "departureTime", "arrivalTime", "flightDate", "availableSeat", "price", "airline"].map((field) => (
                 <div className="adminflights-input-group" key={field}>
-                  <label htmlFor={field}>{field.replace(/([A-Z])/g, ' $1')}</label>
-                  <Field type="text" name={field} id={field} required />
+                  <Field
+                    type="text"
+                    name={field}
+                    id={field}
+                    placeholder={field.replace(/([A-Z])/g, ' $1')}
+                    className="adminflights-input"
+                    style={{ backgroundColor: 'rgb(53,53,53)', color: 'white' }}
+                  />
                   <ErrorMessage name={field} component="div" className="adminflights-error" />
                 </div>
               ))}
 
               <div className="adminflights-input-group">
                 <label htmlFor="terminalId">Terminal</label>
-                <Field as="select" name="terminalId" required>
+                <Field
+                  as="select"
+                  name="terminalId"
+                  className="adminflights-input"
+                  style={{ backgroundColor: 'rgb(53,53,53)', color: 'white' }}
+                  required
+                >
                   <option value="">Select Terminal</option>
                   {terminals.map((t) => (
                     <option key={t.id} value={t.id}>{t.name}</option>
@@ -156,7 +198,14 @@ export default function AdminFlightsPage() {
 
               <div className="adminflights-input-group">
                 <label htmlFor="gateId">Gate</label>
-                <Field as="select" name="gateId" required>
+                <Field
+                  as="select"
+                  name="gateId"
+                  className="adminflights-input"
+                  style={{ backgroundColor: 'rgb(53,53,53)', color: 'white' }}
+                  required
+                >
+
                   <option value="">Select Gate</option>
                   {gates.map((g) => (
                     <option key={g.id} value={g.id}>{g.name}</option>
@@ -165,9 +214,12 @@ export default function AdminFlightsPage() {
                 <ErrorMessage name="gateId" component="div" className="adminflights-error" />
               </div>
             </div>
+
             <button type="submit" className="adminflights-add-btn">ADD</button>
           </Form>
+
         </Formik>
+
 
         <div className="adminflights-table">
           <div className="adminflights-table-header">

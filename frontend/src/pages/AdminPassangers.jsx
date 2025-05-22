@@ -31,6 +31,7 @@ const handleDelete = (id) => {
 
   return (
     <div className="adminpassangers-container">
+
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
@@ -44,7 +45,8 @@ const handleDelete = (id) => {
             <a href="/admin/booking">BOOKING</a>
           </div>
           <div className="airport-nav-row">
-            <a href="/admin/faqs">FAQ'S</a>
+            <a href="/admin/faqs">FAQS</a>
+
           </div>
           <div className="airport-nav-row">
             <a href="/admin/flightspage">FLIGHTS</a>
@@ -68,6 +70,7 @@ const handleDelete = (id) => {
             <a href="/admin/announcements">ANNOUNCEMENTS</a>
           </div>
         </nav>
+
       </aside>
 
       <main className="adminpassangers-content">

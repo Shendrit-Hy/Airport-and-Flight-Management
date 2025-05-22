@@ -73,6 +73,7 @@ const handleDeletePayment = (reference) => {
 
   return (
     <div className="adminpayments-container">
+
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
@@ -110,6 +111,7 @@ const handleDeletePayment = (reference) => {
             <a href="/admin/announcements">ANNOUNCEMENTS</a>
           </div>
         </nav>
+
       </aside>
       <main className="adminpayments-content">
         <header className="adminbooking-header">
@@ -149,7 +151,7 @@ const handleDeletePayment = (reference) => {
           </button>
         </div>
 
-        {/* Payment Table */}
+
         <div className="adminpayments-table-container">
           <table className="adminpayments-table">
             <thead>

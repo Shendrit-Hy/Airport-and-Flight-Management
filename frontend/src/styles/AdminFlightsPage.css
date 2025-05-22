@@ -10,15 +10,18 @@
 
 .adminflights-form-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.2rem;
+  margin: 20px;
 }
 
 .adminflights-input-group {
   display: flex;
   flex-direction: column;
+  gap: 8px; /* kjo e ndan label, input dhe error mes tyre */
+  margin-bottom: 12px; /* kjo i ndan grupet nga njëra-tjetra */
 }
+
 
 .adminflights-input-group label {
   font-size: 14px;
@@ -26,38 +29,58 @@
   color: #ccc;
 }
 
-.adminflights-input-group input {
-  padding: 10px;
+.adminflights-input,
+.adminflights-input-group input,
+.adminflights-input-group select {
+  padding: 0.8rem;
+  border-radius: 8px;
   border: none;
-  border-radius: 20px;
-  background-color: #e2e9ff;
+  font-size: 1rem;
+  width: 90%;
+  background-color: rgb(53, 53, 53);
+  color: white;
   outline: none;
 }
 
-.adminflights-add-btn {
-  background-color: #0066ff;
-  color: white;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  width: 100px;
-  align-self: flex-end;
+.adminflights-error {
+  color: tomato;
+  font-size: 12px;
+  margin-top: 4px;
 }
 
+.adminflights-add-btn {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.6rem;
+  font-size: 1rem;
+  background-color: rgb(0,13,255);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  align-self: flex-end;
+  width: 120px;
+}
+
+.adminflights-add-btn:hover {
+  background-color: #45a049;
+}
+
+/* Tabela dhe pamja e përgjithshme */
 .adminflights-table {
   background-color: black;
   font-size: 10px;
+  color: white;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .adminflights-table-header,
 .adminflights-table-row {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(11, 1fr);
   padding: 10px;
   border-bottom: 1px solid #ccc;
-  color: white;
 }
 
 .adminflights-table-header {

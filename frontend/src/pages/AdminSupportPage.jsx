@@ -49,7 +49,8 @@ export default function AdminSupportPage() {
             <a href="/admin/booking">BOOKING</a>
           </div>
           <div className="airport-nav-row">
-            <a href="/admin/faqs">FAQ'S</a>
+            <a href="/admin/faqs">FAQS</a>
+
           </div>
           <div className="airport-nav-row">
             <a href="/admin/flightspage">FLIGHTS</a>
@@ -71,6 +72,7 @@ export default function AdminSupportPage() {
           </div>
           <div className="airport-nav-row">
             <a href="/admin/announcements">ANNOUNCEMENTS</a>
+
           </div>
         </nav>
       </aside>
