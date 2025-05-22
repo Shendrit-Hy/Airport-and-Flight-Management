@@ -80,6 +80,7 @@ const handleAddFlight = async () => {
           <div className="adminflights-title">ADMIN</div>
         </header>
 
+<<<<<<< Updated upstream
         <form className="adminflights-add-form" onSubmit={handleAddFlight}>
           <div className="adminflights-form-grid">
             {[
@@ -108,6 +109,92 @@ const handleAddFlight = async () => {
           </div>
           <button type="submit" className="adminflights-add-btn">ADD</button>
         </form>
+=======
+        <Formik
+          initialValues={{
+            flightNumber: '',
+            departureAirport: '',
+            arrivalAirport: '',
+            departureTime: '',
+            arrivalTime: '',
+            flightDate: '',
+            availableSeat: '',
+            price: '',
+            airline: '',
+            terminalId: '',
+            gateId: ''
+          }}
+          validationSchema={Yup.object({
+            flightNumber: Yup.string().required('Required'),
+            departureAirport: Yup.string().required('Required'),
+            arrivalAirport: Yup.string().required('Required'),
+            departureTime: Yup.string().required('Required'),
+            arrivalTime: Yup.string().required('Required'),
+            flightDate: Yup.string().required('Required'),
+            availableSeat: Yup.number().required('Required'),
+            price: Yup.number().required('Required'),
+            airline: Yup.string().required('Required'),
+            terminalId: Yup.string().required('Required'),
+            gateId: Yup.string().required('Required')
+          })}
+          onSubmit={handleAddFlight}
+        >
+          <Form className="adminflights-add-form">
+            <div className="adminflights-form-grid">
+              {["flightNumber", "departureAirport", "arrivalAirport", "departureTime", "arrivalTime", "flightDate", "availableSeat", "price", "airline"].map((field) => (
+                <div className="adminflights-input-group" key={field}>
+                  <Field
+                    type="text"
+                    name={field}
+                    id={field}
+                    placeholder={field.replace(/([A-Z])/g, ' $1')}
+                    className="adminflights-input"
+                    style={{ backgroundColor: 'rgb(53,53,53)', color: 'white' }}
+                  />
+                  <ErrorMessage name={field} component="div" className="adminflights-error" />
+                </div>
+              ))}
+
+              <div className="adminflights-input-group">
+                <label htmlFor="terminalId">Terminal</label>
+                <Field
+                  as="select"
+                  name="terminalId"
+                  className="adminflights-input"
+                  style={{ backgroundColor: 'rgb(53,53,53)', color: 'white' }}
+                  required
+                >
+                  <option value="">Select Terminal</option>
+                  {terminals.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </Field>
+                <ErrorMessage name="terminalId" component="div" className="adminflights-error" />
+              </div>
+
+              <div className="adminflights-input-group">
+                <label htmlFor="gateId">Gate</label>
+                <Field
+                  as="select"
+                  name="gateId"
+                  className="adminflights-input"
+                  style={{ backgroundColor: 'rgb(53,53,53)', color: 'white' }}
+                  required
+                >
+                  <option value="">Select Gate</option>
+                  {gates.map((g) => (
+                    <option key={g.id} value={g.id}>{g.name}</option>
+                  ))}
+                </Field>
+                <ErrorMessage name="gateId" component="div" className="adminflights-error" />
+              </div>
+            </div>
+
+            <button type="submit" className="adminflights-add-btn">ADD</button>
+          </Form>
+
+        </Formik>
+>>>>>>> Stashed changes
 
         <div className="adminflights-table">
           <div className="adminflights-table-header">

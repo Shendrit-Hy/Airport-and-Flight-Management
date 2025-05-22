@@ -60,8 +60,40 @@ export default function AdminSupportPage() {
             <a href="/admin/dashboard">DASHBOARD</a>
             <a href="/admin/search">SEARCH</a>
           </div>
+<<<<<<< Updated upstream
           <div className="adminsupport-nav-row">
             <a href="/admin/support" className="active">SUPPORT TICKETS</a>
+=======
+          <div className="airport-nav-row">
+            <a href="/admin/airport">AIRPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/booking">BOOKING</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/faqs">FAQS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/flightspage">FLIGHTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/maintenance">MAINTENANCE</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/passangers">PASSANGERS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/payments">PAYMENTS</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/staff">STAFF</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/support">SUPPORT</a>
+          </div>
+          <div className="airport-nav-row">
+            <a href="/admin/announcements">ANNOUNCEMENTS</a>
+>>>>>>> Stashed changes
           </div>
         </nav>
       </aside>
