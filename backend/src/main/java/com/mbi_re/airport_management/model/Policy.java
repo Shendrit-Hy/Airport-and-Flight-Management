@@ -17,6 +17,17 @@ public class Policy {
 
     private LocalDateTime createdAt;
 
+    @Column(name = "tenant_id", nullable = false)
+    private String tenantId;
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();

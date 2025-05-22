@@ -8,9 +8,20 @@ import java.util.Optional;
 
 public interface GateRepository extends JpaRepository<Gate, Long> {
 
-    // Find all gates for a given tenant
+    /**
+     * Retrieves all gates for the specified tenant.
+     *
+     * @param tenantId the tenant identifier
+     * @return a list of gates belonging to the given tenant
+     */
     List<Gate> findByTenantId(String tenantId);
 
-    // Find one gate by ID and tenant
+    /**
+     * Retrieves a gate by its ID and tenant.
+     *
+     * @param id the gate ID
+     * @param tenantId the tenant identifier
+     * @return an Optional containing the gate if found, or empty if not
+     */
     Optional<Gate> findByIdAndTenantId(Long id, String tenantId);
 }

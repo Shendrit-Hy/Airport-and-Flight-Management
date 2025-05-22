@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import '../styles/AdminFlightsPage.css';
 import { getAllFlights, createFlight, deleteFlight } from '../api/flightService';
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
@@ -9,20 +11,6 @@ export default function AdminFlightsPage() {
   const [flights, setFlights] = useState([]);
   const [terminals, setTerminals] = useState([]);
   const [gates, setGates] = useState([]);
-
-  const [newFlight, setNewFlight] = useState({
-    flightNumber: '',
-    departureAirport: '',
-    arrivalAirport: '',
-    departureTime: '',
-    arrivalTime: '',
-    flightDate: '',
-    availableSeat: '',
-    price: '',
-    airline: '',
-    terminalId: '',
-    gateId: ''
-  });
 
   const tenantId = getTenantIdFromSubdomain();
   const token = localStorage.getItem("token");
@@ -72,29 +60,12 @@ export default function AdminFlightsPage() {
     }
   };
 
-  const handleChange = (e) => {
-    setNewFlight({ ...newFlight, [e.target.name]: e.target.value });
-  };
-
-  const handleAddFlight = async (e) => {
-    e.preventDefault();
+  const handleAddFlight = async (values, { resetForm }) => {
     try {
-      await createFlight(newFlight, tenantId, token);
+      await createFlight(values, tenantId, token);
       console.log("Flight created!");
       loadFlights();
-      setNewFlight({
-        flightNumber: '',
-        departureAirport: '',
-        arrivalAirport: '',
-        departureTime: '',
-        arrivalTime: '',
-        flightDate: '',
-        availableSeat: '',
-        price: '',
-        airline: '',
-        terminalId: '',
-        gateId: ''
-      });
+      resetForm();
     } catch (error) {
       console.error("Failed to create flight", error);
       if (error.response?.status === 401) {
@@ -117,39 +88,13 @@ export default function AdminFlightsPage() {
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
-          <div className="airport-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/airport">AIRPORT</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/booking">BOOKING</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/faqs">FAQ'S</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/flightspage">FLIGHTS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/maintenance">MAINTENANCE</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/passangers">PASSANGERS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/payments">PAYMENTS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/staff">STAFF</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/support">SUPPORT</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/announcements">ANNOUNCEMENTS</a>
-          </div>
+
+          {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
+            <div className="airport-nav-row" key={item}>
+              <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
+            </div>
+          ))}
+
         </nav>
       </aside>
 
@@ -159,57 +104,70 @@ export default function AdminFlightsPage() {
           <div className="adminflights-title">ADMIN</div>
         </header>
 
-        <form className="adminflights-add-form" onSubmit={handleAddFlight}>
-          <div className="adminflights-form-grid">
-            {[
-              { name: 'flightNumber', label: 'Flight Number' },
-              { name: 'departureAirport', label: 'Departure Airport' },
-              { name: 'arrivalAirport', label: 'Arrival Airport' },
-              { name: 'departureTime', label: 'Departure Time' },
-              { name: 'arrivalTime', label: 'Arrival Time' },
-              { name: 'flightDate', label: 'Flight Date' },
-              { name: 'availableSeat', label: 'Available Seat' },
-              { name: 'price', label: 'Price' },
-              { name: 'airline', label: 'Airline' },
-            ].map((field) => (
-              <div className="adminflights-input-group" key={field.name}>
-                <label htmlFor={field.name}>{field.label}</label>
-                <input
-                  type="text"
-                  id={field.name}
-                  name={field.name}
-                  value={newFlight[field.name]}
-                  onChange={handleChange}
-                  required
-                />
+        <Formik
+          initialValues={{
+            flightNumber: '',
+            departureAirport: '',
+            arrivalAirport: '',
+            departureTime: '',
+            arrivalTime: '',
+            flightDate: '',
+            availableSeat: '',
+            price: '',
+            airline: '',
+            terminalId: '',
+            gateId: ''
+          }}
+          validationSchema={Yup.object({
+            flightNumber: Yup.string().required('Required'),
+            departureAirport: Yup.string().required('Required'),
+            arrivalAirport: Yup.string().required('Required'),
+            departureTime: Yup.string().required('Required'),
+            arrivalTime: Yup.string().required('Required'),
+            flightDate: Yup.string().required('Required'),
+            availableSeat: Yup.number().required('Required'),
+            price: Yup.number().required('Required'),
+            airline: Yup.string().required('Required'),
+            terminalId: Yup.string().required('Required'),
+            gateId: Yup.string().required('Required')
+          })}
+          onSubmit={handleAddFlight}
+        >
+          <Form className="adminflights-add-form">
+            <div className="adminflights-form-grid">
+              {["flightNumber", "departureAirport", "arrivalAirport", "departureTime", "arrivalTime", "flightDate", "availableSeat", "price", "airline"].map((field) => (
+                <div className="adminflights-input-group" key={field}>
+                  <label htmlFor={field}>{field.replace(/([A-Z])/g, ' $1')}</label>
+                  <Field type="text" name={field} id={field} required />
+                  <ErrorMessage name={field} component="div" className="adminflights-error" />
+                </div>
+              ))}
+
+              <div className="adminflights-input-group">
+                <label htmlFor="terminalId">Terminal</label>
+                <Field as="select" name="terminalId" required>
+                  <option value="">Select Terminal</option>
+                  {terminals.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </Field>
+                <ErrorMessage name="terminalId" component="div" className="adminflights-error" />
               </div>
-            ))}
 
-            {/* Terminal Selection */}
-            <div className="adminflights-input-group">
-              <label htmlFor="terminalId">Terminal</label>
-              <select name="terminalId" value={newFlight.terminalId} onChange={handleChange} required>
-                <option value="">Select Terminal</option>
-                {terminals.map((t) => (
-                  <option key={t.id} value={t.id}>{t.name}</option>
-                ))}
-              </select>
+              <div className="adminflights-input-group">
+                <label htmlFor="gateId">Gate</label>
+                <Field as="select" name="gateId" required>
+                  <option value="">Select Gate</option>
+                  {gates.map((g) => (
+                    <option key={g.id} value={g.id}>{g.name}</option>
+                  ))}
+                </Field>
+                <ErrorMessage name="gateId" component="div" className="adminflights-error" />
+              </div>
             </div>
-
-            {/* Gate Selection */}
-            <div className="adminflights-input-group">
-              <label htmlFor="gateId">Gate</label>
-              <select name="gateId" value={newFlight.gateId} onChange={handleChange} required>
-                <option value="">Select Gate</option>
-                {gates.map((g) => (
-                  <option key={g.id} value={g.id}>{g.name}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <button type="submit" className="adminflights-add-btn">ADD</button>
-        </form>
+            <button type="submit" className="adminflights-add-btn">ADD</button>
+          </Form>
+        </Formik>
 
         <div className="adminflights-table">
           <div className="adminflights-table-header">

@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import axios from "axios";
 import { getTenantIdFromSubdomain } from "../utils/getTenantId";
 import "../styles/AdminBooking.css";
-import "../styles/AdminAirportPage.css"
+
+import "../styles/AdminAirportPage.css";
+
 
 function AdminFaqs() {
   const [faqs, setFaqs] = useState([]);
-  const [form, setForm] = useState({ question: "", answer: "" });
-
   const tenantId = getTenantIdFromSubdomain();
 
   useEffect(() => {
@@ -25,25 +27,16 @@ function AdminFaqs() {
       .catch((err) => console.error("Error fetching FAQs:", err));
   };
 
-  const handleInputChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleAddFaq = () => {
-    if (!form.question || !form.answer) {
-      alert("Please fill in both question and answer.");
-      return;
-    }
-
+  const handleAddFaq = (values, { resetForm }) => {
     axios
       .post(
         "http://localhost:8080/api/faqs",
-        { ...form },
+        { ...values },
         { headers: { "X-Tenant-ID": tenantId } }
       )
       .then((res) => {
         setFaqs((prev) => (Array.isArray(prev) ? [...prev, res.data] : [res.data]));
-        setForm({ question: "", answer: "" });
+        resetForm();
       })
       .catch((err) => console.error("Error adding FAQ:", err));
   };
@@ -53,39 +46,13 @@ function AdminFaqs() {
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
-          <div className="airport-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/airport">AIRPORT</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/booking">BOOKING</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/faqs">FAQ'S</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/flightspage">FLIGHTS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/maintenance">MAINTENANCE</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/passangers">PASSANGERS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/payments">PAYMENTS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/staff">STAFF</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/support">SUPPORT</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/announcements">ANNOUNCEMENTS</a>
-          </div>
+
+          {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
+            <div className="airport-nav-row" key={item}>
+              <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
+            </div>
+          ))}
+
         </nav>
       </aside>
 
@@ -96,59 +63,73 @@ function AdminFaqs() {
         </header>
 
         <div style={{ maxWidth: 600, margin: "0 20px 30px 20px" }}>
-          <input
-            type="text"
-            name="question"
-            placeholder="Question"
-            value={form.question}
-            onChange={handleInputChange}
-            style={{
-              backgroundColor: "rgb(27,27,27)",
-              border: "none",
-              borderRadius: 8,
-              padding: 12,
-              marginBottom: 15,
-              width: "100%",
-              color: "white",
-              fontSize: "1rem",
-            }}
-          />
-          <textarea
-            name="answer"
-            placeholder="Answer"
-            value={form.answer}
-            onChange={handleInputChange}
-            rows={4}
-            style={{
-              backgroundColor: "rgb(27,27,27)",
-              border: "none",
-              borderRadius: 8,
-              padding: 12,
-              marginBottom: 15,
-              width: "100%",
-              color: "white",
-              fontSize: "1rem",
-              resize: "vertical",
-            }}
-          />
-          <button
-            onClick={handleAddFaq}
-            style={{
-              backgroundColor: "rgb(0,13,255)",
-              color: "white",
-              border: "none",
-              padding: "12px 20px",
-              fontSize: "1rem",
-              borderRadius: 8,
-              cursor: "pointer",
-              transition: "background-color 0.3s",
-              width: 140,
-            }}
-            onMouseOver={(e) => (e.target.style.backgroundColor = "#444")}
-            onMouseOut={(e) => (e.target.style.backgroundColor = "#333")}
+
+          <Formik
+            initialValues={{ question: "", answer: "" }}
+            validationSchema={Yup.object({
+              question: Yup.string().required("Question is required"),
+              answer: Yup.string().required("Answer is required")
+            })}
+            onSubmit={handleAddFaq}
           >
-            Add FAQ
-          </button>
+            <Form>
+              <Field
+                name="question"
+                placeholder="Question"
+                className="airport-input"
+                style={{
+                  backgroundColor: "rgb(27,27,27)",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: 12,
+                  marginBottom: 15,
+                  width: "100%",
+                  color: "white",
+                  fontSize: "1rem",
+                }}
+              />
+              <ErrorMessage name="question" component="div" className="airport-error" />
+
+              <Field
+                name="answer"
+                as="textarea"
+                placeholder="Answer"
+                rows={4}
+                className="airport-input"
+                style={{
+                  backgroundColor: "rgb(27,27,27)",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: 12,
+                  marginBottom: 15,
+                  width: "100%",
+                  color: "white",
+                  fontSize: "1rem",
+                  resize: "vertical",
+                }}
+              />
+              <ErrorMessage name="answer" component="div" className="airport-error" />
+
+              <button
+                type="submit"
+                style={{
+                  backgroundColor: "rgb(0,13,255)",
+                  color: "white",
+                  border: "none",
+                  padding: "12px 20px",
+                  fontSize: "1rem",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  transition: "background-color 0.3s",
+                  width: 140,
+                }}
+                onMouseOver={(e) => (e.target.style.backgroundColor = "#444")}
+                onMouseOut={(e) => (e.target.style.backgroundColor = "#333")}
+              >
+                Add FAQ
+              </button>
+            </Form>
+          </Formik>
         </div>
 
         <div className="adminbooking-table-container">
