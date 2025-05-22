@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import '../styles/AdminAirportPage.css';
-import { getAirports, createAirport, deleteAirport } from '../api/airportService';
+import { getAllAirports, createAirport, deleteAirport } from '../api/airportService';
 
 export default function AdminTrendingPlace() {
   const [airports, setAirports] = useState([]);
