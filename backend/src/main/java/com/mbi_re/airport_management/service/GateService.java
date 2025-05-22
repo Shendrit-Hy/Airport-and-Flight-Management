@@ -86,10 +86,10 @@ public class GateService {
         gate.setTenantId(tenantId);
 
         if (dto.getFlightId() != null) {
-            Flight flight = flightRepository.findByIdAndTenantId(dto.getFlightId(), tenantId)
-                    .orElseThrow(() -> new EntityNotFoundException("Flight not found for ID: " + dto.getFlightId()));
-            gate.setFlight(flight);
+            flightRepository.findByIdAndTenantId(dto.getFlightId(), tenantId)
+                    .ifPresent(gate::setFlight);
         }
+
 
         return gateRepository.save(gate);
     }
@@ -109,4 +109,49 @@ public class GateService {
 
         gateRepository.delete(gate);
     }
+
+    /**
+     * Updates an existing gate for the given tenant.
+     * <p>
+     * This method ensures that only tenant-owned gates are updated. It verifies and updates
+     * the gate number, status, terminal, and optionally the flight. If a flight ID is not provided,
+     * any existing flight assignment is cleared.
+     * </p>
+     *
+     * @param id       the ID of the gate to update
+     * @param dto      the data transfer object containing updated gate information
+     * @param tenantId the tenant ID to scope the update operation
+     * @return the updated Gate entity
+     * @throws EntityNotFoundException if the gate, terminal, or flight cannot be found for the given tenant
+     */
+    @CacheEvict(value = "gates", key = "#tenantId")
+    public Gate updateGate(Long id, GateDTO dto, String tenantId) {
+        Gate existingGate = gateRepository.findByIdAndTenantId(id, tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("Gate not found or not owned by tenant"));
+
+        if (dto.getGateNumber() != null) {
+            existingGate.setGateNumber(dto.getGateNumber());
+        }
+
+        if (dto.getStatus() != null) {
+            existingGate.setStatus(dto.getStatus());
+        }
+
+        if (dto.getTerminalId() != null) {
+            Terminal terminal = terminalRepository.findByIdAndTenantId(dto.getTerminalId(), tenantId)
+                    .orElseThrow(() -> new EntityNotFoundException("Terminal not found for ID: " + dto.getTerminalId()));
+            existingGate.setTerminal(terminal);
+        }
+
+        if (dto.getFlightId() != null) {
+            Flight flight = flightRepository.findByIdAndTenantId(dto.getFlightId(), tenantId)
+                    .orElseThrow(() -> new EntityNotFoundException("Flight not found for ID: " + dto.getFlightId()));
+            existingGate.setFlight(flight);
+        } else {
+            existingGate.setFlight(null); // Clear existing flight if not provided
+        }
+
+        return gateRepository.save(existingGate);
+    }
+
 }

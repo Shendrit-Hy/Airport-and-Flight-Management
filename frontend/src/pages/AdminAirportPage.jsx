@@ -114,8 +114,8 @@ export default function AdminAirportPage() {
               <span>{airport.name}</span>
               <span>{airport.code}</span>
               <span>{airport.timezone}</span>
-              <span>{airport.cityId}</span>
-              <span>{airport.countryId}</span>
+              <span>{airport.city.id}</span>
+              <span>{airport.country.id}</span>
               <span>
                 <button
                   className="airport-delete-btn"
