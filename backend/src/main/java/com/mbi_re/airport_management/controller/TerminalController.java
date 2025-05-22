@@ -96,6 +96,7 @@ public class TerminalController {
             @RequestHeader("X-Tenant-ID") String tenantIdFromHeader,
             @RequestAttribute(name = "jwtTenantId", required = false) String jwtTenantId
     ) {
+        System.out.println(jwtTenantId);
         TenantUtil.validateTenant(jwtTenantId);
         return terminalService.createTerminal(dto, jwtTenantId);
     }
