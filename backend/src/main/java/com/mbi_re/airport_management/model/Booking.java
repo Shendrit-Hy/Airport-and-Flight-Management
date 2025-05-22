@@ -18,17 +18,36 @@ public class Booking {
 
     private String passengerName;
 
+    private Long passengerId;
+
     private String flightNumber;
 
     private String seatNumber;
 
     private LocalDateTime bookingTime;
 
+    @Column(name = "booking_id")
+    private String bookingId;
+
     private String status; // e.g. BOOKED, CANCELLED
     @Column(nullable = false)
     private String tenantId;
 
+    public String getBookingId() {
+        return bookingId;
+    }
 
+    public void setBookingId(String bookingId) {
+        this.bookingId = bookingId;
+    }
+
+    public Long getPassengerId() {
+        return passengerId;
+    }
+
+    public void setPassengerId(Long passengerId) {
+        this.passengerId = passengerId;
+    }
     public Long getId() {
         return id;
     }

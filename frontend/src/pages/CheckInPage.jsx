@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/CheckInPage.css';
 
@@ -53,10 +54,18 @@ const CheckInPage = () => {
   return (
     <div className="checkinpage-container">
       <h2>Check-In për Fluturim</h2>
-      <Formik initialValues={{ code: '' }} onSubmit={handleSearch}>
+      <Formik
+        initialValues={{ code: '' }}
+        validationSchema={Yup.object({
+          code: Yup.string().required('Kodi është i detyrueshëm')
+        })}
+        onSubmit={handleSearch}
+      >
         <Form className="checkinpage-form">
           <label htmlFor="code">Shkruaj Kodin e Biletës</label>
           <Field id="code" name="code" placeholder="p.sh. ABC123" className="checkinpage-input" />
+          <ErrorMessage name="code" component="div" className="checkinpage-error" />
+
           <button type="submit" className="checkinpage-submit">Kërko</button>
           <div className="checkinpage-button-group">
             <button onClick={() => window.history.back()} className="checkinpage-back-button">

@@ -7,11 +7,17 @@ public class Airport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-    private String location;
-    private String country;
-    private String city;
+    private String code;
+
+    @ManyToOne
+    @JoinColumn(name = "country_id", nullable = false)
+    private Country country;
+
+    @ManyToOne
+    @JoinColumn(name = "city_id", nullable = false)
+    private City city;
+    private String timezone;
     private String tenantId;
 
     public Long getId() {
@@ -30,28 +36,36 @@ public class Airport {
         this.name = name;
     }
 
-    public String getLocation() {
-        return location;
+    public String getCode() {
+        return code;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public String getCountry() {
+    public Country getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(Country country) {
         this.country = country;
     }
 
-    public String getCity() {
+    public City getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(City city) {
         this.city = city;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
     }
 
     public String getTenantId() {

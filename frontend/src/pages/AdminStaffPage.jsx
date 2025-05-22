@@ -1,57 +1,66 @@
 import React, { useEffect, useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import '../styles/AdminStaffPage.css';
+
+import "../styles/AdminAirportPage.css";
 import {
   getStaffList,
   deleteStaffById,
   addStaff
 } from '../api/staffService';
+import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 export default function AdminStaffPage() {
   const [staffList, setStaffList] = useState([]);
-  const [newStaff, setNewStaff] = useState({
-    fullName: '',
-    role: '',
-    email: '',
-    shiftTime: ''
-  });
+  const token = localStorage.getItem('token');
+  const tenantId = getTenantIdFromSubdomain();
 
   useEffect(() => {
-    loadStaff();
+    if (token && tenantId) {
+      loadStaff();
+    }
   }, []);
 
   const loadStaff = async () => {
-    const data = await getStaffList();
-    setStaffList(data);
+    try {
+      const data = await getStaffList(tenantId, token);
+      setStaffList(data.data);
+    } catch (err) {
+      console.error('Failed to load staff:', err);
+    }
   };
 
   const handleDelete = async (id) => {
-    await deleteStaffById(id);
-    loadStaff();
+    try {
+      await deleteStaffById(id, tenantId, token);
+      loadStaff();
+    } catch (err) {
+      console.error('Failed to delete staff:', err);
+    }
   };
 
-  const handleChange = (e) => {
-    setNewStaff({ ...newStaff, [e.target.name]: e.target.value });
-  };
-
-  const handleAddStaff = async (e) => {
-    e.preventDefault();
-    await addStaff(newStaff);
-    setNewStaff({ fullName: '', role: '', email: '', shiftTime: '' });
-    loadStaff();
+  const handleAddStaff = async (values, { resetForm }) => {
+    try {
+      await addStaff(values, tenantId, token);
+      resetForm();
+      loadStaff();
+    } catch (err) {
+      console.error('Failed to add staff:', err);
+    }
   };
 
   return (
     <div className="adminstaff-layout">
-      <aside className="adminstaff-sidebar">
-        <div className="adminstaff-logo">MBI RE</div>
-        <nav className="adminstaff-nav">
-          <div className="adminstaff-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a>
-            <a href="/admin/flights">FLIGHTS</a>
-          </div>
-          <div className="adminstaff-nav-row">
-            <a href="/admin/staff" className="active">STAFF</a>
-          </div>
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+
+          {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
+            <div className="airport-nav-row" key={item}>
+              <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
+            </div>
+          ))}
         </nav>
       </aside>
 
@@ -61,59 +70,61 @@ export default function AdminStaffPage() {
           <div className="adminstaff-title">ADMIN</div>
         </header>
 
-        <form className="adminstaff-add-form" onSubmit={handleAddStaff}>
-          <div className="adminstaff-form-left">
-            <input
-              type="text"
-              name="fullName"
-              placeholder="Full Name"
-              value={newStaff.fullName}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="shiftTime"
-              placeholder="Shift Time"
-              value={newStaff.shiftTime}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="role"
-              placeholder="Role"
-              value={newStaff.role}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={newStaff.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <button type="submit" className="adminstaff-add-btn">ADD</button>
-        </form>
+        <Formik
+          initialValues={{
+            name: '',
+            role: '',
+            email: '',
+            shiftStart: '',
+            shiftEnd: ''
+          }}
+          validationSchema={Yup.object({
+            name: Yup.string().required('Required'),
+            role: Yup.string().required('Required'),
+            email: Yup.string().email('Invalid email').required('Required'),
+            shiftStart: Yup.string().required('Required'),
+            shiftEnd: Yup.string().required('Required')
+          })}
+          onSubmit={handleAddStaff}
+        >
+          <Form className="adminstaff-add-form">
+            <div className="adminstaff-form-left">
+              <Field type="text" name="name" placeholder="Full Name" required />
+              <ErrorMessage name="name" component="div" className="adminstaff-error" />
+
+              <Field type="time" name="shiftStart" placeholder="Shift Start" required />
+              <ErrorMessage name="shiftStart" component="div" className="adminstaff-error" />
+
+              <Field type="time" name="shiftEnd" placeholder="Shift End" required />
+              <ErrorMessage name="shiftEnd" component="div" className="adminstaff-error" />
+
+              <Field type="text" name="role" placeholder="Role" required />
+              <ErrorMessage name="role" component="div" className="adminstaff-error" />
+
+              <Field type="email" name="email" placeholder="Email" required />
+              <ErrorMessage name="email" component="div" className="adminstaff-error" />
+            </div>
+            <button type="submit" className="adminstaff-add-btn">ADD</button>
+          </Form>
+        </Formik>
 
         <div className="adminstaff-table">
           <div className="adminstaff-table-header">
             <span>Full Name</span>
             <span>Role</span>
             <span>Email</span>
-            <span>Shift Time</span>
+            <span>Shift Start</span>
+            <span>Shift End</span>
             <span>Actions</span>
           </div>
 
           {staffList.map((staff) => (
             <div className="adminstaff-table-row" key={staff.id}>
-              <span>{staff.fullName}</span>
+              <span>{staff.name}</span>
               <span>{staff.role}</span>
               <span>{staff.email}</span>
-              <span>{staff.shiftTime}</span>
+              <span>{staff.shiftStart}</span>
+              <span>{staff.shiftEnd}</span>
               <span>
                 <button onClick={() => handleDelete(staff.id)} className="adminstaff-delete-btn">🗑</button>
               </span>

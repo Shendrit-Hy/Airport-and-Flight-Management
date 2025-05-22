@@ -39,24 +39,23 @@
   flex: 1;
   position: relative;
   padding-bottom: 20px;
-  background: url('/public/Sunset.png') center/cover no-repeat;
+  background: url('/public/AdminBooking.png') center/cover no-repeat;
   background-size: cover;
 }
 
 .adminbooking-ribbon {
-  width: 100%;
-  background-color: #1d1d1d;
-  padding: 10px 20px;
   display: flex;
   justify-content: flex-end;
-  height: 55px;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 15px;
 }
-
-.adminbooking-label {
-  font-weight: bold;
-  font-size: 16px;
+.adminbooking-header{
+  color: black;
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 15px 0px 15px;
 }
-
 .adminbooking-title {
   font-size: 24px;
   margin: 30px 20px 60px 20px;
@@ -160,8 +159,11 @@
   flex: 1;
   position: relative;
   padding-bottom: 20px;
-  background: url('/public/Sunset.png') center/cover no-repeat;
+  background: url('/public/AdminPassangers.png') center/cover no-repeat;
   background-size: cover;
+}
+.adminpayments-content{
+  background: url('/public/AdminPayments.png') center/cover no-repeat;
 }
 
 .adminpayments-ribbon,

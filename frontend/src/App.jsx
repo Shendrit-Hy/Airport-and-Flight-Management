@@ -25,7 +25,18 @@ import AdminAirportPage from './pages/AdminAirportPage';
 import AdminSupportPage from './pages/AdminSupportPage';
 import AdminPassangers from './pages/AdminPassangers';
 import AdminPayments from './pages/AdminPayments';
+import AnnouncementManager from './pages/AnnouncementManager';
+import UserAnnouncements from './pages/UserAnnouncements';
+import TrendingPlaces from './pages/TrendingPlaces';
+import AdminFaqs from './pages/AdminFaqs';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
+import { LanguageProvider } from './context/LanguageContext';
+
+<LanguageProvider>
+  <App />
+</LanguageProvider>
 
 
 function LayoutWithNavbar({ children }) {
@@ -55,6 +66,7 @@ function LayoutWithNavbar({ children }) {
 function App() {
   return (
     <BrowserRouter>
+          <LanguageProvider>
       <AuthProvider>
         <LayoutWithNavbar>
           <Routes>
@@ -78,6 +90,10 @@ function App() {
          <Route path="/admin/support" element={<AdminSupportPage />} />
         <Route path="/admin/passangers" element={<AdminPassangers />} />
         <Route path="/admin/payments" element={<AdminPayments />} />
+        <Route path="/admin/announcements" element={<AnnouncementManager />} />
+        <Route path="/announcements" element={<UserAnnouncements />} />
+        <Route path="/trending" element={<TrendingPlaces />} />
+        <Route path="/admin/faqs" element={<AdminFaqs />} />
         <Route
           path="/admin/flightspage"
           element={
@@ -102,6 +118,7 @@ function App() {
                      </Routes>
                    </LayoutWithNavbar>
                  </AuthProvider>
+                   </LanguageProvider>
                </BrowserRouter>
              );
            }

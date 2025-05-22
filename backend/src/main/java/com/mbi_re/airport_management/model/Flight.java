@@ -12,6 +12,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 public class Flight {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,24 +23,29 @@ public class Flight {
 
     private LocalTime departureTime;
     private LocalTime arrivalTime;
-
     private LocalDate flightDate;
 
     private int availableSeat;
     private double price;
 
-    private String airline;
+    @Enumerated(EnumType.STRING)
+    private FlightStatus flightStatus;
 
     @Column(name = "tenant_id", nullable = false)
     private String tenantId;
 
-    public String getTenantId() {
-        return tenantId;
-    }
+    @ManyToOne
+    @JoinColumn(name = "gate_id")
+    private Gate gate;
 
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
+    @ManyToOne
+    @JoinColumn(name = "terminal_id")
+    private Terminal terminal;
+
+    @ManyToOne
+    @JoinColumn(name = "airline_id", nullable = false)
+    private Airline airline;
+
 
     public Long getId() {
         return id;
@@ -113,11 +119,44 @@ public class Flight {
         this.price = price;
     }
 
-    public String getAirline() {
+    public FlightStatus getFlightStatus() {
+        return flightStatus;
+    }
+
+    public void setFlightStatus(FlightStatus flightStatus) {
+        this.flightStatus = flightStatus;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public Gate getGate() {
+        return gate;
+    }
+
+    public void setGate(Gate gate) {
+        this.gate = gate;
+    }
+
+    public Terminal getTerminal() {
+        return terminal;
+    }
+
+    public void setTerminal(Terminal terminal) {
+        this.terminal = terminal;
+    }
+
+    public Airline getAirline() {
         return airline;
     }
 
-    public void setAirline(String airline) {
+    public void setAirline(Airline airline) {
         this.airline = airline;
     }
 }
+

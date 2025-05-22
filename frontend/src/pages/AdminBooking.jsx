@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/AdminBooking.css";
+import "../styles/AdminAirportPage.css";
 import axios from "axios";
 
 function AdminBooking() {
@@ -55,13 +56,7 @@ function AdminBooking() {
 
   return (
     <div className="adminbooking-container">
-<<<<<<< Updated upstream
-      <aside className="adminbooking-sidebar">
-        <img src="/logo.png" alt="Logo" className="adminbooking-logo" />
-        <button className="adminbooking-side-button">DASHBOARD</button>
-        <button className="adminbooking-side-button">SEARCH</button>
-        <button className="adminbooking-side-button">BOOKINGS</button>
-=======
+
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
@@ -76,6 +71,7 @@ function AdminBooking() {
           </div>
           <div className="airport-nav-row">
             <a href="/admin/faqs">FAQS</a>
+
           </div>
           <div className="airport-nav-row">
             <a href="/admin/flightspage">FLIGHTS</a>
@@ -99,13 +95,13 @@ function AdminBooking() {
             <a href="/admin/announcements">ANNOUNCEMENTS</a>
           </div>
         </nav>
->>>>>>> Stashed changes
+
       </aside>
       <main className="adminbooking-content">
-        <div className="adminbooking-ribbon">
-          <span className="adminbooking-label">ADMIN</span>
-        </div>
-        <h2 className="adminbooking-title">BOOKINGS</h2>
+        <header className="adminbooking-header">
+          <h2>BOOKING</h2>
+          <div className="adminbooking-title">ADMIN</div>
+        </header>
 
         <div className="adminbooking-table-container">
           <table className="adminbooking-table">

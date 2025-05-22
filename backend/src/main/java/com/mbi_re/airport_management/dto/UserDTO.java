@@ -7,12 +7,22 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
+
+    private Long id;
     private String fullname;
     private String username;
     private String email;
     private String password;
     private String country;
     private String tenantId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getFullname() {
         return fullname;

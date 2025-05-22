@@ -1,35 +1,98 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import "../styles/FilteredFlights.css";
+import { getTenantIdFromSubdomain } from '../utils/getTenantId';
+import { useLanguage } from '../context/LanguageContext'; // ✅ importo kontekstin
 
-const FlightCard = () => (
-  <div className="filteredflights-card">
-    <div className="filteredflights-row">
-      <input type="text" placeholder="From" className="filteredflights-input" />
-      <input type="text" placeholder="To" className="filteredflights-input" />
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
+
+const FlightCard = ({ flight }) => {
+  const navigate = useNavigate();
+  const { t } = useLanguage(); // ✅ përkthe tekstet
+
+  const handleBuy = () => {
+    navigate('/booking', { state: { flight } });
+  };
+
+  return (
+    <div className="filteredflights-card">
+      <div className="filteredflights-row">
+        <span className="filteredflights-text"><strong>{t("From", "Prej")}:</strong> {flight.departureAirport}</span>
+        <span className="filteredflights-text"><strong>{t("To", "Deri")}:</strong> {flight.arrivalAirport}</span>
+      </div>
+      <div className="filteredflights-row">
+        <span className="filteredflights-text"><strong>{t("Departure", "Nisja")}:</strong> {flight.departureTime}</span>
+        <span className="filteredflights-text"><strong>{t("Arrival", "Ardhja")}:</strong> {flight.arrivalTime}</span>
+      </div>
+      <div className="filteredflights-row">
+        <span className="filteredflights-text"><strong>{t("Seats", "Ulëset")}:</strong> {flight.availableSeat}</span>
+        <span className="filteredflights-text"><strong>{t("Price", "Çmimi")}:</strong> €{flight.price}</span>
+        <button className="filteredflights-buy-btn" onClick={handleBuy}>{t("Buy", "Bli")}</button>
+      </div>
     </div>
-    <div className="filteredflights-row">
-      <input type="text" placeholder="Departure" className="filteredflights-input" />
-      <input type="text" placeholder="Arrival" className="filteredflights-input" />
-    </div>
-    <div className="filteredflights-row">
-      <input type="text" placeholder="Number of available seats" className="filteredflights-input filteredflights-seats" />
-      <input type="text" placeholder="Price" className="filteredflights-input filteredflights-price" />
-      <button className="filteredflights-buy-btn">Buy</button>
-    </div>
-  </div>
-);
+  );
+};
 
 const FilteredFlights = () => {
+  const query = useQuery();
+  const [flights, setFlights] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { t } = useLanguage(); // ✅ përdoret edhe në komponentin kryesor
+
+  const from = query.get('from');
+  const to = query.get('to');
+  const startDate = query.get('startDate');
+  const endDate = query.get('endDate');
+  const passengers = query.get('passengers');
+
+  useEffect(() => {
+    const fetchFlights = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/flights/filter', {
+          params: {
+            from,
+            to,
+            startDate,
+            endDate,
+            passengers
+          },
+          headers: {
+            'X-Tenant-ID': getTenantIdFromSubdomain()
+          }
+        });
+        setFlights(response.data);
+      } catch (error) {
+        console.error('Failed to fetch flights:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFlights();
+  }, [from, to, startDate, endDate, passengers]);
+
   return (
     <div className="filteredflights-wrapper">
       <div className="filteredflights-header">
-        <h2>Filtered Flights</h2>
+        <h2>{t("Filtered Flights", "Fluturimet e Filtruara")}</h2>
         <button className="filteredflights-filter-btn">
-          Filter By <span>▼</span>
+          {t("Filter By", "Filtro sipas")} <span>▼</span>
         </button>
       </div>
-      <FlightCard />
-      <FlightCard />
+
+      {loading ? (
+        <p>{t("Loading flights...", "Duke i ngarkuar fluturimet...")}</p>
+      ) : flights.length === 0 ? (
+        <p>{t("No flights found.", "Asnjë fluturim nuk u gjet.")}</p>
+      ) : (
+        flights.map(flight => (
+          <FlightCard key={flight.id} flight={flight} />
+        ))
+      )}
     </div>
   );
 };

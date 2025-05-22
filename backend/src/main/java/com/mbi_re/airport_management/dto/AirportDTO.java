@@ -2,9 +2,11 @@ package com.mbi_re.airport_management.dto;
 
 public class AirportDTO {
     private String name;
-    private String location;
-    private String country;
-    private String city;
+    private String code;
+    private Long countryId;
+    private Long cityId;
+    private String timezone;
+    private String tenantId;
 
     public String getName() {
         return name;
@@ -14,27 +16,43 @@ public class AirportDTO {
         this.name = name;
     }
 
-    public String getLocation() {
-        return location;
+    public String getCode() {
+        return code;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public String getCountry() {
-        return country;
+    public Long getCountryId() {
+        return countryId;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setCountryId(Long countryId) {
+        this.countryId = countryId;
     }
 
-    public String getCity() {
-        return city;
+    public Long getCityId() {
+        return cityId;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setCityId(Long cityId) {
+        this.cityId = cityId;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

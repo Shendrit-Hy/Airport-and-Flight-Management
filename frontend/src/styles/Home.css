@@ -1,5 +1,6 @@
 .home-page {
   font-family: sans-serif;
+  background-color: white;
 }
 
 /* Seksioni 1 */
@@ -14,21 +15,29 @@
 
 .overlay-text {
   text-align: center;
-  background: rgba(0, 0, 0, 0.6);
+  /* background: rgba(0, 0, 0, 0.6); */
   padding: 2rem;
   border-radius: 12px;
+  width: 1000px;
+}
+.home-title{
+  font-size: 100px;
+}
+.home-text{
+  font-size: 26px;
 }
 
 /* Seksioni 2 */
 .search-section {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  padding: 2rem;
+  padding: 4rem 4rem 4rem 4rem;
+  height: 500px;
 }
 
 .image-group img {
-  width: 200px;
+  width: 300px;
   height: auto;
   margin: 0 10px;
 }
@@ -36,13 +45,45 @@
 .search-form {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 10px;
+  width: 400px;
+  height: 450px;
+  padding-top: 30px;
+  background-color: rgb(30, 30, 30);
+  border-radius: 25px;
 }
 
-.search-form input,
+.search-form-field {
+  border-radius: 5px;
+  height: 30px;
+}
+
+
+.search-section-title{
+  color: white;
+  font-weight: bold;
+  font-size: 35px;
+}
+.search-form input {
+  padding: 10px;
+  width: 280px;
+  border-radius: 15px;
+  height: 30px;
+}
+
 .search-form button {
   padding: 10px;
-  width: 250px;
+  width: 300px;
+  border-radius: 15px;
+  height: 40px;
+  font-weight: bold;
+  background-color: rgb(0, 48, 221);
+  border: none;
+  color: white;
+}
+.search-form button:hover{
+  cursor: pointer;
 }
 
 /* Seksioni 3 */
@@ -50,18 +91,18 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 2rem;
+  padding: 4rem 4rem 4rem 4rem;
+  height: 450px;
 }
 
 .plane-image-left img {
-  width: 500px;
+  width: 750px;
   height: auto;
   border-radius: 8px;
 }
 
 .flights-table-right {
   flex: 1;
-  margin-left: 2rem;
 }
 
 .flight-table {
@@ -75,6 +116,7 @@
   border: 1px solid #ccc;
   text-align: center;
   background-color: white;
+  font-size: 10px;
 }
 
 .flight-table th {
@@ -86,7 +128,7 @@
 .view-flights-btn {
   margin-top: 1rem;
   padding: 10px 20px;
-  background-color: #d0183c;
+  background-color: rgb(0, 48, 221);
   color: white;
   border: none;
   border-radius: 5px;
@@ -94,28 +136,49 @@
 }
 .submit{
  cursor: pointer;}
-/* DIZAJN */
-.placeholder-section {
+
+.parking-price-section{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 4rem 4rem 4rem 4rem;
+  height: 450px;
+}
+.parking-price-right-section{
+  width: 50%;
+  height: 100%;
+  padding:1rem;
+  background: url('/public/epesta.jpg') center/cover no-repeat;
+  border-radius: 25px;
+}
+
+
+/* Weather Section */
+.weather-section {
+  padding: 4rem;
+  background-color: rgb(0, 31, 143);
+  text-align: center;
+}
+
+.weather-title {
+  font-size: 32px;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.weather-cards {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 300px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.placeholder-box {
-  border: 2px solid red;
-  padding: 2rem;
-  border-radius: 20px;
-  font-size: 1.5rem;
+.weather-card {
+  background-color: white;
+  border-radius: 15px;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width: 150px;
+  text-align: center;
 }
 
-/* Foto që mbulon tërë ekranin */
-.fullscreen-image-section {
-  width: 100%;
-}
-
-.full-img {
-  width: 100%;
-  height: auto;
-  display: block;
-}

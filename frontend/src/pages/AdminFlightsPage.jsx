@@ -1,54 +1,78 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import '../styles/AdminFlightsPage.css';
-import { getFlights, createFlight, deleteFlight } from '../api/flightService';
+import { getAllFlights, createFlight, deleteFlight } from '../api/flightService';
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
+import "../styles/AdminAirportPage.css"
+
 
 export default function AdminFlightsPage() {
   const [flights, setFlights] = useState([]);
-  const [newFlight, setNewFlight] = useState({
-    flightNumber: '',
-    departureAirport: '',
-    arrivalAirport: '',
-    departureTime: '',
-    arrivalTime: '',
-    flightDate: '',
-    availableSeat: '',
-    price: '',
-    airline: ''
-  });
+  const [terminals, setTerminals] = useState([]);
+  const [gates, setGates] = useState([]);
 
   const tenantId = getTenantIdFromSubdomain();
-  const token = localStorage.getItem("token"); // Read JWT token directly
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     loadFlights();
+    loadTerminals();
+    loadGates();
   }, []);
 
   const loadFlights = async () => {
     try {
-      const res = await getFlights(tenantId, token);
+      const res = await getAllFlights(tenantId, token);
       setFlights(res.data);
     } catch (err) {
       console.error("Failed to load flights", err);
     }
   };
 
-  const handleChange = (e) => {
-    setNewFlight({ ...newFlight, [e.target.name]: e.target.value });
+  const loadTerminals = async () => {
+    try {
+      const res = await fetch(`/api/terminals`, {
+        headers: {
+          "X-Tenant-ID": tenantId,
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      setTerminals(data);
+    } catch (err) {
+      console.error("Failed to load terminals", err);
+    }
   };
 
-const handleAddFlight = async () => {
-  try {
-    await createFlight(newFlight, tenantId, token);
-    console.log("Flight created!");
-    // Optionally refresh flight list or reset form
-  } catch (error) {
-    console.error("Failed to create flight", error);
-    if (error.response?.status === 401) {
-      alert("You must be logged in as admin to create a flight.");
+  const loadGates = async () => {
+    try {
+      const res = await fetch(`/api/gates`, {
+        headers: {
+          "X-Tenant-ID": tenantId,
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      setGates(data);
+    } catch (err) {
+      console.error("Failed to load gates", err);
     }
-  }
-};
+  };
+
+  const handleAddFlight = async (values, { resetForm }) => {
+    try {
+      await createFlight(values, tenantId, token);
+      console.log("Flight created!");
+      loadFlights();
+      resetForm();
+    } catch (error) {
+      console.error("Failed to create flight", error);
+      if (error.response?.status === 401) {
+        alert("You must be logged in as admin to create a flight.");
+      }
+    }
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -61,16 +85,16 @@ const handleAddFlight = async () => {
 
   return (
     <div className="adminflights-layout">
-      <aside className="adminflights-sidebar">
-        <div className="adminflights-logo">MBI RE</div>
-        <nav className="adminflights-nav">
-          <div className="adminflights-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a>
-            <a href="/admin/search">SEARCH</a>
-          </div>
-          <div className="adminflights-nav-row">
-            <a href="/admin/flights" className="active">FLIGHTS</a>
-          </div>
+      <aside className="airport-sidebar">
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+
+          {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
+            <div className="airport-nav-row" key={item}>
+              <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
+            </div>
+          ))}
+
         </nav>
       </aside>
 
@@ -80,7 +104,7 @@ const handleAddFlight = async () => {
           <div className="adminflights-title">ADMIN</div>
         </header>
 
-<<<<<<< Updated upstream
+
         <form className="adminflights-add-form" onSubmit={handleAddFlight}>
           <div className="adminflights-form-grid">
             {[
@@ -109,7 +133,7 @@ const handleAddFlight = async () => {
           </div>
           <button type="submit" className="adminflights-add-btn">ADD</button>
         </form>
-=======
+
         <Formik
           initialValues={{
             flightNumber: '',
@@ -181,6 +205,7 @@ const handleAddFlight = async () => {
                   style={{ backgroundColor: 'rgb(53,53,53)', color: 'white' }}
                   required
                 >
+
                   <option value="">Select Gate</option>
                   {gates.map((g) => (
                     <option key={g.id} value={g.id}>{g.name}</option>
@@ -194,7 +219,7 @@ const handleAddFlight = async () => {
           </Form>
 
         </Formik>
->>>>>>> Stashed changes
+
 
         <div className="adminflights-table">
           <div className="adminflights-table-header">
@@ -207,6 +232,7 @@ const handleAddFlight = async () => {
             <span>Available Seat</span>
             <span>Price</span>
             <span>Airline</span>
+            <span>Status</span>
             <span>Actions</span>
           </div>
 
@@ -221,6 +247,7 @@ const handleAddFlight = async () => {
               <span>{f.availableSeat}</span>
               <span>{f.price}</span>
               <span>{f.airline}</span>
+              <span>{f.flightStatus}</span>
               <span>
                 <button className="adminflights-delete-btn" onClick={() => handleDelete(f.id)}>🗑</button>
               </span>

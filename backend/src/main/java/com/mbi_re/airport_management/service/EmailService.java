@@ -6,6 +6,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for sending support-related email notifications.
+ */
 @Service
 public class EmailService {
 
@@ -15,6 +18,13 @@ public class EmailService {
     @Autowired
     private Environment env;
 
+    /**
+     * Sends a support notification email.
+     *
+     * @param to      the recipient email address
+     * @param subject the subject of the email
+     * @param message the body of the email
+     */
     public void sendSupportNotification(String to, String subject, String message) {
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(to);
