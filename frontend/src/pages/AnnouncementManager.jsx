@@ -3,6 +3,7 @@ import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { getTenantIdFromSubdomain } from "../utils/getTenantId";
+
 import "../styles/AdminBooking.css";
 import "../styles/AdminAirportPage.css";
 
@@ -47,6 +48,7 @@ function AdminAnnouncements() {
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
+
           {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
             <div className="airport-nav-row" key={item}>
               <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
@@ -63,13 +65,14 @@ function AdminAnnouncements() {
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat"
         }}
-      >
+
         <header className="adminbooking-header">
           <h2>ANNOUNCEMENTS</h2>
           <div className="adminbooking-title">ADMIN</div>
         </header>
 
         <div className="adminpayments-form">
+
           <Formik
             initialValues={{ title: "", message: "" }}
             validationSchema={Yup.object({
