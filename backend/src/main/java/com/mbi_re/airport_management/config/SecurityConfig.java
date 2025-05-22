@@ -41,7 +41,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5179")); // Your frontend origin
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5179", "http://localhost:5173")); // Your frontend origin
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Tenant-ID"));
         config.setAllowCredentials(true); // If using cookies or auth headers
@@ -68,6 +68,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/flights/filter").permitAll()
                         .requestMatchers("/api/announcements").permitAll()
                         .requestMatchers("/api/faqs").permitAll()
+                        .requestMatchers("/api/airlines").permitAll()
                         .requestMatchers("/api/countries").permitAll()
                         .requestMatchers("/api/terminals").permitAll()
                         .requestMatchers("/api/gates").permitAll()
