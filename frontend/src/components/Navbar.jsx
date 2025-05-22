@@ -20,7 +20,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <Link to="/" className="navbar-logo">Logo</Link>
+        <Link to="/" className="navbar-logo">MBI RE</Link>
       </div>
       <div className="navbar-right">
         <Link to="/flights" className="navbar-link">{t("Flights", "Fluturimet")}</Link>

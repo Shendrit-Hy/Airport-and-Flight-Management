@@ -1,40 +1,73 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/userProfile.css';
-import { useLanguage } from '../context/LanguageContext'; // ✅
+import { useLanguage } from '../context/LanguageContext';
+import axios from '../utils/axiosInstance'; // ose përdor axios direkt
 
 export default function UserProfile() {
-  const { t } = useLanguage(); // ✅
+  const { t } = useLanguage();
+
   const [user, setUser] = useState({
-    username: 'john_doe',
-    fullName: 'John Doe',
-    email: 'john@example.com',
-    role: 'User'
+    username: '',
+    fullName: '',
+    email: '',
+    role: ''
   });
 
-  const [flights, setFlights] = useState([
-    {
-      id: 1,
-      flightNumber: 'MB101',
-      departureAirport: 'Prishtina',
-      arrivalAirport: 'Zurich',
-      departureTime: '07:30',
-      arrivalTime: '09:15',
-      price: 150,
-      flightStatus: 'SCHEDULED',
-      checked: 'No'
-    },
-    {
-      id: 2,
-      flightNumber: 'MB202',
-      departureAirport: 'Tirana',
-      arrivalAirport: 'Berlin',
-      departureTime: '10:00',
-      arrivalTime: '12:45',
-      price: 200,
-      flightStatus: 'CANCELLED',
-      checked: 'No'
+  const [editedUsername, setEditedUsername] = useState('');
+  const [flights, setFlights] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const tenantId = localStorage.getItem("tenantId") || "default";
+
+    axios.get('/api/auth/profile', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-Tenant-ID": tenantId
+      }
+    }).then(res => {
+      setUser(res.data);
+      setEditedUsername(res.data.username);
+    }).catch(err => {
+      console.error("Gabim gjatë marrjes së profilit:", err);
+    });
+
+    axios.get('/api/flights', {
+      headers: {
+        "X-Tenant-ID": tenantId
+      }
+    }).then(res => {
+      setFlights(res.data);
+    }).catch(err => {
+      console.error("Gabim gjatë marrjes së fluturimeve:", err);
+    });
+  }, []);
+
+  const handleUsernameUpdate = async () => {
+    const token = localStorage.getItem("token");
+    const tenantId = localStorage.getItem("tenantId") || "default";
+
+    setLoading(true);
+    try {
+      const res = await axios.put('/api/auth/profile', {
+        ...user,
+        username: editedUsername
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-Tenant-ID": tenantId
+        }
+      });
+      setUser(res.data);
+      alert("Username updated successfully!");
+    } catch (err) {
+      console.error("Gabim gjatë përditësimit:", err);
+      alert("Update failed.");
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
   const handleCancel = (flightId) => {
     setFlights(prev =>
@@ -61,8 +94,20 @@ export default function UserProfile() {
 
         <div className="userprofile-container">
           <div className="userprofile-left">
-            <button className="userprofile-btn">{t("Username", "Emri i përdoruesit")}: {user.username}</button>
-            <button className="userprofile-btn userprofile-update">{t("Update Your Username", "Përditëso Emrin e Përdoruesit")}</button>
+            <input
+              type="text"
+              value={editedUsername}
+              onChange={(e) => setEditedUsername(e.target.value)}
+              className="userprofile-btn"
+            />
+            <button
+              className="userprofile-btn userprofile-update"
+              onClick={handleUsernameUpdate}
+              disabled={loading}
+            >
+              {loading ? t("Updating...", "Duke përditësuar...") : t("Update Your Username", "Përditëso Emrin")}
+            </button>
+
             <button className="userprofile-btn">{t("Full Name", "Emri i Plotë")}: {user.fullName}</button>
             <button className="userprofile-btn">{t("Email", "Email")}: {user.email}</button>
           </div>

@@ -15,6 +15,7 @@ public class UserDTO {
     private String password;
     private String country;
     private String tenantId;
+    private String role;
 
     public Long getId() {
         return id;
@@ -44,16 +45,16 @@ public class UserDTO {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
@@ -70,5 +71,13 @@ public class UserDTO {
 
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

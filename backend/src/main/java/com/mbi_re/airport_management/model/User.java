@@ -2,11 +2,7 @@ package com.mbi_re.airport_management.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -37,7 +33,7 @@ public class User {
     private String password;
 
     @Column(name = "tenant_id", nullable = false)
-    private String tenantId; // Multitenancy support
+    private String tenantId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
