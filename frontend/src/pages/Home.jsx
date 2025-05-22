@@ -24,7 +24,6 @@ const HomePage = () => {
   const [price, setPrice] = useState(null);
   const [forecast, setForecast] = useState([]);
 
-
   useEffect(() => {
     const fetchAirports = async () => {
       try {
@@ -40,24 +39,16 @@ const HomePage = () => {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const apiKey = "YOUR_API_KEY"; // Replace with your actual API key
+        const apiKey = "YOUR_API_KEY";
         const response = await fetch(
           `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=Prishtina`
         );
         const data = await response.json();
         if (data.error) {
           console.error('Weather API Error:', data.error.message);
-          setWeather(null);
-        } else {
-          setWeather({
-            temp: data.current.temp_c,
-            description: data.current.condition.text,
-            icon: data.current.condition.icon
-          });
         }
       } catch (error) {
         console.error("Weather fetch failed", error);
-        setWeather(null);
       }
     };
 
@@ -78,10 +69,11 @@ const HomePage = () => {
       setPrice(null);
     }
   };
+
   useEffect(() => {
     const fetchForecast = async () => {
       try {
-        const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+        const apiKey = 'YOUR_API_KEY';
         const lat = '42.665440';
         const lon = '21.165319';
         const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
@@ -96,6 +88,7 @@ const HomePage = () => {
     };
     fetchForecast();
   }, []);
+
   return (
     <div className="home-page">
       <header className="navbar-section"></header>
@@ -162,7 +155,7 @@ const HomePage = () => {
                 <th>{t('ACTIVE', 'AKTIV')}</th>
               </tr>
             </thead>
-            <tbody>{/* Flights will be dynamically inserted here */}</tbody>
+            <tbody></tbody>
           </table>
           <button className="view-flights-btn" onClick={() => window.location.href = "/flights"}>
             {t('View All Flights', 'Shiko të gjitha fluturimet')}
@@ -200,7 +193,7 @@ const HomePage = () => {
         </div>
         <div className="parking-price-right-section"></div>
       </section>
-      {/* Weather Section */}
+
       <section className="section weather-section">
         <h2 className="weather-title">{t('5-Day Forecast', 'Parashikimi 5-Ditor')}</h2>
         <div className="weather-cards">
