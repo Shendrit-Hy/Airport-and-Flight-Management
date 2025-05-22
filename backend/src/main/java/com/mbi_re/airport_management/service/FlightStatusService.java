@@ -12,13 +12,28 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Service responsible for automatically updating the status of flights based on their scheduled times.
+ */
 @Service
 @RequiredArgsConstructor
 public class FlightStatusService {
+
     @Autowired
     private FlightRepository flightRepository;
 
-    // Runs every minute
+    /**
+     * Updates the status of all flights every minute based on current time.
+     * <p>
+     * Status transitions:
+     * <ul>
+     *     <li>SCHEDULED: More than 60 minutes before departure</li>
+     *     <li>BOARDING: Within 60 minutes before departure</li>
+     *     <li>IN_AIR: Between departure and arrival</li>
+     *     <li>LANDED: After arrival</li>
+     *     <li>UNKNOWN: Fallback state</li>
+     * </ul>
+     */
     @Scheduled(fixedRate = 60000)
     @Transactional
     public void updateFlightStatuses() {
@@ -29,7 +44,7 @@ public class FlightStatusService {
             LocalDateTime departure = LocalDateTime.of(flight.getFlightDate(), flight.getDepartureTime());
             LocalDateTime arrival = LocalDateTime.of(flight.getFlightDate(), flight.getArrivalTime());
 
-            // Handle overnight flights (arrival time before departure)
+            // Adjust for overnight flights
             if (arrival.isBefore(departure)) {
                 arrival = arrival.plusDays(1);
             }
@@ -43,6 +58,14 @@ public class FlightStatusService {
         }
     }
 
+    /**
+     * Determines the current flight status based on the time now, departure, and arrival.
+     *
+     * @param now       current time
+     * @param departure scheduled departure datetime
+     * @param arrival   scheduled arrival datetime
+     * @return the evaluated {@link FlightStatus}
+     */
     private FlightStatus determineStatus(LocalDateTime now, LocalDateTime departure, LocalDateTime arrival) {
         if (now.isBefore(departure.minusMinutes(60))) {
             return FlightStatus.SCHEDULED;
@@ -57,4 +80,3 @@ public class FlightStatusService {
         }
     }
 }
-

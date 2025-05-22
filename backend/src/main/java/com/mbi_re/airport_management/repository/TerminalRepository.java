@@ -6,11 +6,26 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for accessing terminal data.
+ * Supports tenant-aware queries.
+ */
 public interface TerminalRepository extends JpaRepository<Terminal, Long> {
 
-    // Find all terminals for a given tenant
+    /**
+     * Finds all terminals associated with a given tenant.
+     *
+     * @param tenantId the ID of the tenant
+     * @return list of terminals
+     */
     List<Terminal> findByTenantId(String tenantId);
 
-    // Find one terminal by ID and tenant
+    /**
+     * Finds a specific terminal by ID and tenant.
+     *
+     * @param id       the ID of the terminal
+     * @param tenantId the tenant ID
+     * @return optional terminal
+     */
     Optional<Terminal> findByIdAndTenantId(Long id, String tenantId);
 }

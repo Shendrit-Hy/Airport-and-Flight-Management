@@ -23,13 +23,10 @@ public class Flight {
 
     private LocalTime departureTime;
     private LocalTime arrivalTime;
-
     private LocalDate flightDate;
 
     private int availableSeat;
     private double price;
-
-    private String airline;
 
     @Enumerated(EnumType.STRING)
     private FlightStatus flightStatus;
@@ -44,6 +41,11 @@ public class Flight {
     @ManyToOne
     @JoinColumn(name = "terminal_id")
     private Terminal terminal;
+
+    @ManyToOne
+    @JoinColumn(name = "airline_id", nullable = false)
+    private Airline airline;
+
 
     public Long getId() {
         return id;
@@ -117,14 +119,6 @@ public class Flight {
         this.price = price;
     }
 
-    public String getAirline() {
-        return airline;
-    }
-
-    public void setAirline(String airline) {
-        this.airline = airline;
-    }
-
     public FlightStatus getFlightStatus() {
         return flightStatus;
     }
@@ -156,4 +150,13 @@ public class Flight {
     public void setTerminal(Terminal terminal) {
         this.terminal = terminal;
     }
+
+    public Airline getAirline() {
+        return airline;
+    }
+
+    public void setAirline(Airline airline) {
+        this.airline = airline;
+    }
 }
+

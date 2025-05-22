@@ -22,19 +22,17 @@ public class FlightDTO {
 
     private LocalTime departureTime;
     private LocalTime arrivalTime;
-
     private LocalDate flightDate;
 
     private int availableSeat;
     private double price;
-
-    private String airline;
 
     private FlightStatus flightStatus;
     private String tenantId;
 
     private Long gateId;
     private Long terminalId;
+    private Long airlineId;
 
     public Long getId() {
         return id;
@@ -108,14 +106,6 @@ public class FlightDTO {
         this.price = price;
     }
 
-    public String getAirline() {
-        return airline;
-    }
-
-    public void setAirline(String airline) {
-        this.airline = airline;
-    }
-
     public FlightStatus getFlightStatus() {
         return flightStatus;
     }
@@ -146,5 +136,13 @@ public class FlightDTO {
 
     public void setTerminalId(Long terminalId) {
         this.terminalId = terminalId;
+    }
+
+    public Long getAirlineId() {
+        return airlineId;
+    }
+
+    public void setAirlineId(Long airlineId) {
+        this.airlineId = airlineId;
     }
 }

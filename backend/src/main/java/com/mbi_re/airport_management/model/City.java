@@ -17,6 +17,17 @@ public class City {
     @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
+    @Column(name = "tenant_id", nullable = false)
+    private String tenantId;
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
     public City() {}
 
     public City(Long id, String name, Country country) {

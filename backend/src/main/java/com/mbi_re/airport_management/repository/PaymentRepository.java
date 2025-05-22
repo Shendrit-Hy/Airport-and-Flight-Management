@@ -6,9 +6,26 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository for managing Payment entities.
+ */
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
-    List<Payment> findAllByTenantId(String tenantId);
-    Payment findByReferenceAndTenantId(String reference, String tenantId);
 
+    /**
+     * Retrieves all payments for a specific tenant.
+     *
+     * @param tenantId the tenant ID
+     * @return list of payments associated with the tenant
+     */
+    List<Payment> findAllByTenantId(String tenantId);
+
+    /**
+     * Finds a payment by its reference and tenant ID.
+     *
+     * @param reference the unique payment reference
+     * @param tenantId  the tenant ID
+     * @return the payment matching the reference and tenant, or null if not found
+     */
+    Payment findByReferenceAndTenantId(String reference, String tenantId);
 }

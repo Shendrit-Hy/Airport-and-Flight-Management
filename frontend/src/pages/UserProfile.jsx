@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/userProfile.css';
+import { useLanguage } from '../context/LanguageContext'; // ✅
 
 export default function UserProfile() {
+  const { t } = useLanguage(); // ✅
   const [user, setUser] = useState({
     username: 'john_doe',
     fullName: 'John Doe',
@@ -54,20 +56,20 @@ export default function UserProfile() {
     <div className="userprofile-page">
       <div className="userprofile-main">
         <header className="userprofile-topbar">
-          <span>{user.role}</span>
+          <span>{t(user.role, user.role)}</span>
         </header>
 
         <div className="userprofile-container">
           <div className="userprofile-left">
-            <button className="userprofile-btn">Username: {user.username}</button>
-            <button className="userprofile-btn userprofile-update">Update Your Username</button>
-            <button className="userprofile-btn">Full Name: {user.fullName}</button>
-            <button className="userprofile-btn">Email: {user.email}</button>
+            <button className="userprofile-btn">{t("Username", "Emri i përdoruesit")}: {user.username}</button>
+            <button className="userprofile-btn userprofile-update">{t("Update Your Username", "Përditëso Emrin e Përdoruesit")}</button>
+            <button className="userprofile-btn">{t("Full Name", "Emri i Plotë")}: {user.fullName}</button>
+            <button className="userprofile-btn">{t("Email", "Email")}: {user.email}</button>
           </div>
 
           <div className="userprofile-right">
             <div className="userprofile-flight-box">
-              <p>NUMRI I<br />FLUTURIMEVE</p>
+              <p>{t("NUMBER OF", "NUMRI I")}<br />{t("FLIGHTS", "FLUTURIMEVE")}</p>
               <h3>{flights.length}</h3>
             </div>
           </div>
@@ -77,15 +79,15 @@ export default function UserProfile() {
           <table>
             <thead>
               <tr>
-                <th>Flight No</th>
-                <th>Origin</th>
-                <th>Destination</th>
-                <th>Departure</th>
-                <th>Arrival</th>
-                <th>Price (€)</th>
-                <th>Status</th>
-                <th>Checked</th>
-                <th>Actions</th>
+                <th>{t("Flight No", "Nr. Fluturimit")}</th>
+                <th>{t("Origin", "Prejardhja")}</th>
+                <th>{t("Destination", "Destinacioni")}</th>
+                <th>{t("Departure", "Nisja")}</th>
+                <th>{t("Arrival", "Ardhja")}</th>
+                <th>{t("Price (€)", "Çmimi (€)")}</th>
+                <th>{t("Status", "Statusi")}</th>
+                <th>{t("Checked", "I regjistruar")}</th>
+                <th>{t("Actions", "Veprime")}</th>
               </tr>
             </thead>
             <tbody>
@@ -102,8 +104,8 @@ export default function UserProfile() {
                   <td>
                     {flight.flightStatus === 'SCHEDULED' && (
                       <>
-                        <button onClick={() => handleCancel(flight.id)}>Cancel</button>
-                        <button onClick={() => handleCheckIn(flight.id)}>Check In</button>
+                        <button onClick={() => handleCancel(flight.id)}>{t("Cancel", "Anulo")}</button>
+                        <button onClick={() => handleCheckIn(flight.id)}>{t("Check In", "Regjistrohu")}</button>
                       </>
                     )}
                   </td>

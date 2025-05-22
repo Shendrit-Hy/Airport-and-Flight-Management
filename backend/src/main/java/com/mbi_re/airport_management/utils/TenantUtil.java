@@ -13,5 +13,18 @@ public class TenantUtil {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid tenant ID");
         }
     }
+
+    public static void validateTenantFromContext() {
+        String contextTenant = TenantContext.getTenantId();
+        if (contextTenant == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Missing tenant context");
+        }
+    }
+
+    public static String getCurrentTenant() {
+        return TenantContext.getTenantId();
+    }
+
+
 }
 
