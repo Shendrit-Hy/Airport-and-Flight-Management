@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import '../styles/Home.css';
-import { getAirports } from '../api/airportService';
+import { getAllAirports } from '../api/airportService';
 import axios from '../utils/axiosInstance';
 import ImageSlider from './ImageSlider';
 
@@ -27,7 +27,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchAirports = async () => {
       try {
-        const response = await getAirports();
+        const response = await getAllAirports();
         setAirports(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error('Failed to load airports:', error);

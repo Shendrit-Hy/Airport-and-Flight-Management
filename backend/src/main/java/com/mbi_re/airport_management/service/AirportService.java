@@ -7,6 +7,7 @@ import com.mbi_re.airport_management.model.Country;
 import com.mbi_re.airport_management.repository.AirportRepository;
 import com.mbi_re.airport_management.repository.CityRepository;
 import com.mbi_re.airport_management.repository.CountryRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -71,13 +72,18 @@ public class AirportService {
     }
 
     /**
-     * Deletes an airport by ID and tenant.
+     * Deletes an airport by ID for a given tenant.
      * Ensures the airport belongs to the tenant before deletion.
-     * Evicts cache for the tenant.
+     * Evicts cache for the tenant after successful deletion.
      *
-     * @param id       the airport ID
-     * @param tenantId the tenant identifier
+     * This operation is transactional – if any part of the deletion process fails,
+     * the entire operation is rolled back.
+     *
+     * @param id       the ID of the airport to delete
+     * @param tenantId the tenant identifier from request context or header
+     * @throws IllegalArgumentException if the airport is not found or doesn't belong to the tenant
      */
+    @Transactional
     @CacheEvict(value = "airports", key = "#tenantId")
     public void deleteAirport(Long id, String tenantId) {
         airportRepository.findByIdAndTenantId(id, tenantId)
