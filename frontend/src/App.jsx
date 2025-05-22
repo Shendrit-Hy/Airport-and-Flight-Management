@@ -33,6 +33,9 @@ import AdminCity from './pages/AdminCity';
 import AdminLanguages from './pages/AdminLanguages';
 import AdminTrendingPlace from './pages/AdminTrendingPlace';
 import AdminPolicy from './pages/AdminPolicy';
+import AdminGate from './pages/AdminGate';
+import AdminTerminalandAirline from './pages/AdminTerminalandAirline';
+
 
 
 
@@ -105,6 +108,8 @@ function App() {
         <Route path="/admin/languages" element={<AdminLanguages />} />
         <Route path="/admin/trending" element={<AdminTrendingPlace />} />
         <Route path="/admin/policy" element={<AdminPolicy />} />
+        <Route path="/admin/gate" element={<AdminGate />} />
+        <Route path="/admin/terminal" element={<AdminTerminalandAirline />} />
 
 
 
