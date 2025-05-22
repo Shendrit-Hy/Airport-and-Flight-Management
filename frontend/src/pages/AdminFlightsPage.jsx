@@ -4,8 +4,7 @@ import * as Yup from 'yup';
 import '../styles/AdminFlightsPage.css';
 import { getAllFlights, createFlight, deleteFlight } from '../api/flightService';
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
-import "../styles/AdminAirportPage.css"
-
+import "../styles/AdminAirportPage.css";
 
 export default function AdminFlightsPage() {
   const [flights, setFlights] = useState([]);
@@ -88,13 +87,11 @@ export default function AdminFlightsPage() {
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
-
           {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
             <div className="airport-nav-row" key={item}>
               <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
             </div>
           ))}
-
         </nav>
       </aside>
 
@@ -103,36 +100,6 @@ export default function AdminFlightsPage() {
           <h2>FLIGHTS</h2>
           <div className="adminflights-title">ADMIN</div>
         </header>
-
-
-        <form className="adminflights-add-form" onSubmit={handleAddFlight}>
-          <div className="adminflights-form-grid">
-            {[
-              { name: 'flightNumber', label: 'Flight Number' },
-              { name: 'departureAirport', label: 'Departure Airport' },
-              { name: 'arrivalAirport', label: 'Arrival Airport' },
-              { name: 'departureTime', label: 'Departure Time' },
-              { name: 'arrivalTime', label: 'Arrival Time' },
-              { name: 'flightDate', label: 'Flight Date' },
-              { name: 'availableSeat', label: 'Available Seat' },
-              { name: 'price', label: 'Price' },
-              { name: 'airline', label: 'Airline' }
-            ].map((field) => (
-              <div className="adminflights-input-group" key={field.name}>
-                <label htmlFor={field.name}>{field.label}</label>
-                <input
-                  type="text"
-                  id={field.name}
-                  name={field.name}
-                  value={newFlight[field.name]}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            ))}
-          </div>
-          <button type="submit" className="adminflights-add-btn">ADD</button>
-        </form>
 
         <Formik
           initialValues={{
@@ -205,7 +172,6 @@ export default function AdminFlightsPage() {
                   style={{ backgroundColor: 'rgb(53,53,53)', color: 'white' }}
                   required
                 >
-
                   <option value="">Select Gate</option>
                   {gates.map((g) => (
                     <option key={g.id} value={g.id}>{g.name}</option>
@@ -217,9 +183,7 @@ export default function AdminFlightsPage() {
 
             <button type="submit" className="adminflights-add-btn">ADD</button>
           </Form>
-
         </Formik>
-
 
         <div className="adminflights-table">
           <div className="adminflights-table-header">
