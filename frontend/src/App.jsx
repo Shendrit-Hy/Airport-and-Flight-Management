@@ -29,6 +29,16 @@ import AnnouncementManager from './pages/AnnouncementManager';
 import UserAnnouncements from './pages/UserAnnouncements';
 import TrendingPlaces from './pages/TrendingPlaces';
 import AdminFaqs from './pages/AdminFaqs';
+import AdminCity from './pages/AdminCity';
+import AdminLanguages from './pages/AdminLanguages';
+import AdminTrendingPlace from './pages/AdminTrendingPlace';
+import AdminPolicy from './pages/AdminPolicy';
+import AdminGate from './pages/AdminGate';
+import AdminTerminalandAirline from './pages/AdminTerminalandAirline';
+
+
+
+
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -94,6 +104,15 @@ function App() {
         <Route path="/announcements" element={<UserAnnouncements />} />
         <Route path="/trending" element={<TrendingPlaces />} />
         <Route path="/admin/faqs" element={<AdminFaqs />} />
+        <Route path="/admin/city" element={<AdminCity />} />
+        <Route path="/admin/languages" element={<AdminLanguages />} />
+        <Route path="/admin/trending" element={<AdminTrendingPlace />} />
+        <Route path="/admin/policy" element={<AdminPolicy />} />
+        <Route path="/admin/gate" element={<AdminGate />} />
+        <Route path="/admin/terminal" element={<AdminTerminalandAirline />} />
+
+
+
         <Route
           path="/admin/flightspage"
           element={

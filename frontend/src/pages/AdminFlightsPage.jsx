@@ -26,6 +26,7 @@ export default function AdminFlightsPage() {
 
   const handleAddFlight = async (values, { resetForm }) => {
     try {
+      await addFlight(values, token);
       console.log("Flight created!");
       console.log(values);
       console.log(token);
