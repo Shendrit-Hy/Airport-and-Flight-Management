@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 import "../styles/FilteredFlights.css";
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
-import { useLanguage } from '../context/LanguageContext'; // ✅ importo kontekstin
+import { useLanguage } from '../context/LanguageContext';
+import { filterFlights } from '../api/flightService';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -12,7 +11,7 @@ const useQuery = () => {
 
 const FlightCard = ({ flight }) => {
   const navigate = useNavigate();
-  const { t } = useLanguage(); // ✅ përkthe tekstet
+  const { t } = useLanguage();
 
   const handleBuy = () => {
     navigate('/booking', { state: { flight } });
@@ -41,29 +40,19 @@ const FilteredFlights = () => {
   const query = useQuery();
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { t } = useLanguage(); // ✅ përdoret edhe në komponentin kryesor
+  const { t } = useLanguage();
 
   const from = query.get('from');
   const to = query.get('to');
   const startDate = query.get('startDate');
   const endDate = query.get('endDate');
   const passengers = query.get('passengers');
+  const tenantId = getTenantIdFromSubdomain();
 
   useEffect(() => {
     const fetchFlights = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/flights/filter', {
-          params: {
-            from,
-            to,
-            startDate,
-            endDate,
-            passengers
-          },
-          headers: {
-            'X-Tenant-ID': getTenantIdFromSubdomain()
-          }
-        });
+        const response = await filterFlights({ from, to, startDate, endDate, passengers }, tenantId);
         setFlights(response.data);
       } catch (error) {
         console.error('Failed to fetch flights:', error);
@@ -73,7 +62,7 @@ const FilteredFlights = () => {
     };
 
     fetchFlights();
-  }, [from, to, startDate, endDate, passengers]);
+  }, [from, to, startDate, endDate, passengers, tenantId]);
 
   return (
     <div className="filteredflights-wrapper">

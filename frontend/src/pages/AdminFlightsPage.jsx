@@ -26,8 +26,10 @@ export default function AdminFlightsPage() {
 
   const handleAddFlight = async (values, { resetForm }) => {
     try {
-      await addFlight(values, token);
       console.log("Flight created!");
+      console.log(values);
+      console.log(token);
+      await addFlight(values, token);
       loadFlights();
       resetForm();
     } catch (error) {
@@ -76,7 +78,7 @@ export default function AdminFlightsPage() {
             flightDate: '',
             availableSeat: '',
             price: '',
-            airline: '',
+            airlineId: '',
             terminalId: '',
             gateId: ''
           }}
@@ -89,7 +91,7 @@ export default function AdminFlightsPage() {
             flightDate: Yup.string().required('Required'),
             availableSeat: Yup.number().required('Required'),
             price: Yup.number().required('Required'),
-            airline: Yup.string().required('Required'),
+            airlineId: Yup.string().required('Required'),
             terminalId: Yup.string().required('Required'),
             gateId: Yup.string().required('Required')
           })}
@@ -99,7 +101,7 @@ export default function AdminFlightsPage() {
             <div className="adminflights-form-grid">
               {[
                 "flightNumber", "departureAirport", "arrivalAirport", "departureTime",
-                "arrivalTime", "flightDate", "availableSeat", "price", "airline",
+                "arrivalTime", "flightDate", "availableSeat", "price", "airlineId",
                 "terminalId", "gateId"
               ].map((field) => (
                 <div className="adminflights-input-group" key={field}>
@@ -130,7 +132,7 @@ export default function AdminFlightsPage() {
             <span>Flight Date</span>
             <span>Available Seat</span>
             <span>Price</span>
-            <span>Airline</span>
+            <span>Airline ID</span>
             <span>Status</span>
             <span>Actions</span>
           </div>
@@ -145,7 +147,7 @@ export default function AdminFlightsPage() {
               <span>{f.flightDate}</span>
               <span>{f.availableSeat}</span>
               <span>{f.price}</span>
-              <span>{f.airline}</span>
+              <span>{f.airlineId}</span>
               <span>{f.flightStatus}</span>
               <span>
                 <button className="adminflights-delete-btn" onClick={() => handleDelete(f.id)}>🗑</button>

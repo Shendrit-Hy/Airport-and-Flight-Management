@@ -37,4 +37,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
      * @return optional seat
      */
     Optional<Seat> findByIdAndTenantId(Long id, String tenantId);
+
+    void deleteByFlightIdAndTenantId(Long flightId, String tenantId);
 }
