@@ -1,102 +1,58 @@
 import React, { useEffect, useState } from "react";
 import "../styles/AdminBooking.css";
 import "../styles/AdminAirportPage.css";
-import axios from "axios";
+import { getAllBookings, deleteBooking } from "../api/bookingService";
+import { getTenantIdFromSubdomain } from "../utils/getTenantId";
 
 function AdminBooking() {
   const [bookings, setBookings] = useState([]);
 
+  const token = localStorage.getItem("token");
+  const tenantId = getTenantIdFromSubdomain();
+
   useEffect(() => {
-    const token = localStorage.getItem("token"); // Ose merre nga AuthContext
-    const tenantId = "airline1"; // ose import nga getTenantId()
-
-    console.log("📡 Duke dërguar request për bookings me token:", token);
-
-    axios.get('http://localhost:8080/api/bookings', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'X-Tenant-ID': tenantId,
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => {
-        const data = Array.isArray(response.data)
-          ? response.data
-          : response.data.bookings;
-
-        console.log("📦 Marrë nga backend:", data);
-        setBookings(data || []);
-      })
-      .catch(error => {
-        console.error(' Error fetching bookings:', error);
-      });
+    loadBookings();
   }, []);
 
+  const loadBookings = async () => {
+    try {
+      const response = await getAllBookings(tenantId, token);
+      const data = Array.isArray(response.data)
+        ? response.data
+        : response.data.bookings;
+
+      setBookings(data || []);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    }
+  };
+
   const handleDelete = async (id) => {
-  const token = localStorage.getItem("token");
-  const tenantId = "airline1";
-
-  try {
-    await axios.delete(`http://localhost:8080/api/bookings/${id}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'X-Tenant-ID': tenantId
-      }
-    });
-
-    // Fshi nga state vetëm nëse backend-i konfirmon fshirjen
-    const updatedBookings = bookings.filter(booking => booking.id !== id);
-    setBookings(updatedBookings);
-
-    console.log("Booking u fshi me sukses.");
-  } catch (error) {
-    console.error("Fshirja dështoi:", error);
-  }
-};
+    try {
+      await deleteBooking(id, tenantId, token);
+      setBookings((prev) => prev.filter((booking) => booking.id !== id));
+      console.log("Booking deleted successfully.");
+    } catch (error) {
+      console.error("Deletion failed:", error);
+    }
+  };
 
   return (
     <div className="adminbooking-container">
-
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
-          <div className="airport-nav-row">
-            <a href="/admin/dashboard">DASHBOARD</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/airport">AIRPORT</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/booking">BOOKING</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/faqs">FAQS</a>
-
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/flightspage">FLIGHTS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/maintenance">MAINTENANCE</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/passangers">PASSANGERS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/payments">PAYMENTS</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/staff">STAFF</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/support">SUPPORT</a>
-          </div>
-          <div className="airport-nav-row">
-            <a href="/admin/announcements">ANNOUNCEMENTS</a>
-          </div>
+          {[
+            "dashboard", "airport", "booking", "faqs", "flightspage",
+            "maintenance", "passangers", "payments", "staff", "support", "announcements"
+          ].map((item) => (
+            <div className="airport-nav-row" key={item}>
+              <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
+            </div>
+          ))}
         </nav>
-
       </aside>
+
       <main className="adminbooking-content">
         <header className="adminbooking-header">
           <h2>BOOKING</h2>
@@ -129,7 +85,7 @@ function AdminBooking() {
                     <td>
                       <button
                         className="adminbooking-delete-btn"
-                        onClick={() => handleDelete(b.id || i)}
+                        onClick={() => handleDelete(b.id)}
                       >
                         Delete
                       </button>

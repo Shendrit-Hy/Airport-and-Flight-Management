@@ -2,66 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import '../styles/AdminFlightsPage.css';
-import { getAllFlights, createFlight, deleteFlight } from '../api/flightService';
+import { getAllFlights, addFlight, deleteFlight } from '../api/flightService';
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 import "../styles/AdminAirportPage.css";
 
 export default function AdminFlightsPage() {
   const [flights, setFlights] = useState([]);
-  const [terminals, setTerminals] = useState([]);
-  const [gates, setGates] = useState([]);
-
   const tenantId = getTenantIdFromSubdomain();
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     loadFlights();
-    loadTerminals();
-    loadGates();
   }, []);
 
   const loadFlights = async () => {
     try {
-      const res = await getAllFlights(tenantId, token);
+      const res = await getAllFlights(token);
       setFlights(res.data);
     } catch (err) {
       console.error("Failed to load flights", err);
     }
   };
 
-  const loadTerminals = async () => {
-    try {
-      const res = await fetch(`/api/terminals`, {
-        headers: {
-          "X-Tenant-ID": tenantId,
-          Authorization: `Bearer ${token}`
-        }
-      });
-      const data = await res.json();
-      setTerminals(data);
-    } catch (err) {
-      console.error("Failed to load terminals", err);
-    }
-  };
-
-  const loadGates = async () => {
-    try {
-      const res = await fetch(`/api/gates`, {
-        headers: {
-          "X-Tenant-ID": tenantId,
-          Authorization: `Bearer ${token}`
-        }
-      });
-      const data = await res.json();
-      setGates(data);
-    } catch (err) {
-      console.error("Failed to load gates", err);
-    }
-  };
-
   const handleAddFlight = async (values, { resetForm }) => {
     try {
-      await createFlight(values, tenantId, token);
+      await addFlight(values, token);
       console.log("Flight created!");
       loadFlights();
       resetForm();
@@ -75,7 +40,7 @@ export default function AdminFlightsPage() {
 
   const handleDelete = async (id) => {
     try {
-      await deleteFlight(id, tenantId, token);
+      await deleteFlight(id, token);
       loadFlights();
     } catch (err) {
       console.error("Failed to delete flight", err);
@@ -132,7 +97,11 @@ export default function AdminFlightsPage() {
         >
           <Form className="adminflights-add-form">
             <div className="adminflights-form-grid">
-              {["flightNumber", "departureAirport", "arrivalAirport", "departureTime", "arrivalTime", "flightDate", "availableSeat", "price", "airline"].map((field) => (
+              {[
+                "flightNumber", "departureAirport", "arrivalAirport", "departureTime",
+                "arrivalTime", "flightDate", "availableSeat", "price", "airline",
+                "terminalId", "gateId"
+              ].map((field) => (
                 <div className="adminflights-input-group" key={field}>
                   <Field
                     type="text"
@@ -145,40 +114,6 @@ export default function AdminFlightsPage() {
                   <ErrorMessage name={field} component="div" className="adminflights-error" />
                 </div>
               ))}
-
-              <div className="adminflights-input-group">
-                <label htmlFor="terminalId">Terminal</label>
-                <Field
-                  as="select"
-                  name="terminalId"
-                  className="adminflights-input"
-                  style={{ backgroundColor: 'rgb(53,53,53)', color: 'white' }}
-                  required
-                >
-                  <option value="">Select Terminal</option>
-                  {terminals.map((t) => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
-                  ))}
-                </Field>
-                <ErrorMessage name="terminalId" component="div" className="adminflights-error" />
-              </div>
-
-              <div className="adminflights-input-group">
-                <label htmlFor="gateId">Gate</label>
-                <Field
-                  as="select"
-                  name="gateId"
-                  className="adminflights-input"
-                  style={{ backgroundColor: 'rgb(53,53,53)', color: 'white' }}
-                  required
-                >
-                  <option value="">Select Gate</option>
-                  {gates.map((g) => (
-                    <option key={g.id} value={g.id}>{g.name}</option>
-                  ))}
-                </Field>
-                <ErrorMessage name="gateId" component="div" className="adminflights-error" />
-              </div>
             </div>
 
             <button type="submit" className="adminflights-add-btn">ADD</button>

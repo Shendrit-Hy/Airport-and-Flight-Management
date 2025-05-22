@@ -3,6 +3,7 @@ package com.mbi_re.airport_management.controller;
 import com.mbi_re.airport_management.config.TenantContext;
 import com.mbi_re.airport_management.dto.FlightDTO;
 import com.mbi_re.airport_management.model.Flight;
+import com.mbi_re.airport_management.model.FlightStatus;
 import com.mbi_re.airport_management.repository.FlightRepository;
 import com.mbi_re.airport_management.service.FlightService;
 import com.mbi_re.airport_management.utils.TenantUtil;
@@ -107,6 +108,7 @@ public class FlightController {
             @Parameter(description = "Flight data transfer object") FlightDTO flightDTO) {
         TenantUtil.validateTenantFromContext();
         flightDTO.setTenantId(TenantContext.getTenantId());
+        flightDTO.setFlightStatus(FlightStatus.UNKNOWN);
         FlightDTO saved = flightService.addFlight(flightDTO);
         return ResponseEntity.ok(saved);
     }

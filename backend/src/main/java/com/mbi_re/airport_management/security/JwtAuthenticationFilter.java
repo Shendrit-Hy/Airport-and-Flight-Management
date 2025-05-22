@@ -36,6 +36,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Set tenant in context (overrides header-based one)
             TenantContext.setTenantId(tenantId);
 
+            // ✅ Set jwtTenantId as request attribute so it can be used in controller
+            request.setAttribute("jwtTenantId", tenantId);
+
             var userDetails = customUserDetailsService.loadUserByUsernameAndTenant(username, tenantId);
             if (userDetails != null) {
                 var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

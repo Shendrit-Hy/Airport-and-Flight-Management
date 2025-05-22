@@ -1,6 +1,7 @@
 package com.mbi_re.airport_management.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Gate {
@@ -17,7 +18,7 @@ public class Gate {
     @JoinColumn(name = "terminal_id", nullable = false)
     private Terminal terminal;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "flight_id")
     private Flight flight;
 
