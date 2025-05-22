@@ -5,13 +5,12 @@ import { AuthContext } from '../context/AuthContext';
 import '../styles/SupportPage.css';
 import { sendSupportRequest } from '../api/supportService';
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
-import { useLanguage } from '../context/LanguageContext'; // ✅ importo përkthimin
+import { useLanguage } from '../context/LanguageContext'; 
 
 const SupportPage = () => {
   const { user } = useContext(AuthContext);
-  const { t } = useLanguage(); // ✅ përdor për përkthim
-
-
+  const { t } = useLanguage(); 
+  
   const validate = (values) => {
     const errors = {};
     if (!values.subject) errors.subject = 'Subjekti është i detyrueshëm';

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import '../styles/AdminMaintenancePage.css';
+
 import "../styles/AdminAirportPage.css";
 import {
   getMaintenances,
@@ -44,6 +45,7 @@ export default function AdminMaintenancePage() {
 
   return (
     <div className="adminmaintenance-layout">
+
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
@@ -60,6 +62,7 @@ export default function AdminMaintenancePage() {
           <h2>MAINTENANCE</h2>
           <div className="adminmaintenance-title">ADMIN</div>
         </header>
+
 
         <Formik
           initialValues={{

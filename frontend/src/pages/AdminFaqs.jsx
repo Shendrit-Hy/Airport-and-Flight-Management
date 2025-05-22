@@ -4,7 +4,9 @@ import * as Yup from "yup";
 import axios from "axios";
 import { getTenantIdFromSubdomain } from "../utils/getTenantId";
 import "../styles/AdminBooking.css";
+
 import "../styles/AdminAirportPage.css";
+
 
 function AdminFaqs() {
   const [faqs, setFaqs] = useState([]);
@@ -44,11 +46,13 @@ function AdminFaqs() {
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
+
           {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
             <div className="airport-nav-row" key={item}>
               <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
             </div>
           ))}
+
         </nav>
       </aside>
 
@@ -59,6 +63,7 @@ function AdminFaqs() {
         </header>
 
         <div style={{ maxWidth: 600, margin: "0 20px 30px 20px" }}>
+
           <Formik
             initialValues={{ question: "", answer: "" }}
             validationSchema={Yup.object({

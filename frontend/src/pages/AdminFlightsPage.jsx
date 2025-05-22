@@ -6,6 +6,7 @@ import { getAllFlights, createFlight, deleteFlight } from '../api/flightService'
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 import "../styles/AdminAirportPage.css"
 
+
 export default function AdminFlightsPage() {
   const [flights, setFlights] = useState([]);
   const [terminals, setTerminals] = useState([]);
@@ -87,11 +88,13 @@ export default function AdminFlightsPage() {
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
+
           {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
             <div className="airport-nav-row" key={item}>
               <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
             </div>
           ))}
+
         </nav>
       </aside>
 
