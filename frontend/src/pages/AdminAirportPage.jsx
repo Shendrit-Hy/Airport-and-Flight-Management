@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import '../styles/AdminAirportPage.css';
-import { getAirports, createAirport, deleteAirport } from '../api/airportService';
+import { getAllAirports, createAirport, deleteAirport } from '../api/airportService';
+import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 export default function AdminAirportPage() {
   const [airports, setAirports] = useState([]);
+  const tenantId = getTenantIdFromSubdomain();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     loadAirports();
@@ -13,7 +16,7 @@ export default function AdminAirportPage() {
 
   const loadAirports = async () => {
     try {
-      const res = await getAirports();
+      const res = await getAllAirports(tenantId, token);
       setAirports(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Error loading airports:', err);
@@ -21,8 +24,16 @@ export default function AdminAirportPage() {
   };
 
   const handleAdd = async (values, { resetForm }) => {
+    const airportData = {
+      name: values.name,
+      code: values.code,
+      timezone: values.timezone,
+      cityId: values.cityId,
+      countryId: values.countryId,
+    };
+
     try {
-      await createAirport(values);
+      await createAirport(airportData, tenantId, token);
       resetForm();
       loadAirports();
     } catch (err) {
@@ -32,7 +43,7 @@ export default function AdminAirportPage() {
 
   const handleDelete = async (id) => {
     try {
-      await deleteAirport(id);
+      await deleteAirport(id, tenantId, token);
       loadAirports();
     } catch (err) {
       console.error('Error deleting airport:', err);
@@ -58,21 +69,20 @@ export default function AdminAirportPage() {
           <div className="airport-admin-title">ADMIN</div>
         </header>
 
-
         <Formik
-          initialValues={{ name: '', code: '', timezone: '', city: '', country: '' }}
+          initialValues={{ name: '', code: '', timezone: '', cityId: '', countryId: '' }}
           validationSchema={Yup.object({
             name: Yup.string().required('Required'),
             code: Yup.string().required('Required'),
             timezone: Yup.string().required('Required'),
-            city: Yup.string().required('Required'),
-            country: Yup.string().required('Required'),
+            cityId: Yup.string().required('Required'),
+            countryId: Yup.string().required('Required'),
           })}
           onSubmit={handleAdd}
         >
           <Form className="airport-add-form">
             <div className="airport-form-grid">
-              {['name', 'code', 'timezone', 'city', 'country'].map((field) => (
+              {['name', 'code', 'timezone', 'cityId', 'countryId'].map((field) => (
                 <div className="airport-input-group" key={field}>
                   <Field
                     type="text"
@@ -94,8 +104,8 @@ export default function AdminAirportPage() {
             <span>Name</span>
             <span>Code</span>
             <span>Timezone</span>
-            <span>City</span>
-            <span>Country</span>
+            <span>City ID</span>
+            <span>Country ID</span>
             <span>Actions</span>
           </div>
 
@@ -104,8 +114,8 @@ export default function AdminAirportPage() {
               <span>{airport.name}</span>
               <span>{airport.code}</span>
               <span>{airport.timezone}</span>
-              <span>{airport.city}</span>
-              <span>{airport.country}</span>
+              <span>{airport.cityId}</span>
+              <span>{airport.countryId}</span>
               <span>
                 <button
                   className="airport-delete-btn"
