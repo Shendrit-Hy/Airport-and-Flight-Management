@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -77,15 +78,22 @@ public class FlightService {
     }
 
     /**
-     * Deletes a flight for the tenant.
+     * Deletes a flight and all associated seats for the tenant.
+     * Evicts cache for the tenant after successful deletion.
      *
      * @param flightId the flight ID
      * @param tenantId the tenant ID
      */
+    @Transactional
     @CacheEvict(value = { "flights_today_upcoming", "flights_all" }, key = "#tenantId")
     public void deleteFlight(Long flightId, String tenantId) {
         Flight flight = flightRepository.findByIdAndTenantId(flightId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Flight not found or access denied"));
+
+        // Delete all seats associated with the flight
+        seatRepository.deleteByFlightIdAndTenantId(flightId, tenantId);
+
+        // Delete the flight
         flightRepository.delete(flight);
     }
 
@@ -95,7 +103,7 @@ public class FlightService {
      * @param flight the flight entity
      * @return DTO version of the flight
      */
-    private FlightDTO mapToDTO(Flight flight) {
+    public FlightDTO mapToDTO(Flight flight) {
         FlightDTO dto = new FlightDTO();
         dto.setId(flight.getId());
         dto.setFlightNumber(flight.getFlightNumber());
@@ -136,7 +144,7 @@ public class FlightService {
         flight.setTenantId(dto.getTenantId());
 
         if (dto.getAirlineId() != null) {
-            Airline airline = airlineRepository.findById(dto.getAirlineId())
+            Airline airline = airlineRepository.findByIdAndTenantId(dto.getAirlineId(), dto.getTenantId())
                     .orElseThrow(() -> new RuntimeException("Airline not found with id: " + dto.getAirlineId()));
             flight.setAirline(airline);
         }

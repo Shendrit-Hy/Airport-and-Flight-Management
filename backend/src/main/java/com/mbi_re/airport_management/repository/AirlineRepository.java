@@ -4,6 +4,7 @@ import com.mbi_re.airport_management.model.Airline;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AirlineRepository extends JpaRepository<Airline, Long> {
 
@@ -23,4 +24,13 @@ public interface AirlineRepository extends JpaRepository<Airline, Long> {
      * @return list of airlines belonging to the tenant
      */
     List<Airline> findByTenantId(String tenantId);
+
+    /**
+     * Retrieves a specific airline for the specified tenant.
+     *
+     * @param tenantId the tenant identifier
+     * @param airlineId the airline identifier
+     * @return list of airlines belonging to the tenant
+     */
+    Optional<Airline> findByIdAndTenantId(Long airlineId, String tenantId);
 }

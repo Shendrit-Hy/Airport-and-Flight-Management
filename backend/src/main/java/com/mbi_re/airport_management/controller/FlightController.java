@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing flight-related operations.
@@ -150,20 +151,13 @@ public class FlightController {
      * @return A list of flights that match the search criteria.
      */
     @GetMapping("/filter")
-    @Operation(summary = "Filter flights", description = "Search for flights with multiple criteria. Publicly accessible by tenant header.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Flights retrieved successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid parameters"),
-            @ApiResponse(responseCode = "403", description = "Invalid tenant")
-    })
-    public ResponseEntity<List<Flight>> getFilteredFlights(
-            @RequestHeader("X-Tenant-ID")
-            @Parameter(description = "Tenant identifier from request header") String tenantId,
-            @RequestParam @Parameter(description = "Departure airport code") String from,
-            @RequestParam @Parameter(description = "Arrival airport code") String to,
-            @RequestParam @Parameter(description = "Start date in format yyyy-MM-dd") String startDate,
-            @RequestParam @Parameter(description = "End date in format yyyy-MM-dd") String endDate,
-            @RequestParam @Parameter(description = "Minimum number of available seats") int passengers
+    public ResponseEntity<List<FlightDTO>> getFilteredFlights(
+            @RequestHeader("X-Tenant-ID") String tenantId,
+            @RequestParam String from,
+            @RequestParam String to,
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam int passengers
     ) {
         TenantUtil.validateTenant(tenantId);
 
@@ -176,10 +170,16 @@ public class FlightController {
                             tenantId, from, to, start, end, passengers
                     );
 
-            return ResponseEntity.ok(flights);
+            // ✅ Convert to DTOs using service mapping
+            List<FlightDTO> dtos = flights.stream()
+                    .map(flightService::mapToDTO) // ❗ Make `mapToDTO` public in the service
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(dtos);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.emptyList());
         }
     }
+
 }
 
