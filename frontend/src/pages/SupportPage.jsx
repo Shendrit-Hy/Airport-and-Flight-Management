@@ -10,8 +10,7 @@ import { useLanguage } from '../context/LanguageContext';
 const SupportPage = () => {
   const { user } = useContext(AuthContext);
   const { t } = useLanguage(); 
-
-
+  
   const validate = (values) => {
     const errors = {};
     if (!values.subject) errors.subject = 'Subjekti është i detyrueshëm';
