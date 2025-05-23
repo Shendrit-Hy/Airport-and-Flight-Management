@@ -28,9 +28,6 @@ export default function AdminFlightsPage() {
     try {
       await addFlight(values, token);
       console.log("Flight created!");
-      console.log(values);
-      console.log(token);
-      await addFlight(values, token);
       loadFlights();
       resetForm();
     } catch (error) {
