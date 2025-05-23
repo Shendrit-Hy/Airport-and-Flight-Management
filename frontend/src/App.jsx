@@ -1,13 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import TicketsPage from './pages/TicketsPage';
-import RoutesPage from './pages/RoutesPage';
 import SupportPage from './pages/SupportPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import { AuthProvider } from './context/AuthContext';
 import UserProfile from './pages/UserProfile';
-import CheckInPage from './pages/CheckInPage';
 import BookingPage from './pages/BookingPage';
 import AdminDashboard from './components/DashboardLayout';
 import AdminLogin from './pages/AdminLoginPage';
@@ -85,11 +82,8 @@ function App() {
         <Route path="/booking" element={<BookingPage />} />
         <Route path="/signup" element={<RegisterPage />} />
         <Route path="/profile" element={<UserProfile />} />
-        <Route path="/checkin" element={<CheckInPage />} />
-        <Route path="/tickets" element={<TicketsPage />} />
 {/*         <Route path="/admin/flights" element={<FlightsPage />} /> */}
         <Route path="/flights" element={<Flights />} />
-        <Route path="/routes" element={<RoutesPage />} />
         <Route path="/help" element={<SupportPage />} />
         <Route path="/filteredflights" element={<FilteredFlights />} />
         <Route path="/admin" element={<AdminLogin />} />

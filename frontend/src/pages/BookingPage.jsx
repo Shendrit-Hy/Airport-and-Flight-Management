@@ -186,7 +186,7 @@ function PaymentForm({ flight }) {
             markSeatAsUnavailable(seat.id, token)
           ));
 
-          navigate("/checkin");
+          navigate("/profile");
         } catch (err) {
           alert("Booking failed. Please try again.");
           console.error(err);

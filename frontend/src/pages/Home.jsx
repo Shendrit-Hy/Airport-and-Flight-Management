@@ -8,6 +8,7 @@ import ImageSlider from './ImageSlider';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
+import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 
 const SearchSchema = Yup.object().shape({
@@ -30,17 +31,30 @@ const HomePage = () => {
   const [currentWeather, setCurrentWeather] = useState(null);
   const [hourlyForecast, setHourlyForecast] = useState([]);
 
-  useEffect(() => {
-    const fetchAirports = async () => {
-      try {
-        const response = await getAllAirports();
-        setAirports(Array.isArray(response.data) ? response.data : []);
-      } catch (error) {
-        console.error('Failed to load airports:', error);
+  const tenantId = getTenantIdFromSubdomain();
+  const token = localStorage.getItem("token");
+
+useEffect(() => {
+  const fetchAirports = async () => {
+    try {
+      const tenantId = localStorage.getItem('tenantId'); // or however you store it
+      const token = localStorage.getItem('token'); // or use context/auth service
+
+      if (!tenantId || !token) {
+        console.error('Missing tenant ID or token');
+        return;
       }
-    };
-    fetchAirports();
-  }, []);
+
+      const response = await getAllAirports(tenantId, token);
+      setAirports(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Failed to load airports:', error);
+    }
+  };
+
+  fetchAirports();
+}, []);
+
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -122,19 +136,25 @@ const HomePage = () => {
         >
           {() => (
             <Form className="search-form">
-              <Field as="select" name="from" className='search-form-field'>
-                <option value="">{t('Select Departure Airport', 'Zgjedh Aeroportin e Nisjes')}</option>
-                {airports.map((airport) => (
-                  <option key={airport.id} value={airport.city}>{airport.city}</option>
-                ))}
-              </Field>
+<Field as="select" name="from" className="search-form-field">
+  <option value="">{t('Select Departure Airport', 'Zgjedh Aeroportin e Nisjes')}</option>
+  {airports.map((airport) => (
+    <option key={airport.id} value={airport.code}>
+      {airport.name} ({airport.code})
+    </option>
+  ))}
+</Field>
+
               <ErrorMessage name="from" component="div" className="error" />
-              <Field as="select" name="to" className='search-form-field'>
-                <option value="">{t('Select Arrival Airport', 'Zgjedh Aeroportin e Mberritjes')}</option>
-                {airports.map((airport) => (
-                  <option key={airport.id} value={airport.city}>{airport.city}</option>
-                ))}
-              </Field>
+<Field as="select" name="to" className="search-form-field">
+  <option value="">{t('Select Arrival Airport', 'Zgjedh Aeroportin e Mberritjes')}</option>
+  {airports.map((airport) => (
+    <option key={airport.id} value={airport.code}>
+      {airport.name} ({airport.code})
+    </option>
+  ))}
+</Field>
+
               <ErrorMessage name="to" component="div" className="error" />
               <Field type="date" name="startDate" />
               <ErrorMessage name="startDate" component="div" className="error" />

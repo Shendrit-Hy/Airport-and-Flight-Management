@@ -1,53 +1,77 @@
-import React, { useEffect, useState } from "react";
-import "../styles/TrendingPlaces.css";
-// import { getTrendingPlaces } from "../api/trendingPlaceService";
+import React, { useEffect, useState } from 'react';
+import trendingPlaceService from '../api/trendingPlaceService';
 
-import { useLanguage } from "../context/LanguageContext"; // ✅ për përkthim
 
-const TrendingPlaces = () => {
+const TrendingPlacesList = ({ tenantId }) => {
   const [places, setPlaces] = useState([]);
-  const { t } = useLanguage(); // ✅ përdor kontekstin e gjuhës
-
-
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    getTrendingPlaces()
-      .then((res) => {
-        setPlaces(res.data);
-      })
-      .catch((err) => {
-        console.error("Gabim gjatë marrjes së trending places:", err);
-      });
-  }, []);
+    const fetchPlaces = async () => {
+      if (!tenantId) {
+        console.warn("No tenantId provided");
+        setError("Tenant ID is required.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const data = await trendingPlaceService.getTrendingPlaces(tenantId);
+        console.log("Fetched places:", data);
+        setPlaces(data);
+      } catch (err) {
+        console.error('Error fetching trending places:', err);
+        setError('Failed to load trending places.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlaces();
+  }, [tenantId]);
+
+  if (loading) return <p>Loading trending places...</p>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   return (
-    <div className="TrendingPlaces__Wrapper">
-      <div className="TrendingPlaces__Container">
-        <div className="TrendingPlaces__ContentWrapper">
-
-          <div className="TrendingPlaces__Title">
-            {t("TRENDING PLACES", "VENDET MË POPULLORE")}
-          </div>
-
-          <div className="TrendingPlaces__CardsWrapper">
-            {places.map((place, index) => (
-              <div className="TrendingPlaces__Card" key={index}>
-                <img
-                  src={place.imageUrl || "/edyta.jpg"}
-                  alt={place.name}
-                  className="TrendingPlaces__Image"
-                />
-                <div className="TrendingPlaces__Info">
-                  <div className="TrendingPlaces__CityTitle">{place.name}</div>
-                  <div className="TrendingPlaces__Text">{place.description}</div>
-                </div>
+    <div style={{ padding: '20px' }}>
+      <h2 style={{ marginBottom: '20px' }}>Trending Places</h2>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+          gap: '20px',
+        }}
+      >
+        {places.length > 0 ? (
+          places.map((place) => (
+            <div
+              key={place.id}
+              style={{
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                backgroundColor: '#fff',
+              }}
+            >
+              <img
+                src={place.photoUrl}
+                alt={place.description}
+                style={{ width: '100%', height: '180px', objectFit: 'cover' }}
+              />
+              <div style={{ padding: '10px' }}>
+                <p style={{ margin: 0 }}>{place.description}</p>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          ))
+        ) : (
+          <p>No trending places available.</p>
+        )}
       </div>
     </div>
   );
 };
 
-export default TrendingPlaces;
+export default TrendingPlacesList;
