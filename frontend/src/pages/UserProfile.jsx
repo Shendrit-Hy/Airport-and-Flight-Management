@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/userProfile.css';
 import { useLanguage } from '../context/LanguageContext';
-import axios from '../utils/axiosInstance'; // ose përdor axios direkt
+import axios from '../utils/axiosInstance';
 
 export default function UserProfile() {
   const { t } = useLanguage();
@@ -13,9 +13,7 @@ export default function UserProfile() {
     role: ''
   });
 
-  const [editedUsername, setEditedUsername] = useState('');
   const [flights, setFlights] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -28,7 +26,6 @@ export default function UserProfile() {
       }
     }).then(res => {
       setUser(res.data);
-      setEditedUsername(res.data.username);
     }).catch(err => {
       console.error("Gabim gjatë marrjes së profilit:", err);
     });
@@ -43,31 +40,6 @@ export default function UserProfile() {
       console.error("Gabim gjatë marrjes së fluturimeve:", err);
     });
   }, []);
-
-  const handleUsernameUpdate = async () => {
-    const token = localStorage.getItem("token");
-    const tenantId = localStorage.getItem("tenantId") || "default";
-
-    setLoading(true);
-    try {
-      const res = await axios.put('/api/auth/profile', {
-        ...user,
-        username: editedUsername
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "X-Tenant-ID": tenantId
-        }
-      });
-      setUser(res.data);
-      alert("Username updated successfully!");
-    } catch (err) {
-      console.error("Gabim gjatë përditësimit:", err);
-      alert("Update failed.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleCancel = (flightId) => {
     setFlights(prev =>
@@ -94,21 +66,8 @@ export default function UserProfile() {
 
         <div className="userprofile-container">
           <div className="userprofile-left">
-            <input
-              type="text"
-              value={editedUsername}
-              onChange={(e) => setEditedUsername(e.target.value)}
-              className="userprofile-btn"
-            />
-            <button
-              className="userprofile-btn userprofile-update"
-              onClick={handleUsernameUpdate}
-              disabled={loading}
-            >
-              {loading ? t("Updating...", "Duke përditësuar...") : t("Update Your Username", "Përditëso Emrin")}
-            </button>
-
-            <button className="userprofile-btn">{t("Full Name", "Emri i Plotë")}: {user.fullName}</button>
+            <button className="userprofile-btn">{t("Username", "Emri i përdoruesit")}: {user.username}</button>
+            <button className="userprofile-btn">{t("Full Name", "Emri i Plotë")}: {user.fullname}</button>
             <button className="userprofile-btn">{t("Email", "Email")}: {user.email}</button>
           </div>
 
