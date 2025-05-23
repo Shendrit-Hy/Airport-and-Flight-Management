@@ -33,8 +33,6 @@ Ky projekt është një aplikacion web full-stack që mundëson:
 | Veçori                  | Përshkrimi                                                             |
 |-------------------------|-------------------------------------------------------------------------|
 | Moti aktual             | Merr të dhëna nga OpenWeather për lokacionin e aeroportit              |
-| Parashikimi 24 orësh    | Shfaq temperaturat dhe ikonat për 3-orësha gjatë ditës                 |
-| Parashikimi javor       | Shfaqet në formë **karuseli (react-slick)** me ditët e javës dhe motin |
 | Rezervime biletash      | Përdoruesit mund të kërkojnë, rezervojnë dhe të zgjedhin ulëse         |
 | Paneli i adminit        | Menaxhim për fluturime, aeroportet, pasagjerët, mirëmbajtjen, etj.     |
 | Multi-tenancy           | Të dhënat izolohen për secilin tenant sipas `tenantId`                 |
