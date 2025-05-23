@@ -6,52 +6,54 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 /**
- * Repository for managing {@link Maintenance} entities with tenant-based filtering.
+ * {@code MaintenanceRepository} ofron metoda për menaxhimin e entiteteve {@link Maintenance}
+ * me mbështetje për filtrimin sipas {@code tenantId}, në një arkitekturë multi-tenant.
  */
 public interface MaintenanceRepository extends JpaRepository<Maintenance, Long> {
 
     /**
-     * Finds maintenance records by airport ID and status for a specific tenant.
+     * Gjen të gjitha rastet e mirëmbajtjes për një aeroport dhe status të caktuar,
+     * të filtruar sipas tenant-it.
      *
-     * @param airportID the airport code
-     * @param status    the maintenance status
-     * @param tenantId  the tenant identifier
-     * @return list of matching maintenance records
+     * @param airportID kodi i aeroportit
+     * @param status    statusi i mirëmbajtjes (p.sh., "PENDING", "COMPLETED")
+     * @param tenantId  identifikuesi i tenant-it
+     * @return listë me rastet përputhëse të mirëmbajtjes
      */
     List<Maintenance> findByAirportIDAndStatusAndTenantId(String airportID, String status, String tenantId);
 
     /**
-     * Finds maintenance records by airport ID for a specific tenant.
+     * Gjen të gjitha rastet e mirëmbajtjes për një aeroport specifik dhe tenant të caktuar.
      *
-     * @param airportID the airport code
-     * @param tenantId  the tenant identifier
-     * @return list of maintenance records
+     * @param airportID kodi i aeroportit
+     * @param tenantId  identifikuesi i tenant-it
+     * @return listë me rastet e mirëmbajtjes
      */
     List<Maintenance> findByAirportIDAndTenantId(String airportID, String tenantId);
 
     /**
-     * Finds maintenance records by status for a specific tenant.
+     * Gjen të gjitha rastet e mirëmbajtjes për një status të dhënë dhe tenant.
      *
-     * @param status    the maintenance status
-     * @param tenantId  the tenant identifier
-     * @return list of matching records
+     * @param status   statusi i mirëmbajtjes
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me mirëmbajtje që kanë statusin e dhënë
      */
     List<Maintenance> findByStatusAndTenantId(String status, String tenantId);
 
     /**
-     * Finds all maintenance records for a specific tenant.
+     * Gjen të gjitha rastet e mirëmbajtjes për një tenant specifik.
      *
-     * @param tenantId the tenant identifier
-     * @return list of maintenance records
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me mirëmbajtje për tenant-in përkatës
      */
     List<Maintenance> findAllByTenantId(String tenantId);
 
     /**
-     * Finds a maintenance record by ID and tenant ID.
+     * Gjen një rast mirëmbajtjeje sipas ID-së dhe tenant-it.
      *
-     * @param id       the record ID
-     * @param tenantId the tenant identifier
-     * @return the maintenance record or null
+     * @param id       ID-ja e mirëmbajtjes
+     * @param tenantId identifikuesi i tenant-it
+     * @return objekti {@link Maintenance} nëse ekziston, përndryshe {@code null}
      */
     Maintenance findByIdAndTenantId(Long id, String tenantId);
 }

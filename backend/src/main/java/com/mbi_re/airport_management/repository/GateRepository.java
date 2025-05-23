@@ -6,22 +6,26 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * {@code GateRepository} ofron funksionalitete për qasjen dhe menaxhimin e entiteteve {@link Gate},
+ * me filtrime të personalizuara bazuar në tenant për mbështetje të plotë multi-tenant.
+ */
 public interface GateRepository extends JpaRepository<Gate, Long> {
 
     /**
-     * Retrieves all gates for the specified tenant.
+     * Gjen të gjitha portat (gates) që i përkasin një tenant-i specifik.
      *
-     * @param tenantId the tenant identifier
-     * @return a list of gates belonging to the given tenant
+     * @param tenantId identifikuesi i tenant-it
+     * @return një listë me portat përkatëse
      */
     List<Gate> findByTenantId(String tenantId);
 
     /**
-     * Retrieves a gate by its ID and tenant.
+     * Gjen një portë sipas ID-së dhe tenant-it përkatës.
      *
-     * @param id the gate ID
-     * @param tenantId the tenant identifier
-     * @return an Optional containing the gate if found, or empty if not
+     * @param id       ID-ja e portës
+     * @param tenantId identifikuesi i tenant-it
+     * @return {@link Optional} me portën nëse ekziston
      */
     Optional<Gate> findByIdAndTenantId(Long id, String tenantId);
 }

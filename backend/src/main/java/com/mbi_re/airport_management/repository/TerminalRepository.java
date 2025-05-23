@@ -7,25 +7,25 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository interface for accessing terminal data.
- * Supports tenant-aware queries.
+ * {@code TerminalRepository} ofron operacione për qasje dhe menaxhim të të dhënave për {@link Terminal},
+ * duke mbështetur filtrimin sipas {@code tenantId} për sisteme me arkitekturë multi-tenant.
  */
 public interface TerminalRepository extends JpaRepository<Terminal, Long> {
 
     /**
-     * Finds all terminals associated with a given tenant.
+     * Gjen të gjitha terminalet që i përkasin një tenant-i të caktuar.
      *
-     * @param tenantId the ID of the tenant
-     * @return list of terminals
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me entitete {@link Terminal}
      */
     List<Terminal> findByTenantId(String tenantId);
 
     /**
-     * Finds a specific terminal by ID and tenant.
+     * Gjen një terminal specifik sipas ID-së dhe tenant-it.
      *
-     * @param id       the ID of the terminal
-     * @param tenantId the tenant ID
-     * @return optional terminal
+     * @param id       ID-ja e terminalit
+     * @param tenantId identifikuesi i tenant-it
+     * @return {@link Optional} që përmban terminalin nëse gjendet
      */
     Optional<Terminal> findByIdAndTenantId(Long id, String tenantId);
 }

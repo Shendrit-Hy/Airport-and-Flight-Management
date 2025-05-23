@@ -6,32 +6,33 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 /**
- * Repository for managing City entities with tenant-specific access.
+ * {@code CityRepository} ofron funksionalitete për menaxhimin e entiteteve {@link City},
+ * duke filtruar të dhënat sipas tenant-it për mbështetje në arkitekturë multi-tenant.
  */
 public interface CityRepository extends JpaRepository<City, Long> {
 
     /**
-     * Finds all cities for a given tenant.
+     * Gjen të gjitha qytetet që i përkasin një tenant-i të caktuar.
      *
-     * @param tenantId the tenant identifier
-     * @return list of cities for the tenant
+     * @param tenantId identifikuesi i tenant-it
+     * @return një listë me qytete
      */
     List<City> findAllByTenantId(String tenantId);
 
     /**
-     * Finds all cities by country ID for a given tenant.
+     * Gjen qytetet për një vend specifik të filtruar sipas tenant-it.
      *
-     * @param countryId the country ID
-     * @param tenantId  the tenant identifier
-     * @return list of cities for the specified country and tenant
+     * @param countryId ID-ja e vendit
+     * @param tenantId identifikuesi i tenant-it
+     * @return një listë me qytete që i përkasin vendit dhe tenant-it të dhënë
      */
     List<City> findByCountryIdAndTenantId(Long countryId, String tenantId);
 
     /**
-     * Deletes a city by ID and tenant ID.
+     * Fshin një qytet bazuar në ID-në dhe tenant-in përkatës.
      *
-     * @param id       the city ID
-     * @param tenantId the tenant identifier
+     * @param id ID-ja e qytetit për t'u fshirë
+     * @param tenantId identifikuesi i tenant-it
      */
     void deleteByIdAndTenantId(Long id, String tenantId);
 }

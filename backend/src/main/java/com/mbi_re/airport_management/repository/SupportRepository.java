@@ -9,26 +9,27 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository for managing Support entity persistence.
+ * {@code SupportRepository} ofron operacione për menaxhimin e kërkesave për mbështetje teknike ({@link Support}),
+ * duke mbështetur izolimin e të dhënave sipas {@code tenantId}.
  */
 @Repository
 @Tag(name = "Support Repository", description = "Handles database operations for support tickets.")
 public interface SupportRepository extends JpaRepository<Support, Long> {
 
     /**
-     * Retrieves all support tickets for a given tenant.
+     * Kthen të gjitha kërkesat për mbështetje që i përkasin një tenant-i të caktuar.
      *
-     * @param tenantId the tenant ID
-     * @return list of support tickets
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me kërkesa për mbështetje
      */
     List<Support> findByTenantId(String tenantId);
 
     /**
-     * Finds a support ticket by ID and tenant ID.
+     * Gjen një kërkesë specifike për mbështetje bazuar në ID dhe tenant.
      *
-     * @param supportId the support ID
-     * @param tenantId  the tenant ID
-     * @return optional support ticket
+     * @param supportId ID-ja e kërkesës
+     * @param tenantId  identifikuesi i tenant-it
+     * @return {@link Optional} që përmban kërkesën nëse ekziston
      */
     Optional<Support> findByIdAndTenantId(Long supportId, String tenantId);
 }

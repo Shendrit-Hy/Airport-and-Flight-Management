@@ -8,33 +8,34 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository interface for accessing passenger data with tenant isolation.
+ * {@code PassengerRepository} ofron operacione për qasje dhe manipulim të të dhënave
+ * për entitetin {@link Passenger}, me izolim sipas {@code tenantId} për mbështetje multi-tenant.
  */
 @Repository
 public interface PassengerRepository extends JpaRepository<Passenger, Long> {
 
     /**
-     * Finds all passengers belonging to the given tenant.
+     * Gjen të gjithë pasagjerët që i përkasin një tenant-i të caktuar.
      *
-     * @param tenantId the tenant identifier
-     * @return list of passengers for the tenant
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me pasagjerë për tenant-in e dhënë
      */
     List<Passenger> findAllByTenantId(String tenantId);
 
     /**
-     * Finds a passenger by ID and tenant ID.
+     * Gjen një pasagjer sipas ID-së dhe tenant-it përkatës.
      *
-     * @param id       the passenger ID
-     * @param tenantId the tenant identifier
-     * @return optional passenger for the given ID and tenant
+     * @param id       ID-ja e pasagjerit
+     * @param tenantId identifikuesi i tenant-it
+     * @return {@link Optional} që përmban pasagjerin nëse ekziston
      */
     Optional<Passenger> findByIdAndTenantId(Long id, String tenantId);
 
     /**
-     * Deletes a passenger by ID and tenant ID.
+     * Fshin një pasagjer duke përdorur ID-në dhe tenant-id-in përkatës.
      *
-     * @param id       the passenger ID
-     * @param tenantId the tenant identifier
+     * @param id       ID-ja e pasagjerit
+     * @param tenantId identifikuesi i tenant-it
      */
     void deleteByIdAndTenantId(Long id, String tenantId);
 }
