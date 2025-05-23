@@ -60,7 +60,7 @@ const handleDelete = (id) => {
                 <th>Full Name</th>
                 <th>Email</th>
                 <th>Phone</th>
-                <th>Nationality</th>
+                <th>Age</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -70,7 +70,7 @@ const handleDelete = (id) => {
                   <tr key={user.id || index}>
                     <td>{user.fullName}</td>
                     <td>{user.email}</td>
-                    <td>{user.phone}</td>
+                    <td>{user.age}</td>
                     <td>{user.nationality}</td>
                     <td>
                       <button
