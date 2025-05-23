@@ -153,12 +153,13 @@
 }
 
 
-/* Weather Section */
+
+/* .weather-section {
+  padding: 4rem;
+  background-color: rgb(0, 31, 143); */
 .weather-container-dark {
   background-color: #1e2a47; /* ngjyrë e errët blu */
   padding: 1.5rem 2rem;
-  border-radius: 12px;
-  max-width: 320px;
   margin: 1rem auto 2rem auto;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   color: #fff;
