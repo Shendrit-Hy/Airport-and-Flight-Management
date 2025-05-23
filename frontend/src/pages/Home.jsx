@@ -5,6 +5,10 @@ import '../styles/Home.css';
 import { getAllAirports } from '../api/airportService';
 import axios from '../utils/axiosInstance';
 import ImageSlider from './ImageSlider';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Slider from "react-slick";
+
 
 const SearchSchema = Yup.object().shape({
   from: Yup.string().required('Departure airport is required'),
@@ -23,6 +27,8 @@ const HomePage = () => {
   const [language, setLanguage] = useState(localStorage.getItem('language') || 'en');
   const [price, setPrice] = useState(null);
   const [forecast, setForecast] = useState([]);
+  const [currentWeather, setCurrentWeather] = useState(null);
+  const [hourlyForecast, setHourlyForecast] = useState([]);
 
   useEffect(() => {
     const fetchAirports = async () => {
@@ -39,20 +45,39 @@ const HomePage = () => {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const apiKey = "YOUR_API_KEY";
-        const response = await fetch(
-          `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=Prishtina`
-        );
-        const data = await response.json();
-        if (data.error) {
-          console.error('Weather API Error:', data.error.message);
+        const response = await axios.get("http://localhost:8080/api/weather/current");
+        const data = response.data;
+        if (!data.error) {
+          setCurrentWeather(data);
         }
       } catch (error) {
         console.error("Weather fetch failed", error);
       }
     };
-
     fetchWeather();
+  }, []);
+
+  useEffect(() => {
+    const fetchForecast = async () => {
+      try {
+        const apiKey = 'c8e04e837b134803a7c132638252305';
+        const lat = '42.665440';
+        const lon = '21.165319';
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
+        const data = await response.json();
+        if (data.list) {
+          const dailyData = data.list.filter(item => item.dt_txt.includes('12:00:00')).slice(0, 5);
+            console.log(" Weekly Forecast Data:", dailyData);
+          setForecast(dailyData);
+
+          const next24Hours = data.list.slice(0, 9); // 3-hour intervals = 24 hrs
+          setHourlyForecast(next24Hours);
+        }
+      } catch (err) {
+        console.error('Error fetching forecast:', err);
+      }
+    };
+    fetchForecast();
   }, []);
 
   const t = (en, sq) => (language === 'sq' ? sq : en);
@@ -69,25 +94,6 @@ const HomePage = () => {
       setPrice(null);
     }
   };
-
-  useEffect(() => {
-    const fetchForecast = async () => {
-      try {
-        const apiKey = 'YOUR_API_KEY';
-        const lat = '42.665440';
-        const lon = '21.165319';
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
-        const data = await response.json();
-        if (data.list) {
-          const dailyData = data.list.filter(item => item.dt_txt.includes('12:00:00')).slice(0, 5);
-          setForecast(dailyData);
-        }
-      } catch (err) {
-        console.error('Error fetching forecast:', err);
-      }
-    };
-    fetchForecast();
-  }, []);
 
   return (
     <div className="home-page">
@@ -142,30 +148,6 @@ const HomePage = () => {
         </Formik>
       </section>
 
-      <section className="section flights-section">
-        <div className="flights-table-right">
-          <table className="flight-table">
-            <thead>
-              <tr>
-                <th>{t('FLIGHT NO', 'NR. I FLUTURIMIT')}</th>
-                <th>{t('ORIGIN', 'NISJA')}</th>
-                <th>{t('DESTINATION', 'DESTINACIONI')}</th>
-                <th>{t('DEPARTURE TIME', 'KOHA E NISJES')}</th>
-                <th>{t('ARRIVAL TIME', 'KOHA E MBERITJES')}</th>
-                <th>{t('ACTIVE', 'AKTIV')}</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-          <button className="view-flights-btn" onClick={() => window.location.href = "/flights"}>
-            {t('View All Flights', 'Shiko të gjitha fluturimet')}
-          </button>
-        </div>
-        <div className="plane-image-left">
-          <img src="/public/ekaterta.jpg" alt="Jet" />
-        </div>
-      </section>
-
       <ImageSlider />
 
       <section className="section parking-price-section">
@@ -194,19 +176,83 @@ const HomePage = () => {
         <div className="parking-price-right-section"></div>
       </section>
 
-      <section className="section weather-section">
-        <h2 className="weather-title">{t('5-Day Forecast', 'Parashikimi 5-Ditor')}</h2>
-        <div className="weather-cards">
-          {forecast.map((day, index) => (
-            <div className="weather-card" key={index}>
-              <p><strong>{new Date(day.dt_txt).toLocaleDateString()}</strong></p>
-              <img src={`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`} alt="weather" />
-              <p>{Math.round(day.main.temp)}°C</p>
-              <p>{day.weather[0].main}</p>
+      {currentWeather && (
+        <section className="section weather-section">
+          <h2 className="weather-title">{t('Current Weather', 'Moti Aktual')}</h2>
+          <div className="weather-container-dark">
+            <div className="weather-card current-weather-card-dark">
+              <p className="weather-location"><strong>{currentWeather.location.name.toUpperCase()}</strong></p>
+              <img className="weather-icon-large" src={currentWeather.current.condition.icon} alt="weather icon" />
+              <p className="weather-temp-large">{currentWeather.current.temp_c}°C</p>
+              <p className="weather-text-light">{currentWeather.current.condition.text}</p>
             </div>
-          ))}
+          </div>
+        </section>
+      )}
+
+      {hourlyForecast.length > 0 && (
+        <section className="section weather-section">
+          <h2 className="weather-title">{t('Next 24 Hours', '24 Orët e Ardhshme')}</h2>
+          <div className="hourly-forecast-container">
+            {hourlyForecast.map((hour, index) => (
+              <div className="hourly-forecast-card" key={index}>
+                <p className="hour">
+                  {new Date(hour.dt_txt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </p>
+                <img
+                  src={`https://openweathermap.org/img/wn/${hour.weather[0].icon}@2x.png`}
+                  alt="weather icon"
+                />
+                <p className="temp">{Math.round(hour.main.temp)}°C</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {forecast.length > 0 && (
+  <section className="section weather-section">
+    <h2 className="weather-title">{t('Weekly Forecast', 'Parashikimi Javor')}</h2>
+    <Slider
+      dots={true}
+      infinite={true}
+      speed={500}
+      slidesToShow={3}
+      slidesToScroll={1}
+      responsive={[
+        {
+          breakpoint: 768,
+          settings: {
+            slidesToShow: 2,
+          },
+        },
+        {
+          breakpoint: 480,
+          settings: {
+            slidesToShow: 1,
+          },
+        },
+      ]}
+    >
+      {forecast.map((day, index) => (
+        <div className="weekly-slide" key={index}>
+          <p><strong>{new Date(day.dt_txt).toLocaleDateString('en-US', { weekday: 'long' })}</strong></p>
+          <img
+            src={`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
+            alt="weather icon"
+            style={{ width: '60px', height: '60px' }}
+          />
+          <p style={{ fontSize: '1.2rem' }}>{Math.round(day.main.temp)}°C</p>
+          <p>{day.weather[0].description}</p>
         </div>
-      </section>
+      ))}
+    </Slider>
+  </section>
+)}
+
     </div>
   );
 };
