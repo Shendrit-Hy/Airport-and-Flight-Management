@@ -56,8 +56,10 @@ function UserInfoForm({ next }) {
       validationSchema={Yup.object({
         fullName: Yup.string().required("Required"),
         email: Yup.string().email("Invalid email").required("Required"),
-        age: Yup.number().min(1).required("Required"),
-        phone: Yup.string().required("Required"),
+        age: Yup.number().required("Required").moreThan(18, "You must be older than 18"),
+        phone: Yup.string()
+          .required("Required")
+          .matches(/^\+383\d{8}$/, "Phone must start with +383 and contain 8 digits after"),
       })}
       onSubmit={(values) => {
         setUserInfo({ ...values, ticketCount });
@@ -128,8 +130,28 @@ function PaymentForm({ flight }) {
     <Formik
       initialValues={{ cardNumber: "", cvc: "" }}
       validationSchema={Yup.object({
-        cardNumber: Yup.string().required("Required"),
-        cvc: Yup.string().required("Required"),
+        cardNumber: Yup.string()
+          .required("Required")
+          .matches(/^(\d{4}[\s\/-]?){3}\d{4}$/, "Card number must be 16 digits with optional space, /, or -")
+          .test("luhn-check", "Invalid card number", value => {
+            if (!value) return false;
+            const sanitized = value.replace(/[^\d]/g, "");
+            let sum = 0;
+            let shouldDouble = false;
+            for (let i = sanitized.length - 1; i >= 0; i--) {
+              let digit = parseInt(sanitized[i]);
+              if (shouldDouble) {
+                digit *= 2;
+                if (digit > 9) digit -= 9;
+              }
+              sum += digit;
+              shouldDouble = !shouldDouble;
+            }
+            return sum % 10 === 0;
+          }),
+        cvc: Yup.string()
+          .required("Required")
+          .matches(/^\d{3}$/, "CVC must be exactly 3 digits"),
       })}
       onSubmit={async () => {
         try {
@@ -146,7 +168,6 @@ function PaymentForm({ flight }) {
           );
 
           const passengerResponses = await Promise.all(passengerPromises);
-          console.log(userProfile);
           const bookingResponse = await createBooking({
             flightNumber: flight.id,
             seatNumber: selectedSeats.map(seat => seat.seatNumber).join(','),
