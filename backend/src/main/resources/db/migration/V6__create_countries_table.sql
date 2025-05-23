@@ -1,0 +1,6 @@
+CREATE TABLE countries (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    tenant_id VARCHAR(255) NOT NULL
+);
