@@ -36,16 +36,20 @@ function AdminFaqs() {
 
   return (
     <div className="adminbooking-container">
-      <aside className="airport-sidebar">
-        <div className="airport-logo">MBI RE</div>
-        <nav className="airport-nav-group">
-          {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
-            <div className="airport-nav-row" key={item}>
-              <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
-            </div>
-          ))}
-        </nav>
-      </aside>
+     <aside className="airport-sidebar">
+             <div className="airport-logo">MBI RE</div>
+             <nav className="airport-nav-group">
+               {[
+                 'dashboard', 'airport', 'booking', 'faqs', 'flightspage',
+                 'maintenance', 'passangers', 'payments', 'staff', 'support',
+                 'announcements', 'city', 'languages', 'trending', 'policy', 'gate','terminal'
+               ].map((item) => (
+                 <div className="airport-nav-row" key={item}>
+                   <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
+                 </div>
+               ))}
+             </nav>
+           </aside>
 
       <main className="adminbooking-content">
         <header className="adminbooking-header">

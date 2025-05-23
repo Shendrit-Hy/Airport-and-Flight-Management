@@ -2,40 +2,50 @@ import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import '../styles/AdminAirportPage.css';
-import { getAllAirports, createAirport, deleteAirport } from '../api/airportService';
+import {
+  getLanguages,
+  createLanguage,
+  deleteLanguage
+} from '../api/languageService';
 
 export default function AdminLanguages() {
-  const [airports, setAirports] = useState([]);
+  const [languages, setLanguages] = useState([]);
+  const tenantId = localStorage.getItem('tenantId'); // ✅ Merr tenantId nga localStorage
 
   useEffect(() => {
-    loadAirports();
+    loadLanguages();
   }, []);
 
-  const loadAirports = async () => {
+  const loadLanguages = async () => {
     try {
-      const res = await getAirports();
-      setAirports(Array.isArray(res.data) ? res.data : []);
-    } catch (err) {
-      console.error('Error loading airports:', err);
+      const res = await getLanguages();
+      setLanguages(res); // nuk ka më .data, sepse kthehet direkt nga service
+    } catch (error) {
+      console.error('❌ Error loading languages:', error);
     }
   };
 
   const handleAdd = async (values, { resetForm }) => {
+    const payload = {
+      name: values.languagename,
+      code: values.languagecode
+    };
+
     try {
-      await createAirport(values);
+      await createLanguage(payload, tenantId); // ✅ kalon tenantId
       resetForm();
-      loadAirports();
-    } catch (err) {
-      console.error('Error creating airport:', err);
+      loadLanguages();
+    } catch (error) {
+      console.error('❌ Error creating language:', error);
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      await deleteAirport(id);
-      loadAirports();
-    } catch (err) {
-      console.error('Error deleting airport:', err);
+      await deleteLanguage(id, tenantId); // ✅ kalon tenantId
+      loadLanguages();
+    } catch (error) {
+      console.error('❌ Error deleting language:', error);
     }
   };
 
@@ -67,73 +77,56 @@ export default function AdminLanguages() {
           <div className="airport-admin-title">ADMIN</div>
         </header>
 
-
         <Formik
-          initialValues={{ countryname: '', code: ''}}
+          initialValues={{ languagename: '', languagecode: '' }}
           validationSchema={Yup.object({
             languagename: Yup.string().required('Required'),
             languagecode: Yup.string().required('Required'),
-            
           })}
           onSubmit={handleAdd}
         >
           <Form className="admin-city-country-form">
             <div className="admin-city-country-row">
-                {['language name', 'language code'].map((field) => (
-                <div className="admin-city-country-input-group" key={field}>
-                    <Field
-                    type="text"
-                    id={field}
-                    name={field}
-                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                    className="admin-city-country-input"
-                    />
-                    <ErrorMessage
-                    name={field}
-                    component="div"
-                    className="admin-city-country-error"
-                    />
-                </div>
-    ))}
-    <button type="submit" className="admin-city-country-add-btn">ADD</button>
-  </div>
+              <div className="admin-city-country-input-group">
+                <Field
+                  type="text"
+                  name="languagename"
+                  placeholder="Language Name"
+                  className="admin-city-country-input"
+                />
+                <ErrorMessage name="languagename" component="div" className="admin-city-country-error" />
+              </div>
+              <div className="admin-city-country-input-group">
+                <Field
+                  type="text"
+                  name="languagecode"
+                  placeholder="Language Code"
+                  className="admin-city-country-input"
+                />
+                <ErrorMessage name="languagecode" component="div" className="admin-city-country-error" />
+              </div>
+              <button type="submit" className="admin-city-country-add-btn">ADD</button>
+            </div>
           </Form>
-
         </Formik>
 
         <div className="airport-table">
-            <div
-                className="airport-table-header"
-                style={{ display: 'flex', width: '100%' }}
-            >
-                <span style={{ width: '33%' }}>Language Name</span>
-                <span style={{ width: '33%' }}>Language Code</span>
-                <span style={{ width: '33%' }}>Actions</span>
+          <div className="airport-table-header" style={{ display: 'flex', width: '100%' }}>
+            <span style={{ width: '33%' }}>Language Name</span>
+            <span style={{ width: '33%' }}>Language Code</span>
+            <span style={{ width: '33%' }}>Actions</span>
+          </div>
 
-            </div>
-
-            {airports.map((airport) => (
-                <div
-                className="airport-table-row"
-                key={airport.id}
-                style={{ display: 'flex', width: '100%' }}
-                >
-                <span style={{ width: '33%' }}>{airport.name}</span>
-                <span style={{ width: '33%' }}>{airport.code}</span>
-                <span style={{ width: '20%' }}>
-                <button
-                  className="airport-delete-btn"
-                  onClick={() => handleDelete(airport.id)}
-                >
-                  🗑
-                </button>
+          {languages.map((lang) => (
+            <div className="airport-table-row" key={lang.id} style={{ display: 'flex', width: '100%' }}>
+              <span style={{ width: '33%' }}>{lang.name}</span>
+              <span style={{ width: '33%' }}>{lang.code}</span>
+              <span style={{ width: '33%' }}>
+                <button className="airport-delete-btn" onClick={() => handleDelete(lang.id)}>🗑</button>
               </span>
-
-                </div>
-            ))}
+            </div>
+          ))}
         </div>
-        
-
       </main>
     </div>
   );

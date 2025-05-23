@@ -1,14 +1,15 @@
 package com.mbi_re.airport_management.service;
 
-
 import com.mbi_re.airport_management.config.TenantContext;
+import com.mbi_re.airport_management.dto.LanguageDTO;
 import com.mbi_re.airport_management.model.Language;
 import com.mbi_re.airport_management.repository.LanguageRepository;
 import org.springframework.cache.annotation.Cacheable;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LanguageService {
@@ -19,12 +20,8 @@ public class LanguageService {
         this.languageRepository = languageRepository;
     }
 
-
     /**
-     * Retrieves all languages associated with the current tenant.
-     * Cached for performance, assuming language definitions do not change frequently.
-     *
-     * @return a list of language entities for the current tenant
+     * Retrieve all languages for the current tenant.
      */
     @Cacheable("languages")
     public List<Language> getAllLanguages() {
@@ -33,10 +30,7 @@ public class LanguageService {
     }
 
     /**
-     * Saves a new language entity under the current tenant.
-     *
-     * @param language the language to persist
-     * @return the persisted language entity
+     * Save a new language for the current tenant.
      */
     public Language saveLanguage(Language language) {
         language.setTenantId(TenantContext.getTenantId());
@@ -44,18 +38,27 @@ public class LanguageService {
     }
 
     /**
-     * Deletes a language by ID, scoped to the current tenant.
-     * Throws IllegalArgumentException if not found.
-     *
-     * @param id the ID of the language to delete
+     * Create a Language entity from DTO and save it.
      */
+    public Language createFromDTO(LanguageDTO dto, String tenantId) {
+        Language language = new Language();
+        language.setName(dto.getName());
+        language.setCode(dto.getCode());
+        language.setTenantId(tenantId);
+        return languageRepository.save(language);
+    }
+
+    /**
+     * Delete a language by ID if it belongs to the current tenant.
+     */
+    @Transactional
     public void deleteLanguage(Long id) {
         String tenantId = TenantContext.getTenantId();
-        Language language = languageRepository.findByIdAndTenantId(id, tenantId);
-        if (language == null) {
-            throw new IllegalArgumentException("Language not found or does not belong to current tenant");
-        }
-        languageRepository.delete(language);
 
+        Language language = languageRepository
+                .findByIdAndTenantId(id, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Language not found or does not belong to current tenant"));
+
+        languageRepository.delete(language);
     }
 }
