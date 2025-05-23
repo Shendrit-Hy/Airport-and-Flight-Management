@@ -18,12 +18,14 @@ public class CurrencyService {
     private final Map<String, CurrencyDTO> customCurrencies = new ConcurrentHashMap<>();
 
     /**
-     * Retrieves all available currencies supported by the JVM and any custom ones added at runtime.
-     * This list is based on ISO 4217 and extended with user-added currencies.
+     * Retrieves all available currencies supported by the JVM combined with
+     * any custom currencies added at runtime.
      * <p>
-     * The result is cached to reduce computation overhead.
+     * This list is based on ISO 4217 standard and extended with user-added currencies.
+     * The results are cached under "availableCurrencies" to improve performance.
      *
-     * @return a list of {@link CurrencyDTO} representing all available currencies.
+     * @return a list of {@link CurrencyDTO} representing all available currencies,
+     *         including JVM standard and custom-added ones.
      */
     @Cacheable("availableCurrencies")
     public List<CurrencyDTO> getAllCurrencies() {
@@ -39,12 +41,13 @@ public class CurrencyService {
     }
 
     /**
-     * Adds a new currency to the in-memory custom list.
-     * This does not persist the currency globally or in a database.
-     * Used for demonstration or testing tenant-specific additions.
+     * Adds a new currency to the in-memory custom currency list.
+     * <p>
+     * This method does not persist the currency globally or in any database;
+     * it is intended for temporary or tenant-specific additions.
      *
-     * @param currencyDTO the currency to add
-     * @return the added {@link CurrencyDTO}
+     * @param currencyDTO the currency data transfer object to add
+     * @return the added {@link CurrencyDTO} instance
      */
     public CurrencyDTO addCurrency(CurrencyDTO currencyDTO) {
         customCurrencies.put(currencyDTO.getCode(), currencyDTO);
@@ -52,10 +55,11 @@ public class CurrencyService {
     }
 
     /**
-     * Deletes a currency from the in-memory custom list by its currency code.
-     * Does not affect standard JVM currencies.
+     * Removes a currency from the in-memory custom currency list by its currency code.
+     * <p>
+     * This operation does not affect the standard JVM currencies.
      *
-     * @param code the currency code to delete
+     * @param code the currency code (ISO 4217) of the custom currency to delete
      */
     public void deleteCurrency(String code) {
         customCurrencies.remove(code);

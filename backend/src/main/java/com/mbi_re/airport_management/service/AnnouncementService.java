@@ -25,11 +25,12 @@ public class AnnouncementService {
     private AnnouncementRepository announcementRepository;
 
     /**
-     * Retrieves all announcements associated with the given tenant.
-     * This method is cached for public use (unauthenticated users).
+     * Retrieves all announcements associated with the specified tenant.
+     * This method leverages caching for improved performance, especially for
+     * public or unauthenticated access.
      *
-     * @param tenantId the tenant identifier
-     * @return list of announcement DTOs
+     * @param tenantId the identifier of the tenant whose announcements are retrieved
+     * @return list of AnnouncementDTOs belonging to the tenant
      */
     @Cacheable(value = "announcements", key = "#tenantId")
     public List<AnnouncementDTO> getAnnouncementsByTenant(String tenantId) {
@@ -40,11 +41,12 @@ public class AnnouncementService {
     }
 
     /**
-     * Saves a new announcement for a tenant.
-     * Cache is evicted to reflect the new state.
+     * Saves a new announcement entity for a tenant.
+     * Upon saving, the announcements cache for the tenant is evicted to
+     * maintain consistency.
      *
-     * @param dto the announcement data transfer object
-     * @return saved announcement DTO
+     * @param dto the announcement data transfer object containing announcement details
+     * @return the saved announcement as a DTO including any generated fields (e.g. timestamps)
      */
     @CacheEvict(value = "announcements", key = "#dto.tenantId")
     public AnnouncementDTO saveAnnouncement(AnnouncementDTO dto) {
@@ -55,10 +57,10 @@ public class AnnouncementService {
     }
 
     /**
-     * Converts an entity to a DTO.
+     * Converts an Announcement entity to its corresponding DTO representation.
      *
-     * @param announcement the announcement entity
-     * @return announcement DTO
+     * @param announcement the Announcement entity to convert
+     * @return the equivalent AnnouncementDTO
      */
     private AnnouncementDTO toDTO(Announcement announcement) {
         AnnouncementDTO dto = new AnnouncementDTO();
@@ -70,10 +72,10 @@ public class AnnouncementService {
     }
 
     /**
-     * Converts a DTO to an entity.
+     * Converts an AnnouncementDTO into an Announcement entity.
      *
-     * @param dto the announcement DTO
-     * @return announcement entity
+     * @param dto the AnnouncementDTO to convert
+     * @return the equivalent Announcement entity
      */
     private Announcement toEntity(AnnouncementDTO dto) {
         Announcement a = new Announcement();

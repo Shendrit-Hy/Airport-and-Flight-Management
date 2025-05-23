@@ -28,9 +28,10 @@ public class TerminalService {
 
     /**
      * Retrieves all terminals for a specific tenant.
+     * Results are cached by tenantId to improve performance on repeated queries.
      *
-     * @param tenantId the ID of the tenant
-     * @return list of terminal DTOs
+     * @param tenantId the ID of the tenant to filter terminals
+     * @return a list of TerminalDTO objects representing terminals belonging to the tenant
      */
     @Cacheable(value = "terminals", key = "#tenantId")
     public List<TerminalDTO> getAllTerminals(String tenantId) {
@@ -46,13 +47,14 @@ public class TerminalService {
     }
 
     /**
-     * Creates a new terminal associated with a specific airport and tenant.
+     * Creates a new terminal associated with a given airport and tenant.
+     * Validates the presence of the airportId and the existence of the referenced airport.
      *
-     * @param dto      terminal data
-     * @param tenantId the ID of the tenant
-     * @return created terminal DTO
-     * @throws IllegalArgumentException if the airport ID is null
-     * @throws RuntimeException         if the associated airport is not found
+     * @param dto      the TerminalDTO containing terminal data to create
+     * @param tenantId the ID of the tenant for which the terminal is created
+     * @return the created TerminalDTO reflecting the saved terminal data
+     * @throws IllegalArgumentException if airportId in dto is null
+     * @throws RuntimeException         if the airport with the provided ID does not exist
      */
     public TerminalDTO createTerminal(TerminalDTO dto, String tenantId) {
         if (dto.getAirportId() == null) {
@@ -78,11 +80,12 @@ public class TerminalService {
     }
 
     /**
-     * Deletes a terminal by ID for a specific tenant.
+     * Deletes a terminal by its ID for a specific tenant.
+     * Validates the terminal's existence and ownership by the tenant before deletion.
      *
      * @param terminalId the ID of the terminal to delete
-     * @param tenantId   the ID of the tenant
-     * @throws RuntimeException if the terminal is not found or does not belong to the tenant
+     * @param tenantId   the tenant ID used to verify ownership
+     * @throws RuntimeException if terminal is not found or does not belong to the specified tenant
      */
     public void deleteTerminal(Long terminalId, String tenantId) {
         Terminal terminal = terminalRepository.findById(terminalId)

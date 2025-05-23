@@ -22,12 +22,14 @@ public class CurrencyConverterService {
 
     /**
      * Converts an amount from one currency to another using tenant-specific exchange rates.
+     * The conversion is cached per unique combination of source, target currency,
+     * amount, and tenant ID to improve performance.
      *
      * @param from  the source currency code (e.g., "EUR")
      * @param to    the target currency code (e.g., "USD")
      * @param value the amount to convert
-     * @return the converted amount
-     * @throws RuntimeException if either currency is not found for the tenant
+     * @return the converted amount in the target currency
+     * @throws RuntimeException if either the source or target currency is not found for the tenant
      */
     @Cacheable(
             value = "currencyConversion",
@@ -48,9 +50,10 @@ public class CurrencyConverterService {
 
     /**
      * Adds a new currency rate for the current tenant.
+     * Evicts all related caches to ensure cache consistency.
      *
-     * @param rate the currency rate to add
-     * @return the saved currency rate
+     * @param rate the CurrencyRate entity to add
+     * @return the saved CurrencyRate entity
      */
     @CacheEvict(value = {"currencyRates", "currencyConversion"}, allEntries = true)
     public CurrencyRate addRate(CurrencyRate rate) {
@@ -61,10 +64,11 @@ public class CurrencyConverterService {
 
     /**
      * Updates an existing currency rate for the current tenant.
+     * Evicts all related caches to ensure cache consistency.
      *
-     * @param code the currency code to update
-     * @param rate the updated rate details
-     * @return the updated currency rate
+     * @param code the currency code identifying the rate to update
+     * @param rate the CurrencyRate entity containing updated information
+     * @return the updated CurrencyRate entity
      */
     @CacheEvict(value = {"currencyRates", "currencyConversion"}, allEntries = true)
     public CurrencyRate updateRate(String code, CurrencyRate rate) {
@@ -75,9 +79,10 @@ public class CurrencyConverterService {
     }
 
     /**
-     * Deletes a currency rate by code for the current tenant.
+     * Deletes a currency rate by its currency code for the current tenant.
+     * Evicts all related caches to maintain cache correctness.
      *
-     * @param code the currency code to delete
+     * @param code the currency code of the rate to delete
      */
     @CacheEvict(value = {"currencyRates", "currencyConversion"}, allEntries = true)
     public void deleteRate(String code) {
@@ -86,9 +91,10 @@ public class CurrencyConverterService {
 
     /**
      * Retrieves all currency rates for the specified tenant.
+     * The result is cached by tenant ID to improve retrieval speed.
      *
      * @param tenantId the tenant identifier
-     * @return list of currency rates
+     * @return list of CurrencyRate entities for the tenant
      */
     @Cacheable(value = "currencyRates", key = "#tenantId", unless = "#result == null or #result.isEmpty()")
     public List<CurrencyRate> listRates(String tenantId) {

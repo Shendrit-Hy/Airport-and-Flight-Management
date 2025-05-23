@@ -25,11 +25,10 @@ public class CountryService {
     }
 
     /**
-     * Retrieves all countries for the current tenant.
-     * <p>
-     * Caches the result by tenant to improve performance.
+     * Retrieves all countries associated with the current tenant.
+     * The results are cached by tenant ID to enhance performance.
      *
-     * @return list of CountryDTO objects
+     * @return a list of CountryDTO objects representing the tenant's countries
      */
     @Cacheable(value = "countries", key = "T(com.mbi_re.airport_management.config.TenantContext).getTenantId()")
     public List<CountryDTO> getAllCountries() {
@@ -41,11 +40,12 @@ public class CountryService {
 
     /**
      * Creates a new country for the current tenant.
-     * <p>
-     * Invalidates the cache for countries under the current tenant.
+     * Evicts the countries cache to keep cached data consistent.
+     * Throws a RuntimeException if a country with the same name already exists for the tenant.
      *
-     * @param dto the country to create
+     * @param dto the CountryDTO containing data of the country to create
      * @return the created CountryDTO
+     * @throws RuntimeException if the country name already exists for the tenant
      */
     @CacheEvict(value = "countries", key = "T(com.mbi_re.airport_management.config.TenantContext).getTenantId()")
     public CountryDTO createCountry(CountryDTO dto) {
@@ -65,12 +65,10 @@ public class CountryService {
     }
 
     /**
-     /**
-     * Deletes a country for the current tenant based on the ID.
-     * <p>
-     * Invalidates the countries cache after deletion.
+     * Deletes a country by ID for the current tenant.
+     * Evicts the countries cache to maintain cache accuracy.
      *
-     * @param id the country ID to delete
+     * @param id the ID of the country to delete
      */
     @CacheEvict(value = "countries", key = "T(com.mbi_re.airport_management.config.TenantContext).getTenantId()")
     @Transactional
@@ -78,5 +76,4 @@ public class CountryService {
         String tenantId = TenantContext.getTenantId();
         countryRepository.deleteByIdAndTenantId(id, tenantId);
     }
-
 }

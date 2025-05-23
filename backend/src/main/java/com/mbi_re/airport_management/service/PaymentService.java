@@ -24,11 +24,11 @@ public class PaymentService {
     private PaymentRepository paymentRepository;
 
     /**
-     * Retrieves all payment records for a given tenant.
-     * Uses caching to optimize repeated fetches per tenant.
+     * Retrieves all payment records associated with the specified tenant.
+     * Uses caching to optimize performance for repeated requests.
      *
-     * @param tenantId the tenant ID
-     * @return list of PaymentDTOs
+     * @param tenantId the tenant identifier to filter payments
+     * @return a list of PaymentDTO representing payments for the tenant
      */
     @Cacheable(value = "payments", key = "#tenantId")
     public List<PaymentDTO> getPaymentsByTenant(String tenantId) {
@@ -39,11 +39,11 @@ public class PaymentService {
     }
 
     /**
-     * Deletes a payment by its reference for the given tenant.
-     * Evicts the tenant's cache to reflect changes immediately.
+     * Deletes a payment record identified by its reference and tenant ID.
+     * Evicts the cached payments for the tenant to ensure cache consistency.
      *
-     * @param reference the payment reference
-     * @param tenantId  the tenant ID
+     * @param reference the unique payment reference identifier
+     * @param tenantId  the tenant identifier for authorization
      */
     @CacheEvict(value = "payments", key = "#tenantId")
     public void deletePaymentByReference(String reference, String tenantId) {
@@ -54,11 +54,12 @@ public class PaymentService {
     }
 
     /**
-     * Saves a new payment for the given tenant.
-     * Evicts the tenant's cache to maintain consistency.
+     * Saves a new payment record for the specified tenant.
+     * Automatically sets the current time as the payment time.
+     * Evicts the tenant's payment cache after saving to keep data fresh.
      *
-     * @param dto the PaymentDTO with payment details
-     * @return the saved PaymentDTO
+     * @param dto the PaymentDTO containing payment details and tenant ID
+     * @return the saved PaymentDTO with persisted details
      */
     @CacheEvict(value = "payments", key = "#dto.tenantId")
     public PaymentDTO savePayment(PaymentDTO dto) {
@@ -69,10 +70,10 @@ public class PaymentService {
     }
 
     /**
-     * Converts a Payment entity to a DTO.
+     * Converts a Payment entity to its corresponding DTO.
      *
-     * @param payment the Payment entity
-     * @return the corresponding PaymentDTO
+     * @param payment the Payment entity to convert
+     * @return the PaymentDTO representation
      */
     private PaymentDTO toDTO(Payment payment) {
         PaymentDTO dto = new PaymentDTO();
@@ -85,10 +86,10 @@ public class PaymentService {
     }
 
     /**
-     * Converts a PaymentDTO to an entity.
+     * Converts a PaymentDTO to its corresponding entity.
      *
-     * @param dto the PaymentDTO
-     * @return the corresponding Payment entity
+     * @param dto the PaymentDTO to convert
+     * @return the Payment entity representation
      */
     private Payment toEntity(PaymentDTO dto) {
         Payment payment = new Payment();

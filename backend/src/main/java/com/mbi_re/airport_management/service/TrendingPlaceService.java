@@ -28,6 +28,7 @@ public class TrendingPlaceService {
 
     /**
      * Retrieves a list of trending places for the current season and tenant.
+     * The current season is determined based on the current month.
      *
      * @param tenantId The tenant ID to scope the results.
      * @return A list of trending places for the tenant and current season.
@@ -39,18 +40,17 @@ public class TrendingPlaceService {
     }
 
     /**
-     * Retrieves a list of trending places for the current tenant.
+     * Retrieves all trending places for the specified tenant.
      *
      * @param tenantId The tenant ID to scope the results.
-     * @return A list of trending places for the tenant.
+     * @return A list of trending places belonging to the tenant.
      */
     public List<TrendingPlace> getTrendingPlaces(String tenantId) {
         return repository.findByTenantId(tenantId);
     }
 
-
     /**
-     * Creates a new trending place for the specified tenant.
+     * Creates and saves a new trending place associated with the specified tenant.
      *
      * @param dto      The data transfer object containing trending place details.
      * @param tenantId The tenant ID to associate the new place with.
@@ -67,11 +67,12 @@ public class TrendingPlaceService {
     }
 
     /**
-     * Deletes a trending place by ID and tenant ID.
+     * Deletes a trending place by its ID, verifying tenant ownership.
      *
      * @param id       The ID of the trending place to delete.
      * @param tenantId The tenant ID to validate ownership.
-     * @throws IllegalArgumentException if the place does not exist or doesn't belong to the tenant.
+     * @throws IllegalArgumentException if the trending place does not exist or
+     *                                  if it does not belong to the specified tenant.
      */
     public void deleteTrendingPlace(Long id, String tenantId) {
         TrendingPlace place = repository.findById(id)
@@ -85,10 +86,10 @@ public class TrendingPlaceService {
     }
 
     /**
-     * Determines the season based on the given month value.
+     * Determines the current season based on the given month.
      *
-     * @param month The month value (1–12).
-     * @return The season name in uppercase (e.g., "SPRING", "SUMMER").
+     * @param month The month value (1 to 12).
+     * @return The name of the season in uppercase (e.g., "SPRING", "SUMMER", "FALL", "WINTER").
      */
     private String determineSeason(int month) {
         return switch (month) {

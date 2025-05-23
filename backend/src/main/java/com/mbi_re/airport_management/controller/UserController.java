@@ -48,7 +48,7 @@ public class UserController {
      *
      * @param userDTO  The user registration information.
      * @param tenantId The tenant ID from the request header.
-     * @return The created {@link User} entity.
+     * @return The created {@link User} entity wrapped in a response.
      */
     @PostMapping("/register")
     @Operation(
@@ -64,8 +64,12 @@ public class UserController {
             }
     )
     public ResponseEntity<User> register(
-            @RequestBody UserDTO userDTO,
-            @RequestHeader(value = "X-Tenant-ID") String tenantId) {
+            @RequestBody
+            @Parameter(description = "User registration details", required = true)
+            UserDTO userDTO,
+            @RequestHeader(value = "X-Tenant-ID")
+            @Parameter(description = "Tenant ID for multi-tenant support", required = true)
+            String tenantId) {
 
         TenantUtil.validateTenant(tenantId);
         User createdUser = userService.registerUser(userDTO, tenantId);
@@ -74,9 +78,9 @@ public class UserController {
 
     /**
      * Retrieves the currently authenticated user's profile.
-     * Uses the tenant extracted from the security context.
+     * Tenant is extracted from the security context.
      *
-     * @return The current user's {@link UserDTO} profile.
+     * @return The current user's {@link UserDTO} profile wrapped in a response.
      */
     @GetMapping("/profile")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -89,7 +93,6 @@ public class UserController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
             }
     )
-
     public ResponseEntity<UserDTO> getProfile() {
         String tenantId = getTenantFromContext();
         TenantUtil.validateTenant(tenantId);
@@ -102,7 +105,7 @@ public class UserController {
      * Accessible only to users with ADMIN role.
      *
      * @param id The ID of the user to retrieve.
-     * @return The {@link User} object if found, or 404 otherwise.
+     * @return The {@link User} object wrapped in a response if found; otherwise 404.
      */
     @GetMapping("/user/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -119,7 +122,10 @@ public class UserController {
             }
     )
     @Cacheable(value = "usersById", key = "#id + '_' + T(com.mbi_re.airport_management.config.TenantContext).getTenantId()")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<User> getUserById(
+            @PathVariable
+            @Parameter(description = "User ID", required = true)
+            Long id) {
         String tenantId = getTenantFromContext();
         TenantUtil.validateTenant(tenantId);
         Optional<User> user = userService.getUserById(id);
@@ -128,9 +134,10 @@ public class UserController {
 
     /**
      * Updates the currently authenticated user's profile.
+     * Tenant is extracted from the security context.
      *
      * @param updatedUser A {@link UserDTO} object containing updated user information.
-     * @return The updated {@link UserDTO} profile.
+     * @return The updated {@link UserDTO} profile wrapped in a response.
      */
     @PutMapping("/profile")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -144,7 +151,10 @@ public class UserController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
             }
     )
-    public ResponseEntity<UserDTO> updateProfile(@RequestBody UserDTO updatedUser) {
+    public ResponseEntity<UserDTO> updateProfile(
+            @RequestBody
+            @Parameter(description = "Updated user profile information", required = true)
+            UserDTO updatedUser) {
         String tenantId = getTenantFromContext();
         TenantUtil.validateTenant(tenantId);
         UserDTO updatedProfile = userService.updateUserProfile(updatedUser);

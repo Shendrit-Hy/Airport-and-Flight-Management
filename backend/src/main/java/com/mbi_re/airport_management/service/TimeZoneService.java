@@ -20,10 +20,16 @@ import java.util.stream.Collectors;
 public class TimeZoneService {
 
     /**
-     * Retrieves all available time zones with their UTC offsets.
-     * This data is static and rarely changes, so it is cacheable.
+     * Retrieves all available time zones along with their current UTC offsets.
+     * This method collects all zone IDs provided by Java's {@link ZoneId},
+     * sorts them alphabetically, and constructs a list of {@link TimeZoneDTO}
+     * objects containing the zone ID and its offset from UTC in the format "UTC±HH:mm".
+     * <p>
+     * The results are cacheable as the set of available time zones and their offsets
+     * typically change rarely, improving performance on repeated calls.
      *
-     * @return a list of {@link TimeZoneDTO} containing time zone ID and offset
+     * @return a list of {@link TimeZoneDTO} objects, each containing the time zone ID
+     *         and its current UTC offset string representation
      */
     @Cacheable(value = "timezones", key = "#root.methodName") // Cache once per service method (not per tenant)
     public List<TimeZoneDTO> getAllTimeZones() {

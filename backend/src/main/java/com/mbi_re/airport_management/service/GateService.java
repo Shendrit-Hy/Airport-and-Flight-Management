@@ -33,10 +33,11 @@ public class GateService {
 
     /**
      * Retrieves all gates for a specific tenant.
-     * This method is cached to improve performance when gates don't change frequently.
+     * <p>
+     * This method uses caching to improve performance by storing gate data per tenant.
      *
      * @param tenantId the tenant ID for filtering gates
-     * @return list of Gate entities for the given tenant
+     * @return list of Gate entities associated with the given tenant
      */
     @Cacheable(value = "gates", key = "#tenantId")
     public List<Gate> getAllGates(String tenantId) {
@@ -44,10 +45,12 @@ public class GateService {
     }
 
     /**
-     * Converts a Gate entity into a GateResponseDTO.
+     * Converts a Gate entity to its corresponding DTO representation.
+     * <p>
+     * The DTO includes gate details and associated terminal and flight info.
      *
-     * @param gate the gate entity to convert
-     * @return a DTO representation of the gate
+     * @param gate the Gate entity to convert
+     * @return a GateResponseDTO containing gate and related information
      */
     public GateResponseDTO mapToResponseDTO(Gate gate) {
         GateResponseDTO dto = new GateResponseDTO();
@@ -63,13 +66,16 @@ public class GateService {
     }
 
     /**
-     * Creates a new gate for a tenant.
-     * This method ensures tenant-specific associations for terminal and optional flight.
-     * Cache for "gates" is evicted to keep data fresh.
+     * Creates a new gate for the specified tenant.
+     * <p>
+     * The method validates the terminal association, optionally associates a flight,
+     * and evicts the "gates" cache for the tenant to keep data consistent.
      *
-     * @param dto      the gate DTO containing user-provided data
-     * @param tenantId the tenant ID for whom the gate is being created
-     * @return the newly created Gate entity
+     * @param dto      the GateDTO containing data to create the gate
+     * @param tenantId the tenant ID for whom the gate is created
+     * @return the saved Gate entity
+     * @throws IllegalArgumentException if terminal ID in DTO is null
+     * @throws EntityNotFoundException  if the terminal does not exist for the tenant
      */
     @CacheEvict(value = "gates", key = "#tenantId")
     public Gate createGate(GateDTO dto, String tenantId) {
@@ -91,17 +97,17 @@ public class GateService {
                     .ifPresent(gate::setFlight);
         }
 
-
         return gateRepository.save(gate);
     }
 
     /**
-     * Deletes a gate for the given tenant.
-     * This method ensures that only tenant-owned gates can be deleted.
-     * Cache for "gates" is evicted to reflect the change.
+     * Deletes a gate identified by ID for the specified tenant.
+     * <p>
+     * Only gates owned by the tenant can be deleted. The cache for "gates" is evicted after deletion.
      *
      * @param id       the ID of the gate to delete
-     * @param tenantId the tenant ID to ensure scoping
+     * @param tenantId the tenant ID to scope the deletion
+     * @throws EntityNotFoundException if gate does not exist or is not owned by the tenant
      */
     @CacheEvict(value = "gates", key = "#tenantId")
     @Transactional
@@ -115,16 +121,15 @@ public class GateService {
     /**
      * Updates an existing gate for the given tenant.
      * <p>
-     * This method ensures that only tenant-owned gates are updated. It verifies and updates
-     * the gate number, status, terminal, and optionally the flight. If a flight ID is not provided,
-     * any existing flight assignment is cleared.
-     * </p>
+     * The method updates gate number, status, terminal, and flight association.
+     * If no flight ID is provided, any existing flight assignment is cleared.
+     * Cache for "gates" is evicted to keep the data fresh.
      *
      * @param id       the ID of the gate to update
-     * @param dto      the data transfer object containing updated gate information
+     * @param dto      the GateDTO containing updated information
      * @param tenantId the tenant ID to scope the update operation
      * @return the updated Gate entity
-     * @throws EntityNotFoundException if the gate, terminal, or flight cannot be found for the given tenant
+     * @throws EntityNotFoundException if the gate, terminal, or flight (if provided) is not found for the tenant
      */
     @CacheEvict(value = "gates", key = "#tenantId")
     public Gate updateGate(Long id, GateDTO dto, String tenantId) {

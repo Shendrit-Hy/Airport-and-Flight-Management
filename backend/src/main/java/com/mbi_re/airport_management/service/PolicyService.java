@@ -24,21 +24,29 @@ public class PolicyService {
     }
 
     /**
-     * Retrieves all policies associated with the current tenant.
-     * The result is cached to improve read performance.
+     * Retrieves all policies associated with the specified tenant.
      *
-     * @return list of policies for the current tenant
+     * <p>This method can be cached for performance optimization if needed,
+     * but currently is not annotated with caching annotations.</p>
+     *
+     * @param tenantId the tenant identifier whose policies are to be retrieved
+     * @return list of {@link Policy} entities for the given tenant
      */
     public List<Policy> getAllPolicies(String tenantId) {
         return policyRepository.findByTenantId(tenantId);
     }
 
     /**
-     * Creates a new policy for the tenant provided in the DTO.
-     * Cache is evicted upon creation to maintain consistency.
+     * Creates a new policy for the current tenant.
      *
-     * @param dto the policy data transfer object containing the policy details and tenant ID
-     * @return the created Policy entity
+     * <p>The tenant ID is fetched via {@link TenantUtil#getCurrentTenant()} and
+     * explicitly assigned to the new policy before saving.</p>
+     *
+     * <p>This method evicts all entries in the "policies" cache to ensure
+     * cache consistency after a new policy is added.</p>
+     *
+     * @param dto the {@link PolicyDTO} containing details of the policy to be created
+     * @return the newly created {@link Policy} entity
      */
     @CacheEvict(value = "policies", allEntries = true)
     public Policy createPolicy(PolicyDTO dto) {
@@ -47,10 +55,18 @@ public class PolicyService {
         policy.setTitle(dto.getTitle());
         policy.setContent(dto.getContent());
         policy.setType(dto.getType());
-        policy.setTenantId(tenantId); // Explicitly setting the tenant ID
+        policy.setTenantId(tenantId);
         return policyRepository.save(policy);
     }
 
+    /**
+     * Deletes the policy identified by the given ID for the specified tenant.
+     *
+     * <p>This operation is transactional to ensure data integrity.</p>
+     *
+     * @param id       the ID of the policy to delete
+     * @param tenantId the tenant identifier used to scope the deletion
+     */
     @Transactional
     public void deletePolicy(Long id, String tenantId) {
         policyRepository.deleteByIdAndTenantId(id, tenantId);

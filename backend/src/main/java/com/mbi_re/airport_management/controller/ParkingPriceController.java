@@ -13,6 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller for parking price calculations and management.
+ *
+ * <p>Supports both unauthenticated and authenticated calculation endpoints,
+ * with tenant validation.</p>
+ */
 @RestController
 @RequestMapping("/api/parking")
 @Tag(name = "Parking Pricing", description = "Endpoints for calculating and managing parking prices")
@@ -26,25 +32,32 @@ public class ParkingPriceController {
 
     /**
      * Calculate and persist parking price based on provided data.
-     * This endpoint is available to unauthenticated users using the X-Tenant-ID header.
      *
-     * @param dto      parking pricing request data
-     * @param tenantId tenant identifier from header (used before login)
-     * @return calculated and saved ParkingPrice object
+     * <p>This endpoint is available for unauthenticated users who provide a tenant ID
+     * in the "X-Tenant-ID" header. Tenant validation occurs via context set by TenantInterceptor.</p>
+     *
+     * @param dto parking pricing request data (e.g., duration, vehicle type)
+     * @param tenantId tenant identifier extracted from the "X-Tenant-ID" HTTP header
+     * @return ResponseEntity containing the calculated and saved ParkingPrice object
      */
     @PostMapping("/calculate")
     @Operation(
             summary = "Calculate parking price (unauthenticated)",
-            description = "Calculate and store a parking price for a given tenant using X-Tenant-ID header"
+            description = "Calculate and store a parking price for a given tenant using X-Tenant-ID header."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Price calculated and saved successfully"),
             @ApiResponse(responseCode = "403", description = "Invalid or missing tenant ID")
     })
     public ResponseEntity<ParkingPrice> calculate(
-            @RequestBody ParkingPriceDTO dto,
-            @RequestHeader("X-Tenant-ID") @Parameter(description = "Tenant ID from request header") String tenantId) {
-        TenantUtil.validateTenantFromContext(); // Context set by TenantInterceptor
+            @RequestBody
+            @Parameter(description = "Parking price calculation request data", required = true)
+            ParkingPriceDTO dto,
+            @RequestHeader("X-Tenant-ID")
+            @Parameter(description = "Tenant ID from request header", required = true)
+            String tenantId) {
+
+        TenantUtil.validateTenantFromContext(); // Context should already have tenant set by interceptor
         dto.setTenantId(tenantId);
         ParkingPrice result = service.calculateAndSave(dto);
         return ResponseEntity.ok(result);
@@ -52,25 +65,32 @@ public class ParkingPriceController {
 
     /**
      * Authenticated version of parking price calculation.
-     * Only accessible to users with USER or ADMIN role.
      *
-     * @param dto          parking pricing request data
-     * @param jwtTenantId  tenant identifier extracted from JWT and injected into request
-     * @return calculated and saved ParkingPrice object
+     * <p>Only accessible to users with roles USER or ADMIN.
+     * Tenant ID is extracted from JWT and injected into the request.</p>
+     *
+     * @param dto parking pricing request data
+     * @param jwtTenantId tenant identifier extracted from JWT token
+     * @return ResponseEntity containing the calculated and saved ParkingPrice object
      */
     @PostMapping("/secure/calculate")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(
             summary = "Calculate parking price (authenticated)",
-            description = "Calculate and store a parking price for a logged-in user using JWT tenant ID"
+            description = "Calculate and store a parking price for a logged-in user using JWT tenant ID."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Price calculated and saved successfully"),
-            @ApiResponse(responseCode = "403", description = "Invalid or missing tenant ID or role")
+            @ApiResponse(responseCode = "403", description = "Invalid or missing tenant ID or insufficient role")
     })
     public ResponseEntity<ParkingPrice> calculateSecure(
-            @RequestBody ParkingPriceDTO dto,
-            @RequestAttribute("jwtTenantId") @Parameter(description = "Tenant ID from JWT") String jwtTenantId) {
+            @RequestBody
+            @Parameter(description = "Parking price calculation request data", required = true)
+            ParkingPriceDTO dto,
+            @RequestAttribute("jwtTenantId")
+            @Parameter(description = "Tenant ID from JWT", required = true)
+            String jwtTenantId) {
+
         TenantUtil.validateTenant(jwtTenantId);
         dto.setTenantId(jwtTenantId);
         ParkingPrice result = service.calculateAndSave(dto);

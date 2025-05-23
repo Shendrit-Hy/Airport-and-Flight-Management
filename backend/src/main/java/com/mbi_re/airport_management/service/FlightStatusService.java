@@ -23,16 +23,18 @@ public class FlightStatusService {
     private FlightRepository flightRepository;
 
     /**
-     * Updates the status of all flights every minute based on current time.
+     * Periodically updates the status of all flights.
      * <p>
-     * Status transitions:
+     * This method runs every minute and updates each flight's status according to the following rules:
      * <ul>
-     *     <li>SCHEDULED: More than 60 minutes before departure</li>
-     *     <li>BOARDING: Within 60 minutes before departure</li>
-     *     <li>IN_AIR: Between departure and arrival</li>
-     *     <li>LANDED: After arrival</li>
-     *     <li>UNKNOWN: Fallback state</li>
+     *     <li>{@link FlightStatus#SCHEDULED}: More than 60 minutes before departure</li>
+     *     <li>{@link FlightStatus#BOARDING}: Within 60 minutes before departure</li>
+     *     <li>{@link FlightStatus#IN_AIR}: Between departure and arrival times</li>
+     *     <li>{@link FlightStatus#LANDED}: After arrival time</li>
+     *     <li>{@link FlightStatus#UNKNOWN}: Fallback status if none of the above conditions apply</li>
      * </ul>
+     * <p>
+     * Handles overnight flights by adjusting arrival time if it is before departure time.
      */
     @Scheduled(fixedRate = 60000)
     @Transactional
@@ -44,7 +46,7 @@ public class FlightStatusService {
             LocalDateTime departure = LocalDateTime.of(flight.getFlightDate(), flight.getDepartureTime());
             LocalDateTime arrival = LocalDateTime.of(flight.getFlightDate(), flight.getArrivalTime());
 
-            // Adjust for overnight flights
+            // Adjust for overnight flights (arrival next day)
             if (arrival.isBefore(departure)) {
                 arrival = arrival.plusDays(1);
             }
@@ -59,12 +61,12 @@ public class FlightStatusService {
     }
 
     /**
-     * Determines the current flight status based on the time now, departure, and arrival.
+     * Determines the appropriate flight status based on current time relative to departure and arrival.
      *
-     * @param now       current time
-     * @param departure scheduled departure datetime
-     * @param arrival   scheduled arrival datetime
-     * @return the evaluated {@link FlightStatus}
+     * @param now       the current date and time
+     * @param departure the scheduled departure date and time
+     * @param arrival   the scheduled arrival date and time
+     * @return the evaluated {@link FlightStatus} corresponding to the current phase of the flight
      */
     private FlightStatus determineStatus(LocalDateTime now, LocalDateTime departure, LocalDateTime arrival) {
         if (now.isBefore(departure.minusMinutes(60))) {

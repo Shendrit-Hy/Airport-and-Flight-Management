@@ -13,14 +13,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
- * Controller for managing flight bookings within tenant-based system.
+ * Controller for managing flight bookings within a tenant-based system.
  */
 @RestController
 @RequestMapping("/api/bookings")
@@ -38,12 +36,17 @@ public class BookingController {
     }
 
     /**
-     * Create a new booking (accessible by authenticated users).
+     * Create a new booking.
+     * <p>
+     * Accessible by authenticated users.
      *
-     * @param dto Booking data
-     * @return Created booking
+     * @param dto the booking data transfer object containing booking details
+     * @return the created Booking object
      */
-    @Operation(summary = "Create a booking", description = "Authenticated users can book flights.")
+    @Operation(
+            summary = "Create a booking",
+            description = "Allows authenticated users to book flights. Tenant ID is validated from context."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Booking created successfully"),
             @ApiResponse(responseCode = "403", description = "Missing or invalid tenant")
@@ -51,7 +54,8 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<Booking> createBooking(
             @RequestBody
-            @Parameter(description = "Booking data", required = true) BookingDTO dto) {
+            @Parameter(description = "Booking data", required = true)
+            BookingDTO dto) {
 
         TenantUtil.validateTenantFromContext();
         String tenantId = TenantUtil.getCurrentTenant();
@@ -61,11 +65,16 @@ public class BookingController {
     }
 
     /**
-     * Get all bookings (admin only).
+     * Retrieve all bookings.
+     * <p>
+     * Restricted to users with the ADMIN role.
      *
-     * @return List of all bookings
+     * @return list of all Booking objects
      */
-    @Operation(summary = "Get all bookings", description = "Admin-only endpoint to retrieve all bookings.")
+    @Operation(
+            summary = "Get all bookings",
+            description = "Admin-only endpoint to retrieve all bookings."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Bookings fetched successfully"),
             @ApiResponse(responseCode = "403", description = "Access denied")
@@ -78,78 +87,117 @@ public class BookingController {
     }
 
     /**
-     * Get booking by ID (admin only).
+     * Retrieve a booking by its ID.
+     * <p>
+     * Restricted to users with the ADMIN role.
      *
-     * @param id Booking ID
-     * @return Booking details
+     * @param id the booking ID to fetch
+     * @return the Booking object with the specified ID
      */
-    @Operation(summary = "Get booking by ID", description = "Admin-only endpoint to retrieve booking details.")
+    @Operation(
+            summary = "Get booking by ID",
+            description = "Admin-only endpoint to retrieve booking details by ID."
+    )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Booking returned"),
+            @ApiResponse(responseCode = "200", description = "Booking returned successfully"),
             @ApiResponse(responseCode = "404", description = "Booking not found")
     })
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Booking> getById(
             @PathVariable
-            @Parameter(description = "Booking ID", required = true) Long id) {
+            @Parameter(description = "Booking ID", required = true)
+            Long id) {
 
         TenantUtil.validateTenantFromContext();
         return ResponseEntity.ok(service.getBookingById(id));
     }
 
     /**
-     * Update booking (admin only).
+     * Update an existing booking by its ID.
+     * <p>
+     * Restricted to users with the ADMIN role.
      *
-     * @param id  Booking ID
-     * @param dto Updated data
-     * @return Updated booking
+     * @param id  the booking ID to update
+     * @param dto the updated booking data
+     * @return the updated Booking object
      */
-    @Operation(summary = "Update a booking", description = "Admin-only endpoint to update a booking.")
+    @Operation(
+            summary = "Update a booking",
+            description = "Admin-only endpoint to update a booking by ID."
+    )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Booking updated"),
+            @ApiResponse(responseCode = "200", description = "Booking updated successfully"),
             @ApiResponse(responseCode = "404", description = "Booking not found")
     })
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Booking> update(
             @PathVariable
-            @Parameter(description = "Booking ID", required = true) Long id,
+            @Parameter(description = "Booking ID", required = true)
+            Long id,
             @RequestBody
-            @Parameter(description = "Updated booking data", required = true) BookingDTO dto) {
+            @Parameter(description = "Updated booking data", required = true)
+            BookingDTO dto) {
 
         TenantUtil.validateTenantFromContext();
         return ResponseEntity.ok(service.updateBooking(id, dto));
     }
 
     /**
-     * Delete a booking (admin only).
+     * Delete a booking by its ID.
+     * <p>
+     * Restricted to users with the ADMIN role.
      *
-     * @param id Booking ID
-     * @return 204 No Content
+     * @param id the booking ID to delete
+     * @return HTTP 204 No Content if deletion was successful
      */
-    @Operation(summary = "Delete a booking", description = "Admin-only endpoint to delete a booking.")
+    @Operation(
+            summary = "Delete a booking",
+            description = "Admin-only endpoint to delete a booking by ID."
+    )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Booking deleted"),
+            @ApiResponse(responseCode = "204", description = "Booking deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Booking not found")
     })
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable
-            @Parameter(description = "Booking ID", required = true) Long id) {
+            @Parameter(description = "Booking ID", required = true)
+            Long id) {
 
         TenantUtil.validateTenantFromContext();
         service.deleteBooking(id);
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Update the check-in status of a booking.
+     * <p>
+     * Accessible by users with the USER role.
+     *
+     * @param id        the booking ID
+     * @param checkedIn boolean flag indicating check-in status (true = checked in)
+     * @return the updated Booking if found, or 404 Not Found
+     */
+    @Operation(
+            summary = "Update check-in status",
+            description = "Mark a booking as checked-in or not. Accessible by users with USER role."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Check-in status updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Booking not found")
+    })
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/{id}/checkin")
-    @Operation(summary = "Update check-in status", description = "Mark a booking as checked-in or not.")
     public ResponseEntity<Booking> updateCheckInStatus(
-            @PathVariable Long id,
-            @RequestParam boolean checkedIn) {
+            @PathVariable
+            @Parameter(description = "Booking ID", required = true)
+            Long id,
+            @RequestParam
+            @Parameter(description = "New check-in status", required = true)
+            boolean checkedIn) {
 
         TenantUtil.validateTenantFromContext();
         return service.updateCheckInStatus(id, checkedIn)

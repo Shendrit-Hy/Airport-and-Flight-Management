@@ -20,6 +20,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+/**
+ * Controller for user authentication and JWT token generation.
+ * Requires tenant identification via X-Tenant-ID header.
+ */
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Authentication", description = "Endpoints for user login and token generation")
@@ -38,25 +42,38 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     /**
-     * Authenticates a user and returns a JWT token if credentials are valid.
-     * This endpoint requires `X-Tenant-ID` header to identify the tenant.
+     * Authenticates a user by username and password, scoped to a tenant.
+     * Requires 'X-Tenant-ID' header for tenant identification.
      *
-     * @param request the login request containing username and password
-     * @param tenantId tenant ID passed via `X-Tenant-ID` header
-     * @return JWT token, user role, tenant ID and user ID
+     * @param request  the login request containing username and password
+     * @param tenantId the tenant identifier from the "X-Tenant-ID" request header
+     * @return a ResponseEntity containing a JWT token, user role, tenant ID, and user ID if successful;
+     *         400 if tenant header is missing; 401 if authentication fails
      */
     @PostMapping("/login")
-    @Operation(summary = "Login user", description = "Authenticate user and return JWT token. Requires X-Tenant-ID header.")
+    @Operation(
+            summary = "Login user",
+            description = "Authenticate user and return a JWT token. Requires X-Tenant-ID header."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Login successful", content = @Content(schema = @Schema(implementation = LoginResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Invalid username, password, or tenant"),
-            @ApiResponse(responseCode = "400", description = "Missing tenant ID header")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Login successful",
+                    content = @Content(schema = @Schema(implementation = LoginResponse.class))
+            ),
+            @ApiResponse(responseCode = "401", description = "Invalid username, password, or tenant", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Missing tenant ID header", content = @Content)
     })
     public ResponseEntity<?> login(
-            @Valid @RequestBody
-            @Parameter(description = "Login credentials") LoginRequest request,
+            @Valid
+            @RequestBody
+            @Parameter(description = "Login credentials", required = true,
+                    content = @Content(schema = @Schema(implementation = LoginRequest.class)))
+            LoginRequest request,
+
             @RequestHeader(value = "X-Tenant-ID", required = true)
-            @Parameter(description = "Tenant ID to authenticate against") String tenantId) {
+            @Parameter(description = "Tenant ID to authenticate against", required = true)
+            String tenantId) {
 
         if (tenantId == null || tenantId.isBlank()) {
             return ResponseEntity.badRequest().body("Missing X-Tenant-ID header.");
@@ -87,15 +104,15 @@ public class AuthController {
     }
 
     /**
-     * Request body for login.
+     * Request body for login endpoint.
      */
     @Schema(description = "Login request payload")
     public static class LoginRequest {
 
-        @Schema(description = "Username", example = "john.doe")
+        @Schema(description = "Username of the user", example = "john.doe", required = true)
         private String username;
 
-        @Schema(description = "Password", example = "password123")
+        @Schema(description = "Password of the user", example = "password123", required = true)
         private String password;
 
         public LoginRequest() {}
@@ -125,19 +142,19 @@ public class AuthController {
     /**
      * Response returned after successful login.
      */
-    @Schema(description = "Login response containing JWT and user details")
+    @Schema(description = "Login response containing JWT token and user details")
     public static class LoginResponse {
 
-        @Schema(description = "JWT Token")
+        @Schema(description = "JWT authentication token")
         private String token;
 
-        @Schema(description = "User Role", example = "ADMIN")
+        @Schema(description = "Role of the user", example = "ADMIN")
         private String role;
 
-        @Schema(description = "Tenant ID", example = "airport1")
+        @Schema(description = "Tenant ID associated with the user", example = "airport1")
         private String tenantId;
 
-        @Schema(description = "User ID", example = "42")
+        @Schema(description = "Unique identifier of the user", example = "42")
         private Long userId;
 
         public LoginResponse() {}

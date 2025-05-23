@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,10 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
+/**
+ * REST controller for managing Frequently Asked Questions (FAQs).
+ * Supports tenant-aware access control and admin-only modifications.
+ */
 @RestController
 @RequestMapping("/api/faqs")
 @RequiredArgsConstructor
@@ -28,18 +33,19 @@ public class FaqController {
     private FaqService faqService;
 
     /**
-     * Retrieve all FAQs for the current tenant.
-     * If the user is authenticated, tenant is validated using JWT context.
-     * If unauthenticated, X-Tenant-ID is used.
+     * Retrieves all FAQs for the current tenant.
+     * <p>
+     * - For authenticated users, tenant is validated from JWT context.<br>
+     * - For guests, tenant ID must be provided in the X-Tenant-ID header and is validated.
      *
-     * @param tenantId optional tenant ID header (for guest requests)
-     * @param principal the authenticated user, if present
-     * @return list of FAQs
+     * @param tenantId optional tenant ID header (required for unauthenticated requests)
+     * @param principal the authenticated user principal, if present
+     * @return list of FAQs belonging to the current tenant
      */
     @GetMapping
     @Operation(
             summary = "Get FAQs",
-            description = "Retrieve all FAQs for the current tenant. Accessible to all users."
+            description = "Retrieve all FAQs for the current tenant. Accessible by authenticated and unauthenticated users."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "FAQs retrieved successfully"),
@@ -48,33 +54,30 @@ public class FaqController {
     public List<FaqDTO> getFaqs(
             @RequestHeader(value = "X-Tenant-ID", required = false)
             @Parameter(description = "Tenant ID from header (required for unauthenticated users)") String tenantId,
-            Principal principal) {
+            @Parameter(hidden = true) Principal principal) {
 
         if (principal != null) {
-            TenantUtil.validateTenantFromContext(); // Authenticated
+            TenantUtil.validateTenantFromContext();
         } else {
-            TenantUtil.validateTenant(tenantId); // Guest
+            TenantUtil.validateTenant(tenantId);
         }
-
         return faqService.getFaqsByTenant(TenantContext.getTenantId());
-
-        // 💡 Optional: Add @Cacheable("faqs") to faqService.getFaqsByTenant if FAQs rarely change
     }
 
     /**
-     * Save or update an FAQ.
-     * Only accessible to users with ADMIN role.
+     * Creates or updates an FAQ entry.
+     * Only users with ADMIN role can access this endpoint.
      *
-     * @param faqDTO the FAQ to save
-     * @param tenantId tenant ID from header
-     * @param principal the authenticated user
-     * @return saved FAQ
+     * @param faqDTO the FAQ data to be saved or updated
+     * @param tenantId tenant ID from header (required if unauthenticated)
+     * @param principal authenticated user principal
+     * @return the saved FAQ DTO
      */
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Save FAQ",
-            description = "Create or update an FAQ. Only accessible to ADMIN users."
+            description = "Create or update an FAQ. Only accessible by ADMIN users."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "FAQ saved successfully"),
@@ -82,10 +85,10 @@ public class FaqController {
     })
     public FaqDTO saveFaq(
             @RequestBody
-            @Parameter(description = "FAQ object to be saved") FaqDTO faqDTO,
+            @Parameter(description = "FAQ object to be saved", required = true) FaqDTO faqDTO,
             @RequestHeader(value = "X-Tenant-ID", required = false)
             @Parameter(description = "Tenant ID from header (required for unauthenticated users)") String tenantId,
-            Principal principal) {
+            @Parameter(hidden = true) Principal principal) {
 
         if (principal != null) {
             TenantUtil.validateTenantFromContext();
@@ -98,19 +101,19 @@ public class FaqController {
     }
 
     /**
-     * Delete an FAQ by ID.
-     * Only accessible to users with ADMIN role.
+     * Deletes an FAQ entry by its ID.
+     * Only users with ADMIN role can access this endpoint.
      *
-     * @param tenantId tenant ID from header
-     * @param id FAQ ID to delete
-     * @param principal the authenticated user
-     * @return 204 No Content
+     * @param tenantId tenant ID from header (required if unauthenticated)
+     * @param id the ID of the FAQ to delete
+     * @param principal authenticated user principal
+     * @return HTTP 204 No Content if deletion is successful
      */
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Delete FAQ",
-            description = "Delete an FAQ by ID. Only accessible to ADMIN users."
+            description = "Delete an FAQ by ID. Only accessible by ADMIN users."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "FAQ deleted successfully"),
@@ -121,8 +124,8 @@ public class FaqController {
             @RequestHeader(value = "X-Tenant-ID", required = false)
             @Parameter(description = "Tenant ID from header (required for unauthenticated users)") String tenantId,
             @PathVariable
-            @Parameter(description = "ID of the FAQ to delete") Long id,
-            Principal principal) {
+            @Parameter(description = "ID of the FAQ to delete", required = true) Long id,
+            @Parameter(hidden = true) Principal principal) {
 
         if (principal != null) {
             TenantUtil.validateTenantFromContext();

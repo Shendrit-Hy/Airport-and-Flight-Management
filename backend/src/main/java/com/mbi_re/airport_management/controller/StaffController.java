@@ -8,29 +8,40 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+/**
+ * REST controller for managing staff members.
+ * <p>
+ * All operations require tenant validation via the "X-Tenant-ID" header
+ * and ADMIN role authorization.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/staff")
+@Tag(name = "Staff Controller", description = "API endpoints for managing staff members per tenant")
 public class StaffController {
 
     @Autowired
     private StaffService service;
 
     /**
-     * Create a new staff member. Requires ADMIN role.
+     * Create a new staff member.
+     * <p>
+     * Requires ADMIN role.
+     * Validates the tenant from the "X-Tenant-ID" header.
+     * </p>
      *
-     * @param dto      Staff data
-     * @param tenantId Tenant ID from the header for validation (used pre-login)
-     * @return Created StaffDTO
+     * @param dto      Staff data to create
+     * @param tenantId Tenant ID from request header for validation
+     * @return The created StaffDTO object
      */
-    @Operation(summary = "Create a new staff member", description = "Requires ADMIN privileges. Uses header tenant validation.")
+    @Operation(summary = "Create a new staff member", description = "Requires ADMIN privileges. Validates tenant via header.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Staff created successfully"),
             @ApiResponse(responseCode = "403", description = "Invalid tenant ID or unauthorized")
@@ -38,94 +49,120 @@ public class StaffController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public StaffDTO create(
+            @Parameter(description = "Staff data to create", required = true)
             @RequestBody StaffDTO dto,
-            @Parameter(description = "Tenant ID from header") @RequestHeader("X-Tenant-ID") String tenantId) {
+            @Parameter(description = "Tenant ID from header for validation", required = true)
+            @RequestHeader("X-Tenant-ID") String tenantId) {
         TenantUtil.validateTenant(tenantId);
         return service.create(dto);
     }
 
     /**
-     * Retrieve all staff members. Requires ADMIN role.
+     * Retrieve all staff members for the tenant.
+     * <p>
+     * Requires ADMIN role.
+     * Validates tenant from the "X-Tenant-ID" header.
+     * </p>
      *
-     * @param tenantId Tenant ID from the header
-     * @return List of staff
+     * @param tenantId Tenant ID from request header for validation
+     * @return List of all StaffDTO objects
      */
-    @Operation(summary = "Get all staff", description = "Requires ADMIN privileges. Uses header tenant validation.")
+    @Operation(summary = "Get all staff members", description = "Requires ADMIN privileges. Validates tenant via header.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "List retrieved successfully"),
+            @ApiResponse(responseCode = "200", description = "List of staff retrieved successfully"),
             @ApiResponse(responseCode = "403", description = "Invalid tenant ID or unauthorized")
     })
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public List<StaffDTO> getAll(
-            @Parameter(description = "Tenant ID from header") @RequestHeader("X-Tenant-ID") String tenantId) {
+            @Parameter(description = "Tenant ID from header for validation", required = true)
+            @RequestHeader("X-Tenant-ID") String tenantId) {
         TenantUtil.validateTenant(tenantId);
         return service.getAll(tenantId);
     }
 
     /**
-     * Get a staff member by ID. Requires ADMIN role.
+     * Retrieve a staff member by their ID.
+     * <p>
+     * Requires ADMIN role.
+     * Validates tenant from the "X-Tenant-ID" header.
+     * </p>
      *
-     * @param id       Staff ID
-     * @param tenantId Tenant ID from header
-     * @return StaffDTO
+     * @param id       ID of the staff member to retrieve
+     * @param tenantId Tenant ID from request header for validation
+     * @return The StaffDTO corresponding to the given ID
      */
-    @Operation(summary = "Get staff by ID", description = "Requires ADMIN privileges. Uses header tenant validation.")
+    @Operation(summary = "Get staff member by ID", description = "Requires ADMIN privileges. Validates tenant via header.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Staff found"),
+            @ApiResponse(responseCode = "200", description = "Staff member found"),
             @ApiResponse(responseCode = "403", description = "Invalid tenant ID or unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Staff not found")
+            @ApiResponse(responseCode = "404", description = "Staff member not found")
     })
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public StaffDTO getById(
+            @Parameter(description = "ID of the staff member", required = true)
             @PathVariable Long id,
-            @Parameter(description = "Tenant ID from header") @RequestHeader("X-Tenant-ID") String tenantId) {
+            @Parameter(description = "Tenant ID from header for validation", required = true)
+            @RequestHeader("X-Tenant-ID") String tenantId) {
         TenantUtil.validateTenant(tenantId);
         return service.getByIdAndTenantId(id);
     }
 
     /**
-     * Update a staff member. Requires ADMIN role.
+     * Update an existing staff member.
+     * <p>
+     * Requires ADMIN role.
+     * Validates tenant from the "X-Tenant-ID" header.
+     * </p>
      *
-     * @param id       Staff ID
+     * @param id       ID of the staff member to update
      * @param dto      Updated staff data
-     * @param tenantId Tenant ID from header
-     * @return Updated StaffDTO
+     * @param tenantId Tenant ID from request header for validation
+     * @return The updated StaffDTO object
      */
-    @Operation(summary = "Update staff", description = "Requires ADMIN privileges. Uses header tenant validation.")
+    @Operation(summary = "Update staff member", description = "Requires ADMIN privileges. Validates tenant via header.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Staff updated"),
+            @ApiResponse(responseCode = "200", description = "Staff member updated successfully"),
             @ApiResponse(responseCode = "403", description = "Invalid tenant ID or unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Staff not found")
+            @ApiResponse(responseCode = "404", description = "Staff member not found")
     })
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public StaffDTO update(
+            @Parameter(description = "ID of the staff member to update", required = true)
             @PathVariable Long id,
+            @Parameter(description = "Updated staff data", required = true)
             @RequestBody StaffDTO dto,
-            @Parameter(description = "Tenant ID from header") @RequestHeader("X-Tenant-ID") String tenantId) {
+            @Parameter(description = "Tenant ID from header for validation", required = true)
+            @RequestHeader("X-Tenant-ID") String tenantId) {
         TenantUtil.validateTenant(tenantId);
         return service.update(id, dto);
     }
 
     /**
-     * Delete a staff member by ID. Requires ADMIN role.
+     * Delete a staff member by their ID.
+     * <p>
+     * Requires ADMIN role.
+     * Validates tenant from the "X-Tenant-ID" header.
+     * </p>
      *
-     * @param id       Staff ID
-     * @param tenantId Tenant ID from header
+     * @param id       ID of the staff member to delete
+     * @param tenantId Tenant ID from request header for validation
      */
-    @Operation(summary = "Delete staff", description = "Requires ADMIN privileges. Uses header tenant validation.")
+    @Operation(summary = "Delete staff member", description = "Requires ADMIN privileges. Validates tenant via header.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Staff deleted"),
+            @ApiResponse(responseCode = "200", description = "Staff member deleted successfully"),
             @ApiResponse(responseCode = "403", description = "Invalid tenant ID or unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Staff not found")
+            @ApiResponse(responseCode = "404", description = "Staff member not found")
     })
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void delete(
+            @Parameter(description = "ID of the staff member to delete", required = true)
             @PathVariable Long id,
-            @Parameter(description = "Tenant ID from header") @RequestHeader("X-Tenant-ID") String tenantId) {
+            @Parameter(description = "Tenant ID from header for validation", required = true)
+            @RequestHeader("X-Tenant-ID") String tenantId) {
         TenantUtil.validateTenant(tenantId);
         service.delete(id);
     }

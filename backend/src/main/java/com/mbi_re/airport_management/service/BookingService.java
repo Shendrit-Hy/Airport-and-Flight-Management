@@ -24,11 +24,12 @@ public class BookingService {
     }
 
     /**
-     * Creates a new booking for a tenant.
+     * Creates a new booking for the specified tenant.
+     * Evicts the bookings cache for the tenant to maintain cache consistency.
      *
-     * @param dto booking data transfer object
-     * @param tenantId the tenant identifier
-     * @return the created booking
+     * @param dto      the booking data transfer object containing booking details
+     * @param tenantId the tenant identifier to associate the booking with
+     * @return the created Booking entity
      */
     @CacheEvict(value = "bookings", key = "#tenantId + '_all'")
     public Booking createBooking(BookingDTO dto, String tenantId) {
@@ -47,8 +48,9 @@ public class BookingService {
 
     /**
      * Retrieves all bookings for the current tenant.
+     * Results are cached for performance improvement.
      *
-     * @return list of bookings
+     * @return list of Booking entities associated with the current tenant
      */
     @Cacheable(value = "bookings", key = "T(com.mbi_re.airport_management.config.TenantContext).getTenantId() + '_all'")
     public List<Booking> getAllBookings() {
@@ -57,10 +59,11 @@ public class BookingService {
     }
 
     /**
-     * Retrieves a booking by ID, validated for current tenant.
+     * Retrieves a booking by its ID for the current tenant.
+     * Returns null if the booking is not found or does not belong to the tenant.
      *
-     * @param id booking ID
-     * @return the booking, or null if not found or mismatched tenant
+     * @param id the booking ID
+     * @return the Booking entity if found and tenant matches, else null
      */
     public Booking getBookingById(Long id) {
         String tenantId = TenantContext.getTenantId();
@@ -68,11 +71,12 @@ public class BookingService {
     }
 
     /**
-     * Updates an existing booking by ID.
+     * Updates an existing booking for the current tenant by booking ID.
+     * Evicts the bookings cache for the tenant after update.
      *
-     * @param id booking ID
-     * @param dto booking data
-     * @return updated booking or null if not found or unauthorized
+     * @param id  the booking ID to update
+     * @param dto the booking data transfer object containing updated fields
+     * @return the updated Booking entity, or null if not found or unauthorized
      */
     @CacheEvict(value = "bookings", key = "T(com.mbi_re.airport_management.config.TenantContext).getTenantId() + '_all'")
     public Booking updateBooking(Long id, BookingDTO dto) {
@@ -91,9 +95,11 @@ public class BookingService {
     }
 
     /**
-     * Deletes a booking by ID, tenant-scoped.
+     * Deletes a booking by ID scoped to the current tenant.
+     * Evicts the bookings cache for the tenant upon successful deletion.
+     * The operation is transactional.
      *
-     * @param id booking ID
+     * @param id the booking ID to delete
      */
     @CacheEvict(value = "bookings", key = "T(com.mbi_re.airport_management.config.TenantContext).getTenantId() + '_all'")
     @Transactional
@@ -103,6 +109,13 @@ public class BookingService {
         optional.ifPresent(repository::delete);
     }
 
+    /**
+     * Updates the check-in status of a booking for the current tenant.
+     *
+     * @param id        the booking ID
+     * @param checkedIn boolean flag indicating if the passenger has checked in
+     * @return Optional containing the updated Booking if found, else empty
+     */
     public Optional<Booking> updateCheckInStatus(Long id, boolean checkedIn) {
         String tenantId = TenantContext.getTenantId();
         return repository.findByIdAndTenantId(id, tenantId).map(booking -> {
@@ -113,8 +126,9 @@ public class BookingService {
 
     /**
      * Generates a unique booking ID string.
+     * The format is "BOOK-" followed by an 8-character uppercase UUID substring.
      *
-     * @return generated booking ID
+     * @return the generated unique booking ID string
      */
     private String generateBookingId() {
         return "BOOK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();

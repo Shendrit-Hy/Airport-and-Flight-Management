@@ -10,14 +10,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for managing supported languages in the system.
+ *
+ * <p>Supports operations to retrieve all languages, add a new language,
+ * and delete an existing language.</p>
+ *
+ * <p>Tenant validation is enforced via "X-Tenant-ID" either from JWT or request headers.</p>
+ */
 @RestController
 @RequestMapping("/api/languages")
 @CrossOrigin
@@ -30,23 +36,31 @@ public class LanguageController {
         this.languageService = languageService;
     }
 
-    /*
-     * Retrieve all available languages.
+    /**
+     * Retrieves all available languages.
      *
-     * Accessible to all users including unauthenticated ones.
-     * Validates tenant from header if unauthenticated.
+     * <p>This endpoint is publicly accessible, including unauthenticated users,
+     * but tenant context must be validated via the "X-Tenant-ID" header if no tenant
+     * is already set.</p>
      *
-     * @param request HTTP request (used to extract X-Tenant-ID)
-     * @return list of language objects
+     * @param request HTTP servlet request used to extract tenant header if needed.
+     * @return List of all supported Language objects.
+     * @throws IllegalArgumentException if the "X-Tenant-ID" header is missing when required.
      */
     @GetMapping
-    @Operation(summary = "Get all languages", description = "Retrieve a list of all supported languages.")
+    @Operation(
+            summary = "Get all languages",
+            description = "Retrieve a list of all supported languages. Accessible to all users."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List of languages returned successfully"),
+            @ApiResponse(responseCode = "400", description = "Missing tenant header"),
             @ApiResponse(responseCode = "403", description = "Tenant validation failed")
     })
-    public List<Language> getLanguages(HttpServletRequest request) {
-        // For unauthenticated access, validate tenant via header
+    public List<Language> getLanguages(
+            @Parameter(description = "HTTP request for extracting X-Tenant-ID header if unauthenticated")
+            HttpServletRequest request) {
+
         if (!TenantContext.hasTenant()) {
             String tenantFromHeader = request.getHeader("X-Tenant-ID");
             if (tenantFromHeader == null) {
@@ -55,57 +69,69 @@ public class LanguageController {
             TenantContext.setTenantId(tenantFromHeader);
         }
         TenantUtil.validateTenantFromContext();
+
         return languageService.getAllLanguages();
     }
 
     /**
-     * Add a new language to the system.
+     * Adds a new language to the system.
      *
-     * Accessible only to users with the ADMIN role.
-     * Validates tenant from JWT.
+     * <p>Accessible only to users with the ADMIN role. Tenant validation is performed
+     * using the tenant ID from the JWT provided in the "X-Tenant-ID" header.</p>
      *
-     * @param language language object to add
-     * @param jwtTenantId tenant ID from JWT (automatically injected or extracted)
-     * @return added language
+     * @param language The language object to add.
+     * @param jwtTenantId Tenant ID extracted from JWT via the request header.
+     * @return The saved Language object.
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Add a new language", description = "Add a new language to the list of supported languages.")
+    @Operation(
+            summary = "Add a new language",
+            description = "Add a new language to the list of supported languages. Requires ADMIN role."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Language added successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid language data"),
-            @ApiResponse(responseCode = "403", description = "Invalid tenant ID")
+            @ApiResponse(responseCode = "403", description = "Invalid tenant ID or access denied")
     })
     public ResponseEntity<Language> addLanguage(
             @RequestBody
-            @Parameter(description = "Language to add") Language language,
-            @RequestHeader("X-Tenant-ID") String jwtTenantId) {
+            @Parameter(description = "Language object to add") Language language,
+            @RequestHeader("X-Tenant-ID")
+            @Parameter(description = "Tenant ID extracted from JWT token") String jwtTenantId) {
+
         TenantUtil.validateTenant(jwtTenantId);
-        return ResponseEntity.ok(languageService.saveLanguage(language));
+        Language savedLanguage = languageService.saveLanguage(language);
+        return ResponseEntity.ok(savedLanguage);
     }
 
     /**
-     * Delete a language by ID.
+     * Deletes a language by its ID.
      *
-     * Accessible only to users with the ADMIN role.
-     * Validates tenant from JWT.
+     * <p>Accessible only to users with the ADMIN role. Tenant validation is performed
+     * using the tenant ID from the JWT provided in the "X-Tenant-ID" header.</p>
      *
-     * @param id ID of the language to delete
-     * @param jwtTenantId tenant ID from JWT (automatically injected or extracted)
-     * @return no content response
+     * @param id ID of the language to delete.
+     * @param jwtTenantId Tenant ID extracted from JWT via the request header.
+     * @return ResponseEntity with HTTP 204 No Content on successful deletion.
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Delete a language", description = "Delete an existing language by its ID.")
+    @Operation(
+            summary = "Delete a language",
+            description = "Delete an existing language by its ID. Requires ADMIN role."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Language deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Language not found"),
-            @ApiResponse(responseCode = "403", description = "Invalid tenant ID")
+            @ApiResponse(responseCode = "403", description = "Invalid tenant ID or access denied")
     })
     public ResponseEntity<Void> deleteLanguage(
             @PathVariable
             @Parameter(description = "ID of the language to delete") Long id,
-            @RequestHeader("X-Tenant-ID") String jwtTenantId) {
+            @RequestHeader("X-Tenant-ID")
+            @Parameter(description = "Tenant ID extracted from JWT token") String jwtTenantId) {
+
         TenantUtil.validateTenant(jwtTenantId);
         languageService.deleteLanguage(id);
         return ResponseEntity.noContent().build();

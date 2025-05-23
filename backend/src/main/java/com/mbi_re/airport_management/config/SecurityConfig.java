@@ -20,42 +20,80 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+/**
+ * Configuration class for Spring Security.
+ * Sets up password encoding, authentication management, CORS,
+ * and HTTP security with JWT-based authentication.
+ */
 @Configuration
 public class SecurityConfig {
+
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    /**
+     * Provides a PasswordEncoder bean using BCrypt hashing algorithm.
+     * Used to encode and verify user passwords securely.
+     *
+     * @return a BCryptPasswordEncoder instance
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Exposes the AuthenticationManager bean from the AuthenticationConfiguration.
+     * Enables authentication support for the application.
+     *
+     * @param config the AuthenticationConfiguration provided by Spring Security
+     * @return the AuthenticationManager instance
+     * @throws Exception if the AuthenticationManager cannot be created
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * Configures CORS settings to allow requests from specific frontend origins,
+     * permitted HTTP methods, allowed headers, and supports credentials.
+     *
+     * @return a CorsConfigurationSource containing CORS configuration
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5179", "http://localhost:5173")); // Your frontend origin
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5179", "http://localhost:5173")); // Frontend URLs
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Tenant-ID"));
-        config.setAllowCredentials(true); // If using cookies or auth headers
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
 
+    /**
+     * Configures the main HTTP security filter chain for the application.
+     * Disables CSRF protection, enables CORS, sets session management to stateless,
+     * configures exception handling for unauthorized requests,
+     * specifies authorization rules for endpoints,
+     * and adds JWT authentication filter before UsernamePasswordAuthenticationFilter.
+     *
+     * @param http the HttpSecurity to configure
+     * @return the configured SecurityFilterChain
+     * @throws Exception if there is an error during configuration
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS here
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -88,9 +126,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
                         .anyRequest().authenticated()
-
                 );
-
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

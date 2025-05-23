@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for managing announcements within a multi-tenant environment.
+ * Tenant context must be provided via the "X-Tenant-ID" header.
+ * Creation requires ADMIN role.
+ */
 @RestController
 @RequestMapping("/api/announcements")
 @Tag(name = "Announcements", description = "Endpoints for managing announcements per tenant")
@@ -26,49 +31,69 @@ public class AnnouncementController {
     private AnnouncementService announcementService;
 
     /**
-     * Retrieves announcements for the current tenant using X-Tenant-ID header (unauthenticated users).
+     * Retrieves announcements for the specified tenant.
+     * This endpoint is public (unauthenticated), but requires valid tenant context.
      *
-     * @param tenantId tenant identifier provided via request header
-     * @return list of announcements
+     * @param tenantId Tenant identifier from request header "X-Tenant-ID"
+     * @return HTTP 200 with list of AnnouncementDTO for the tenant
      */
     @GetMapping
-    @Operation(summary = "Get announcements", description = "Returns announcements for the given tenant (public)")
+    @Operation(
+            summary = "Get announcements",
+            description = "Returns all announcements for the specified tenant. Public endpoint, tenant must be valid."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved announcements",
-                    content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "403", description = "Missing or invalid tenant context")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved announcements",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AnnouncementDTO.class, type = "array"))
+            ),
+            @ApiResponse(responseCode = "403", description = "Missing or invalid tenant context", content = @Content)
     })
     public ResponseEntity<List<AnnouncementDTO>> getAnnouncements(
             @RequestHeader("X-Tenant-ID")
-            @Parameter(description = "Tenant ID in header", required = true) String tenantId) {
+            @Parameter(description = "Tenant ID in request header", required = true)
+            String tenantId) {
 
-        TenantUtil.validateTenantFromContext(); // Ensures TenantContext was properly set via interceptor
+        TenantUtil.validateTenantFromContext();
         List<AnnouncementDTO> announcements = announcementService.getAnnouncementsByTenant(tenantId);
         return ResponseEntity.ok(announcements);
     }
 
     /**
-     * Creates a new announcement. Requires user to have ADMIN role.
+     * Creates a new announcement for the specified tenant.
+     * Requires ADMIN role.
      *
-     * @param dto      announcement data
-     * @param tenantId tenant ID extracted from JWT or header
-     * @return created announcement
+     * @param dto      Announcement data transfer object
+     * @param tenantId Tenant identifier from request header "X-Tenant-ID"
+     * @return HTTP 200 with created AnnouncementDTO
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Create announcement", description = "Creates a new announcement (ADMIN only)")
+    @Operation(
+            summary = "Create announcement",
+            description = "Creates a new announcement for the tenant. Requires ADMIN role."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Announcement created successfully",
-                    content = @Content(schema = @Schema(implementation = AnnouncementDTO.class))),
-            @ApiResponse(responseCode = "403", description = "Forbidden for non-admin or tenant mismatch")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Announcement created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AnnouncementDTO.class))
+            ),
+            @ApiResponse(responseCode = "403", description = "Forbidden for non-admin or tenant mismatch", content = @Content)
     })
     public ResponseEntity<AnnouncementDTO> createAnnouncement(
             @RequestBody
-            @Parameter(description = "Announcement data") AnnouncementDTO dto,
+            @Parameter(description = "Announcement data", required = true,
+                    content = @Content(schema = @Schema(implementation = AnnouncementDTO.class)))
+            AnnouncementDTO dto,
             @RequestHeader("X-Tenant-ID")
-            @Parameter(description = "Tenant ID in header", required = true) String tenantId) {
+            @Parameter(description = "Tenant ID in request header", required = true)
+            String tenantId) {
 
-        TenantUtil.validateTenant(tenantId); // Ensures tenant from JWT matches header
+        TenantUtil.validateTenant(tenantId);
         dto.setTenantId(tenantId);
         AnnouncementDTO savedAnnouncement = announcementService.saveAnnouncement(dto);
         return ResponseEntity.ok(savedAnnouncement);

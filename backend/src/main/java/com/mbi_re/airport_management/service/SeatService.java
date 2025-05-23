@@ -23,12 +23,15 @@ public class SeatService {
     private SeatRepository seatRepository;
 
     /**
-     * Retrieves all available (unbooked) seats for a given flight and tenant.
-     * This data is cacheable as availability is frequently queried.
+     * Retrieves all available (unbooked) seats for a specific flight and tenant.
+     * <p>
+     * This method evicts the cache entry for available seats of the given flight and tenant,
+     * ensuring that stale cache entries are removed after availability changes.
+     * </p>
      *
-     * @param flightId the ID of the flight
-     * @param tenantId the tenant ID
-     * @return list of available seats
+     * @param flightId the ID of the flight to fetch available seats for
+     * @param tenantId the tenant ID to scope the seats
+     * @return list of {@link SeatDTO} representing available seats
      */
     @CacheEvict(value = "availableSeats", key = "#flightId + '_' + #tenantId")
     public List<SeatDTO> getAvailableSeats(Long flightId, String tenantId) {
@@ -37,11 +40,11 @@ public class SeatService {
     }
 
     /**
-     * Retrieves all seats for a specific flight and tenant.
+     * Retrieves all seats (both booked and available) for a specific flight and tenant.
      *
-     * @param flightId the ID of the flight
-     * @param tenantId the tenant ID
-     * @return list of all seats for the flight
+     * @param flightId the ID of the flight to fetch seats for
+     * @param tenantId the tenant ID to scope the seats
+     * @return list of {@link SeatDTO} representing all seats for the flight
      */
     public List<SeatDTO> getAllSeats(Long flightId, String tenantId) {
         List<Seat> seats = seatRepository.findByFlightIdAndTenantId(flightId, tenantId);
@@ -49,11 +52,15 @@ public class SeatService {
     }
 
     /**
-     * Marks a specific seat as unavailable (booked) for a tenant.
+     * Marks a specific seat as booked (unavailable) for a tenant.
+     * <p>
+     * If the seat with the given ID and tenant does not exist, an exception is thrown.
+     * </p>
      *
-     * @param seatId   the ID of the seat
-     * @param tenantId the tenant ID
-     * @return the updated SeatDTO with availability set to false
+     * @param seatId   the ID of the seat to mark as booked
+     * @param tenantId the tenant ID for scoping
+     * @return updated {@link SeatDTO} with the booked status set to true
+     * @throws RuntimeException if the seat is not found for the given tenant
      */
     public SeatDTO markSeatAsUnavailable(Long seatId, String tenantId) {
         Seat seat = seatRepository.findByIdAndTenantId(seatId, tenantId)
@@ -64,10 +71,10 @@ public class SeatService {
     }
 
     /**
-     * Converts a Seat entity into a SeatDTO.
+     * Converts a {@link Seat} entity into a {@link SeatDTO}.
      *
-     * @param seat the Seat entity
-     * @return SeatDTO
+     * @param seat the {@link Seat} entity to convert
+     * @return the corresponding {@link SeatDTO}
      */
     private SeatDTO convertToDTO(Seat seat) {
         return new SeatDTO(
