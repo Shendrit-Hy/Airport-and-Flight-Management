@@ -16,8 +16,9 @@ export default function AdminGate() {
 
   const loadGates = async () => {
     try {
-      const res = await getGates(tenantId, token);
-      setGates(Array.isArray(res.data) ? res.data : []);
+      const data = await getGates(tenantId);
+      console.log('Loaded gates:', data);
+      setGates(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error loading gates:', err);
     }
@@ -50,7 +51,7 @@ export default function AdminGate() {
           {[
             'dashboard', 'airport', 'booking', 'faqs', 'flightspage',
             'maintenance', 'passangers', 'payments', 'staff', 'support',
-            'announcements', 'city', 'languages', 'trending', 'policy', 'gate','terminal'
+            'announcements', 'city', 'languages', 'trending', 'policy', 'gate', 'terminal'
           ].map((item) => (
             <div className="airport-nav-row" key={item}>
               <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
@@ -59,44 +60,41 @@ export default function AdminGate() {
         </nav>
       </aside>
 
-      <main className="airport-main-content" style={{ backgroundImage: "url('../../public/AdminGateImage.avif')", 
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            width: '100%',
-            height: 'auto' }}>
+      <main className="airport-main-content" style={{
+        backgroundImage: "url('../../public/AdminGateImage.avif')",
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        width: '100%',
+        height: 'auto'
+      }}>
         <header className="airport-header">
           <h2>GATE</h2>
           <div className="airport-admin-title">ADMIN</div>
         </header>
 
         <Formik
-          initialValues={{ gatenr: '', status: '', terminalid: '', terminalname: '' }}
+          initialValues={{ gateNumber: '', terminalId: '', terminalName: '' }}
           validationSchema={Yup.object({
-            gatenr: Yup.string().required('Required'),
-            status: Yup.string().required('Required'),
-            terminalid: Yup.string().required('Required'),
-            terminalname: Yup.string().required('Required'),
+            gateNumber: Yup.string().required('Required'),
+            terminalId: Yup.string().required('Required'),
+            terminalName: Yup.string().required('Required'),
           })}
           onSubmit={handleAdd}
         >
           <Form className="airport-add-form">
             <div className="airport-form-grid">
               <div className="airport-input-group">
-                <Field type="text" name="gatenr" placeholder="Gate Nr" className="airport-input" />
-                <ErrorMessage name="gatenr" component="div" className="airport-error" />
+                <Field type="text" name="gateNumber" placeholder="Gate Number" className="airport-input" />
+                <ErrorMessage name="gateNumber" component="div" className="airport-error" />
               </div>
               <div className="airport-input-group">
-                <Field type="text" name="status" placeholder="Status" className="airport-input" />
-                <ErrorMessage name="status" component="div" className="airport-error" />
+                <Field type="text" name="terminalId" placeholder="Terminal ID" className="airport-input" />
+                <ErrorMessage name="terminalId" component="div" className="airport-error" />
               </div>
               <div className="airport-input-group">
-                <Field type="text" name="terminalid" placeholder="Terminal ID" className="airport-input" />
-                <ErrorMessage name="terminalid" component="div" className="airport-error" />
-              </div>
-              <div className="airport-input-group">
-                <Field type="text" name="terminalname" placeholder="Terminal Name" className="airport-input" />
-                <ErrorMessage name="terminalname" component="div" className="airport-error" />
+                <Field type="text" name="terminalName" placeholder="Terminal Name" className="airport-input" />
+                <ErrorMessage name="terminalName" component="div" className="airport-error" />
               </div>
             </div>
             <button type="submit" className="airport-add-btn">ADD</button>
@@ -105,20 +103,18 @@ export default function AdminGate() {
 
         <div className="airport-table">
           <div className="airport-table-header" style={{ width: '100%', display: 'flex' }}>
-            <span style={{ width: '20%' }}>Gate Number</span>
-            <span style={{ width: '20%' }}>Status</span>
-            <span style={{ width: '20%' }}>Terminal ID</span>
-            <span style={{ width: '20%' }}>Terminal Name</span>
-            <span style={{ width: '20%' }}>Actions</span>
+            <span style={{ width: '25%' }}>Gate Number</span>
+            <span style={{ width: '25%' }}>Terminal ID</span>
+            <span style={{ width: '25%' }}>Terminal Name</span>
+            <span style={{ width: '25%' }}>Actions</span>
           </div>
 
           {gates.map((gate) => (
-            <div className="airport-table-row" key={gate.id}>
-              <span style={{ width: '20%' }}>{gate.gatenr}</span>
-              <span style={{ width: '20%' }}>{gate.status}</span>
-              <span style={{ width: '20%' }}>{gate.terminalid}</span>
-              <span style={{ width: '20%' }}>{gate.terminalname}</span>
-              <span style={{ width: '20%' }}>
+            <div className="airport-table-row" key={gate.id} style={{ display: 'flex', width: '100%' }}>
+              <span style={{ width: '25%' }}>{gate.gateNumber}</span>
+              <span style={{ width: '25%' }}>{gate.terminalId}</span>
+              <span style={{ width: '25%' }}>{gate.terminalName}</span>
+              <span style={{ width: '25%' }}>
                 <button className="airport-delete-btn" onClick={() => handleDelete(gate.id)}>🗑</button>
               </span>
             </div>

@@ -7,6 +7,7 @@ import com.mbi_re.airport_management.utils.TenantUtil;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,9 +29,7 @@ public class PolicyService {
      *
      * @return list of policies for the current tenant
      */
-    @Cacheable(value = "policies", key = "#root.methodName + '_' + T(com.mbi_re.airport_management.utils.TenantUtil).getCurrentTenant()")
-    public List<Policy> getAllPolicies() {
-        String tenantId = TenantUtil.getCurrentTenant();
+    public List<Policy> getAllPolicies(String tenantId) {
         return policyRepository.findByTenantId(tenantId);
     }
 
@@ -50,5 +49,10 @@ public class PolicyService {
         policy.setType(dto.getType());
         policy.setTenantId(tenantId); // Explicitly setting the tenant ID
         return policyRepository.save(policy);
+    }
+
+    @Transactional
+    public void deletePolicy(Long id, String tenantId) {
+        policyRepository.deleteByIdAndTenantId(id, tenantId);
     }
 }

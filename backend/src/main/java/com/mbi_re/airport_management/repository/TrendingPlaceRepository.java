@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface TrendingPlaceRepository extends JpaRepository<TrendingPlace, Long> {
     List<TrendingPlace> findBySeasonAndTenantId(String season, String tenantId);
+    List<TrendingPlace> findByTenantId(String tenantId);
 }

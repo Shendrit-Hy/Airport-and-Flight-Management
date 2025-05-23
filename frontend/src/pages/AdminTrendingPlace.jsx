@@ -2,40 +2,49 @@ import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import '../styles/AdminAirportPage.css';
-import { getAllAirports, createAirport, deleteAirport } from '../api/airportService';
+import trendingPlaceService from '../api/trendingPlaceService';
 
 export default function AdminTrendingPlace() {
-  const [airports, setAirports] = useState([]);
+  const [places, setPlaces] = useState([]);
+  const [imagePreview, setImagePreview] = useState('');
+  const tenantId = localStorage.getItem('tenantId');
 
   useEffect(() => {
-    loadAirports();
+    loadTrendingPlaces();
   }, []);
 
-  const loadAirports = async () => {
+  const loadTrendingPlaces = async () => {
     try {
-      const res = await getAirports();
-      setAirports(Array.isArray(res.data) ? res.data : []);
+      const res = await trendingPlaceService.getTrendingPlaces(tenantId);
+      setPlaces(Array.isArray(res) ? res : []);
     } catch (err) {
-      console.error('Error loading airports:', err);
+      console.error('❌ Error loading trending places:', err);
     }
   };
 
-  const handleAdd = async (values, { resetForm }) => {
-    try {
-      await createAirport(values);
-      resetForm();
-      loadAirports();
-    } catch (err) {
-      console.error('Error creating airport:', err);
-    }
-  };
+const handleAdd = async (values, { resetForm }) => {
+  try {
+    // Convert form values to match backend field names
+    const payload = {
+      ...values,
+      image_url: values.imageUrl, // map to correct backend field
+    };
+
+    await trendingPlaceService.createTrendingPlace(payload, tenantId);
+    resetForm();
+    setImagePreview('');
+    loadTrendingPlaces();
+  } catch (err) {
+    console.error('❌ Error creating trending place:', err);
+  }
+};
 
   const handleDelete = async (id) => {
     try {
-      await deleteAirport(id);
-      loadAirports();
+      await trendingPlaceService.deleteTrendingPlace(id, tenantId);
+      loadTrendingPlaces();
     } catch (err) {
-      console.error('Error deleting airport:', err);
+      console.error('❌ Error deleting trending place:', err);
     }
   };
 
@@ -47,7 +56,7 @@ export default function AdminTrendingPlace() {
           {[
             'dashboard', 'airport', 'booking', 'faqs', 'flightspage',
             'maintenance', 'passangers', 'payments', 'staff', 'support',
-            'announcements', 'city', 'languages', 'trending', 'policy', 'gate','terminal'
+            'announcements', 'city', 'languages', 'trending', 'policy', 'gate', 'terminal'
           ].map((item) => (
             <div className="airport-nav-row" key={item}>
               <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
@@ -56,45 +65,103 @@ export default function AdminTrendingPlace() {
         </nav>
       </aside>
 
-      <main className="airport-main-content" style={{ backgroundImage: "url('../../public/AdminTrendingImage.webp')", 
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            width: '100%',
-            height: 'auto' }}>
+      <main className="airport-main-content" style={{
+        backgroundImage: "url('/AdminTrendingImage.webp')",
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        width: '100%',
+        height: 'auto'
+      }}>
         <header className="airport-header">
           <h2>TRENDING PLACE</h2>
           <div className="airport-admin-title">ADMIN</div>
         </header>
 
-
         <Formik
-          initialValues={{ name: '', description: '', season: '', imageurl: ''}}
+          initialValues={{ name: '', description: '', season: '', imageUrl: '' }}
           validationSchema={Yup.object({
             name: Yup.string().required('Required'),
             description: Yup.string().required('Required'),
-            season: Yup.string().required('Required'),
-            imageurl: Yup.string().required('Required'),
+            season: Yup.string()
+              .oneOf(['SPRING', 'SUMMER', 'FALL', 'WINTER'], 'Invalid season')
+              .required('Required'),
+              imageUrl: Yup.string()
+                .url('Invalid URL format')
+                .required('Required'),
+
           })}
           onSubmit={handleAdd}
         >
-          <Form className="airport-add-form">
-            <div className="airport-form-grid">
-              {['name', 'description', 'season', 'image url'].map((field) => (
-                <div className="airport-input-group" key={field}>
+          {({ setFieldValue }) => (
+            <Form className="airport-add-form">
+              <div className="airport-form-grid">
+                <div className="airport-input-group">
                   <Field
                     type="text"
-                    id={field}
-                    name={field}
-                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                    name="name"
+                    placeholder="Name"
                     className="airport-input"
                   />
-                  <ErrorMessage name={field} component="div" className="airport-error" />
+                  <ErrorMessage name="name" component="div" className="airport-error" />
                 </div>
-              ))}
-            </div>
-            <button type="submit" className="airport-add-btn">ADD</button>
-          </Form>
+
+                <div className="airport-input-group">
+                  <Field
+                    type="text"
+                    name="description"
+                    placeholder="Description"
+                    className="airport-input"
+                  />
+                  <ErrorMessage name="description" component="div" className="airport-error" />
+                </div>
+
+                <div className="airport-input-group">
+                  <Field as="select" name="season" className="airport-input">
+                    <option value="">Select Season</option>
+                    <option value="SPRING">SPRING</option>
+                    <option value="SUMMER">SUMMER</option>
+                    <option value="FALL">FALL</option>
+                    <option value="WINTER">WINTER</option>
+                  </Field>
+                  <ErrorMessage name="season" component="div" className="airport-error" />
+                </div>
+
+                <div className="airport-input-group">
+                  <Field
+                    type="text"
+                    name="imageUrl"
+                    placeholder="Image URL"
+                    className="airport-input"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setFieldValue('imageUrl', value);
+                      setImagePreview(value);
+                    }}
+                  />
+                  <ErrorMessage name="imageUrl" component="div" className="airport-error" />
+                </div>
+              </div>
+
+              {imagePreview && (
+                <div className="airport-input-group">
+                  <label style={{ color: '#555', marginBottom: '5px' }}>Image Preview</label>
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    style={{
+                      maxWidth: '200px',
+                      borderRadius: '8px',
+                      border: '1px solid #ccc',
+                      marginTop: '5px'
+                    }}
+                  />
+                </div>
+              )}
+
+              <button type="submit" className="airport-add-btn">ADD</button>
+            </Form>
+          )}
         </Formik>
 
         <div className="airport-table">
@@ -102,23 +169,18 @@ export default function AdminTrendingPlace() {
             <span style={{ width: '20%' }}>Name</span>
             <span style={{ width: '20%' }}>Description</span>
             <span style={{ width: '20%' }}>Season</span>
-            <span style={{ width: '20%' }}>Image Url</span>
+            <span style={{ width: '20%' }}>Image URL</span>
             <span style={{ width: '20%' }}>Actions</span>
           </div>
 
-          {airports.map((airport) => (
-            <div className="airport-table-row" key={airport.id}>
-              <span style={{ width: '20%' }}>{airport.name}</span>
-              <span style={{ width: '20%' }}>{airport.code}</span>
-              <span style={{ width: '20%' }}>{airport.name}</span>
-              <span style={{ width: '20%' }}>{airport.code}</span>
+          {places.map((place) => (
+            <div className="airport-table-row" key={place.id} style={{ display: 'flex', width: '100%' }}>
+              <span style={{ width: '20%' }}>{place.name}</span>
+              <span style={{ width: '20%' }}>{place.description}</span>
+              <span style={{ width: '20%' }}>{place.season}</span>
+              <span style={{ width: '20%' }}>{place.imageUrl}</span>
               <span style={{ width: '20%' }}>
-                <button
-                  className="airport-delete-btn"
-                  onClick={() => handleDelete(airport.id)}
-                >
-                  🗑
-                </button>
+                <button className="airport-delete-btn" onClick={() => handleDelete(place.id)}>🗑</button>
               </span>
             </div>
           ))}

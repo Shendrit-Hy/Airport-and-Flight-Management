@@ -1,54 +1,37 @@
-import axiosInstance from '../utils/axiosInstance';
+import axios from 'axios';
 
-/**
- * Merr të gjitha gjuhët për tenant-in aktiv.
- * GET /api/languages
- */
-export const getLanguages = async () => {
-  try {
-    const response = await axiosInstance.get('/api/languages');
-    return response.data;
-  } catch (error) {
-    console.error('❌ Error loading languages:', error);
-    throw error;
-  }
+const API_BASE_URL = 'http://localhost:8080/api/languages';
+
+const getLanguages = async (tenantId) => {
+  const response = await axios.get(API_BASE_URL, {
+    headers: {
+      'X-Tenant-ID': tenantId,
+    },
+  });
+  return response.data;
 };
 
-/**
- * Shton një gjuhë të re për tenantin e kyçur.
- * POST /api/languages
- * @param {Object} data - { name: string, code: string }
- * @param {string} tenantId - ID i tenantit për header
- */
-export const createLanguage = async (data, tenantId) => {
-  try {
-    const response = await axiosInstance.post('/api/languages', data, {
-      headers: {
-        'X-Tenant-ID': tenantId,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('❌ Error creating language:', error);
-    throw error;
-  }
+const addLanguage = async (language, tenantId) => {
+  const response = await axios.post(API_BASE_URL, language, {
+    headers: {
+      'X-Tenant-ID': tenantId,
+    },
+  });
+  return response.data;
 };
 
-/**
- * Fshin një gjuhë sipas ID për tenantin e kyçur.
- * DELETE /api/languages/{id}
- * @param {number} id - ID e gjuhës
- * @param {string} tenantId - ID i tenantit për header
- */
-export const deleteLanguage = async (id, tenantId) => {
-  try {
-    await axiosInstance.delete(`/api/languages/${id}`, {
-      headers: {
-        'X-Tenant-ID': tenantId,
-      },
-    });
-  } catch (error) {
-    console.error('❌ Error deleting language:', error);
-    throw error;
-  }
+const deleteLanguage = async (id, tenantId) => {
+  await axios.delete(`${API_BASE_URL}/${id}`, {
+    headers: {
+      'X-Tenant-ID': tenantId,
+    },
+  });
 };
+
+const languageService = {
+  getLanguages,
+  addLanguage,
+  deleteLanguage,
+};
+
+export default languageService;

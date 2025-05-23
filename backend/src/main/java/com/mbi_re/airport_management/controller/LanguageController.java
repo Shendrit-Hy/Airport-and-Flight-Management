@@ -30,7 +30,7 @@ public class LanguageController {
         this.languageService = languageService;
     }
 
-    /**
+    /*
      * Retrieve all available languages.
      *
      * Accessible to all users including unauthenticated ones.
@@ -45,7 +45,6 @@ public class LanguageController {
             @ApiResponse(responseCode = "200", description = "List of languages returned successfully"),
             @ApiResponse(responseCode = "403", description = "Tenant validation failed")
     })
-    @Cacheable("languages") // Optional: only if languages rarely change
     public List<Language> getLanguages(HttpServletRequest request) {
         // For unauthenticated access, validate tenant via header
         if (!TenantContext.hasTenant()) {

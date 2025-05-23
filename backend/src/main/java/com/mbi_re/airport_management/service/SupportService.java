@@ -30,13 +30,11 @@ public class SupportService {
 
     private final SupportRepository supportRepository;
     private final FlightRepository flightRepository;
-    private final EmailService emailService;
 
     @Autowired
-    public SupportService(SupportRepository supportRepository, FlightRepository flightRepository, EmailService emailService) {
+    public SupportService(SupportRepository supportRepository, FlightRepository flightRepository) {
         this.supportRepository = supportRepository;
         this.flightRepository = flightRepository;
-        this.emailService = emailService;
     }
 
     /**

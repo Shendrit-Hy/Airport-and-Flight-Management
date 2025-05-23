@@ -76,4 +76,23 @@ public class TerminalService {
 
         return responseDto;
     }
+
+    /**
+     * Deletes a terminal by ID for a specific tenant.
+     *
+     * @param terminalId the ID of the terminal to delete
+     * @param tenantId   the ID of the tenant
+     * @throws RuntimeException if the terminal is not found or does not belong to the tenant
+     */
+    public void deleteTerminal(Long terminalId, String tenantId) {
+        Terminal terminal = terminalRepository.findById(terminalId)
+                .orElseThrow(() -> new RuntimeException("Terminal not found"));
+
+        if (!terminal.getTenantId().equals(tenantId)) {
+            throw new RuntimeException("Terminal does not belong to the tenant");
+        }
+
+        terminalRepository.delete(terminal);
+    }
+
 }

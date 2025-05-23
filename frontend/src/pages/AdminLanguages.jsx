@@ -2,37 +2,44 @@ import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import '../styles/AdminAirportPage.css';
-import {
-  getLanguages,
-  createLanguage,
-  deleteLanguage
-} from '../api/languageService';
+import languageService from '../api/languageService';
+import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 export default function AdminLanguages() {
   const [languages, setLanguages] = useState([]);
-  const tenantId = localStorage.getItem('tenantId'); // ✅ Merr tenantId nga localStorage
+  const tenantId = getTenantIdFromSubdomain();
 
   useEffect(() => {
     loadLanguages();
   }, []);
 
-  const loadLanguages = async () => {
-    try {
-      const res = await getLanguages();
-      setLanguages(res); // nuk ka më .data, sepse kthehet direkt nga service
-    } catch (error) {
-      console.error('❌ Error loading languages:', error);
+const loadLanguages = async () => {
+  try {
+    const res = await languageService.getLanguages(tenantId);
+    console.log('API Response:', res);
+    if (Array.isArray(res)) {
+      setLanguages(res);
+    } else if (res.languages && Array.isArray(res.languages)) {
+      setLanguages(res.languages);
+    } else {
+      console.warn('Unexpected response format:', res);
+      setLanguages([]);
     }
-  };
+  } catch (error) {
+    console.error('Error loading languages:', error);
+  }
+};
+
 
   const handleAdd = async (values, { resetForm }) => {
+    console.log(values);
     const payload = {
       name: values.languagename,
       code: values.languagecode
     };
 
     try {
-      await createLanguage(payload, tenantId); // ✅ kalon tenantId
+      await languageService.addLanguage(payload, tenantId);
       resetForm();
       loadLanguages();
     } catch (error) {
@@ -42,7 +49,7 @@ export default function AdminLanguages() {
 
   const handleDelete = async (id) => {
     try {
-      await deleteLanguage(id, tenantId); // ✅ kalon tenantId
+      await languageService.deleteLanguage(id, tenantId);
       loadLanguages();
     } catch (error) {
       console.error('❌ Error deleting language:', error);
@@ -66,12 +73,14 @@ export default function AdminLanguages() {
         </nav>
       </aside>
 
-      <main className="airport-main-content" style={{ backgroundImage: "url('../../public/AdminLanguagesImage.jpg')", 
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            width: '100%',
-            height: 'auto' }}>
+      <main className="airport-main-content" style={{
+        backgroundImage: "url('/AdminLanguagesImage.jpg')",
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        width: '100%',
+        height: 'auto'
+      }}>
         <header className="airport-header">
           <h2>LANGUAGES</h2>
           <div className="airport-admin-title">ADMIN</div>
@@ -117,7 +126,7 @@ export default function AdminLanguages() {
             <span style={{ width: '33%' }}>Actions</span>
           </div>
 
-          {languages.map((lang) => (
+          {Array.isArray(languages) && languages.map((lang) => (
             <div className="airport-table-row" key={lang.id} style={{ display: 'flex', width: '100%' }}>
               <span style={{ width: '33%' }}>{lang.name}</span>
               <span style={{ width: '33%' }}>{lang.code}</span>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import '../styles/AdminAirportPage.css';
-import { getAllAirports, createAirport, deleteAirport } from '../api/airportService';
+import { getAllAirports } from '../api/airportService';
 import { getAllTerminals, createTerminal } from '../api/terminalService';
 import { getAllAirlines, createAirline, deleteAirline } from '../api/airlineService';
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
@@ -18,20 +18,29 @@ export default function AdminTerminalandAirline() {
     loadData();
   }, []);
 
-  const loadData = async () => {
-    try {
-      const [airportRes, terminalRes, airlineRes] = await Promise.all([
-        getAllAirports(tenantId),
-        getAllTerminals(tenantId),
-        getAllAirlines(tenantId)
-      ]);
-      setAirports(airportRes.data || []);
-      setTerminals(terminalRes.data || []);
-      setAirlines(airlineRes.data || []);
-    } catch (err) {
-      console.error('Error loading data:', err);
-    }
-  };
+const loadData = async () => {
+  try {
+    const [airportRes, terminalRes, airlineRes] = await Promise.all([
+      getAllAirports(tenantId, token),
+      getAllTerminals(tenantId),
+      getAllAirlines(tenantId)
+    ]);
+
+    console.log('Airport Response:', airportRes);
+    console.log('Terminal Response:', terminalRes);
+    console.log('Airline Response:', airlineRes);
+
+    setAirports(Array.isArray(airportRes.data) ? airportRes.data : []);
+    setTerminals(Array.isArray(terminalRes.data) ? terminalRes.data : []);
+    setAirlines(Array.isArray(airlineRes.data) ? airlineRes.data : []);
+  } catch (err) {
+    console.error('Error loading data:', err);
+    setAirports([]);
+    setTerminals([]);
+    setAirlines([]);
+  }
+};
+
 
   const handleAddTerminal = async (values, { resetForm }) => {
     try {
@@ -70,7 +79,7 @@ export default function AdminTerminalandAirline() {
           {[
             'dashboard', 'airport', 'booking', 'faqs', 'flightspage',
             'maintenance', 'passangers', 'payments', 'staff', 'support',
-            'announcements', 'city', 'languages', 'trending', 'policy', 'gate','terminal'
+            'announcements', 'city', 'languages', 'trending', 'policy', 'gate', 'terminal'
           ].map((item) => (
             <div className="airport-nav-row" key={item}>
               <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
@@ -103,17 +112,28 @@ export default function AdminTerminalandAirline() {
         >
           <Form className="admin-city-country-form">
             <div className="admin-city-country-row">
-              {['terminalname', 'airportID'].map((field) => (
-                <div className="admin-city-country-input-group" key={field}>
-                  <Field
-                    type="text"
-                    name={field}
-                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                    className="admin-city-country-input"
-                  />
-                  <ErrorMessage name={field} component="div" className="admin-city-country-error" />
-                </div>
-              ))}
+              <div className="admin-city-country-input-group">
+                <Field
+                  type="text"
+                  name="terminalname"
+                  placeholder="Terminal Name"
+                  className="admin-city-country-input"
+                />
+                <ErrorMessage name="terminalname" component="div" className="admin-city-country-error" />
+              </div>
+
+              <div className="admin-city-country-input-group">
+                <Field as="select" name="airportID" className="admin-city-country-input">
+                  <option value="">Select Airport</option>
+                  {airports.map((airport) => (
+                    <option key={airport.id} value={airport.id}>
+                      {airport.name}
+                    </option>
+                  ))}
+                </Field>
+                <ErrorMessage name="airportID" component="div" className="admin-city-country-error" />
+              </div>
+
               <button type="submit" className="admin-city-country-add-btn">ADD TERMINAL</button>
             </div>
           </Form>
@@ -147,12 +167,14 @@ export default function AdminTerminalandAirline() {
         <div className="airport-table" style={{ marginBottom: 20 }}>
           <div className="airport-table-header" style={{ display: 'flex', width: '100%' }}>
             <span style={{ width: '50%' }}>Terminal Name</span>
-            <span style={{ width: '50%' }}>Airport ID</span>
+            <span style={{ width: '50%' }}>Airport</span>
           </div>
           {terminals.map((terminal) => (
             <div key={terminal.id} className="airport-table-row" style={{ display: 'flex', width: '100%' }}>
               <span style={{ width: '50%' }}>{terminal.terminalname}</span>
-              <span style={{ width: '50%' }}>{terminal.airportID}</span>
+              <span style={{ width: '50%' }}>
+                {airports.find(a => a.id === terminal.airportID)?.name || terminal.airportID}
+              </span>
             </div>
           ))}
         </div>

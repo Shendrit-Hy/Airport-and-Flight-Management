@@ -11,7 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -100,4 +102,15 @@ public class TerminalController {
         TenantUtil.validateTenant(jwtTenantId);
         return terminalService.createTerminal(dto, jwtTenantId);
     }
+
+
+    @DeleteMapping("/{terminalId}")
+    @Transactional
+    public ResponseEntity<Void> deleteTerminal(
+            @PathVariable Long terminalId,
+            @RequestHeader("X-Tenant-ID") String tenantId) {
+        terminalService.deleteTerminal(terminalId, tenantId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

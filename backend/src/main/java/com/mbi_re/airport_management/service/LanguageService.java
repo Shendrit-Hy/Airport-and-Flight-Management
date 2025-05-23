@@ -23,7 +23,6 @@ public class LanguageService {
     /**
      * Retrieve all languages for the current tenant.
      */
-    @Cacheable("languages")
     public List<Language> getAllLanguages() {
         String tenantId = TenantContext.getTenantId();
         return languageRepository.findAllByTenantId(tenantId);
