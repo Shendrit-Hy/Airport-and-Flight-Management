@@ -44,7 +44,11 @@ export default function AdminLanguages() {
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
-          {['dashboard', 'airport', 'booking', 'faqs', 'flightspage', 'maintenance', 'passangers', 'payments', 'staff', 'support', 'announcements'].map((item) => (
+          {[
+            'dashboard', 'airport', 'booking', 'faqs', 'flightspage',
+            'maintenance', 'passangers', 'payments', 'staff', 'support',
+            'announcements', 'city', 'languages', 'trending', 'policy', 'gate','terminal'
+          ].map((item) => (
             <div className="airport-nav-row" key={item}>
               <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
             </div>
@@ -52,7 +56,12 @@ export default function AdminLanguages() {
         </nav>
       </aside>
 
-      <main className="airport-main-content">
+      <main className="airport-main-content" style={{ backgroundImage: "url('../../public/AdminLanguagesImage.jpg')", 
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            width: '100%',
+            height: 'auto' }}>
         <header className="airport-header">
           <h2>LANGUAGES</h2>
           <div className="airport-admin-title">ADMIN</div>

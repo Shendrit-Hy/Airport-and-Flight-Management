@@ -97,7 +97,11 @@ const handleDeleteCity = async (id) => {
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
-          {['dashboard', 'airport', 'booking', 'faqs', 'flightspage', 'maintenance', 'passangers', 'payments', 'staff', 'support', 'announcements'].map((item) => (
+          {[
+            'dashboard', 'airport', 'booking', 'faqs', 'flightspage',
+            'maintenance', 'passangers', 'payments', 'staff', 'support',
+            'announcements', 'city', 'languages', 'trending', 'policy', 'gate','terminal'
+          ].map((item) => (
             <div className="airport-nav-row" key={item}>
               <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
             </div>
@@ -105,7 +109,12 @@ const handleDeleteCity = async (id) => {
         </nav>
       </aside>
 
-      <main className="airport-main-content">
+      <main className="airport-main-content" style={{ backgroundImage: "url('../../public/AdminCityImage.jpg')", 
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            width: '100%',
+            height: 'auto' }}>
         <header className="airport-header">
           <h2>CITY & COUNTRY ADMIN</h2>
           <div className="airport-admin-title">ADMIN</div>

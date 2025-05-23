@@ -7,7 +7,7 @@
 }
 
 .airport-sidebar {
-  width: 220px;
+  width: 180px; 
   background-color: #111;
   padding: 20px;
   display: flex;
@@ -30,7 +30,8 @@
 .airport-nav-row {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  height: 100%;
+  gap: 0px;
 }
 
 .airport-nav-row a {
@@ -38,13 +39,14 @@
   text-decoration: none;
   font-weight: 500;
   border-left: 3px solid teal;
-  padding: 2px;
-  padding-left: 10px;
-  margin: 5px;
-  width: 80%;
-  height: 24px;
+  margin: 3px;
   border-radius: 0px 5px 5px 0px;
+  font-size: 12px; 
+  width: 100%;     
+  padding: 4px 8px;
+  height: auto;    
 }
+
 .airport-nav-row a:hover{
   cursor: pointer;
   background-color: #3a3a3a;
@@ -76,7 +78,7 @@
   padding: 20px;
   border-radius: 15px;
   margin-bottom: 30px;
-  box-shadow: 0 0 10px teal;
+  /* box-shadow: 0 0 10px teal; */
 }
 
 .airport-form-grid {

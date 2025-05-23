@@ -72,7 +72,7 @@
   padding: 20px;
   border-radius: 15px;
   margin-bottom: 30px;
-  box-shadow: 0 0 10px teal;
+  /* box-shadow: 0 0 10px teal; */
   gap: 20px; /* adds space between form inputs and button */
 }
 
