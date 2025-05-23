@@ -113,7 +113,7 @@ public class UserService {
      *
      * @return the current user's profile as a UserDTO
      */
-    @Cacheable(value = "userProfiles", key = "'profile_' + T(com.mbi_re.airport_management.config.TenantContext).getTenantId()")
+
     public UserDTO getCurrentUserProfile() {
         final String tenantId = TenantContext.getTenantId();
         final String username = SecurityContextHolder.getContext().getAuthentication().getName();
