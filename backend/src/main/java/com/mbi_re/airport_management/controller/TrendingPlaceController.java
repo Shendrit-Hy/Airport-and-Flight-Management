@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +17,10 @@ import java.util.List;
 
 /**
  * Controller for managing trending places in the airport system.
- * Supports CRUD operations, with multi-tenant support via X-Tenant-ID header.
+ * <p>
+ * Supports CRUD operations with multi-tenant support enforced
+ * via the {@code X-Tenant-ID} request header.
+ * </p>
  */
 @RestController
 @RequestMapping("/api/trending-places")
@@ -29,62 +34,103 @@ public class TrendingPlaceController {
     }
 
     /**
-     * Retrieve all trending places for the specified tenant.
+     * Retrieves all trending places associated with the specified tenant.
+     * <p>
+     * The tenant is identified via the {@code X-Tenant-ID} header.
+     * Tenant context is set before fetching the data to ensure multi-tenant isolation.
+     * </p>
      *
-     * @param tenantId The tenant ID passed via the X-Tenant-ID header.
-     * @return List of trending places.
+     * @param tenantId the tenant ID from the {@code X-Tenant-ID} header
+     * @return a list of {@link TrendingPlace} entities belonging to the tenant
      */
     @GetMapping
-    @Operation(summary = "Get all trending places", description = "Fetch all trending places for the current tenant.")
+    @Operation(
+            summary = "Get all trending places",
+            description = "Fetch all trending places for the current tenant."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list"),
             @ApiResponse(responseCode = "400", description = "Invalid tenant ID supplied"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public List<TrendingPlace> getTrendingPlaces(@RequestHeader("X-Tenant-ID") String tenantId) {
+    public List<TrendingPlace> getTrendingPlaces(
+            @RequestHeader("X-Tenant-ID")
+            @Parameter(description = "Tenant ID header for multi-tenant isolation", required = true, example = "tenant123")
+            String tenantId) {
+
         TenantContext.setTenantId(tenantId);
         return service.getTrendingPlaces(tenantId);
     }
 
     /**
-     * Create a new trending place. Admin-only access.
+     * Creates a new trending place for the specified tenant.
+     * <p>
+     * Only users with the ADMIN role can access this endpoint.
+     * Tenant context is set from the {@code X-Tenant-ID} header before creation.
+     * </p>
      *
-     * @param dto      The trending place data transfer object.
-     * @param tenantId The tenant ID from the header.
-     * @return The created trending place entity.
+     * @param dto      the trending place data transfer object containing creation details
+     * @param tenantId the tenant ID from the {@code X-Tenant-ID} header
+     * @return the created {@link TrendingPlace} entity
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Create a new trending place", description = "Create a trending place for the tenant (Admin only).")
+    @Operation(
+            summary = "Create a new trending place",
+            description = "Create a trending place for the tenant (Admin only).",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trending place created successfully"),
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public TrendingPlace createTrendingPlace(@RequestBody TrendingPlaceDTO dto,
-                                             @RequestHeader("X-Tenant-ID") String tenantId) {
+    public TrendingPlace createTrendingPlace(
+            @RequestBody
+            @Parameter(description = "Trending place data to create", required = true)
+            TrendingPlaceDTO dto,
+
+            @RequestHeader("X-Tenant-ID")
+            @Parameter(description = "Tenant ID header for multi-tenant isolation", required = true, example = "tenant123")
+            String tenantId) {
+
         TenantContext.setTenantId(tenantId);
         return service.createTrendingPlace(dto, tenantId);
     }
 
     /**
-     * Delete a trending place by ID. Admin-only access.
+     * Deletes a trending place by its ID for the specified tenant.
+     * <p>
+     * Only users with the ADMIN role are authorized to perform this operation.
+     * Tenant context is set from the {@code X-Tenant-ID} header before deletion.
+     * </p>
      *
-     * @param id       ID of the trending place to delete.
-     * @param tenantId The tenant ID from the header.
+     * @param id       the ID of the trending place to delete
+     * @param tenantId the tenant ID from the {@code X-Tenant-ID} header
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Delete a trending place", description = "Delete a trending place by ID (Admin only).")
+    @Operation(
+            summary = "Delete a trending place",
+            description = "Delete a trending place by ID (Admin only).",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Trending place deleted successfully"),
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Trending place not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public void deleteTrendingPlace(@PathVariable Long id,
-                                    @RequestHeader("X-Tenant-ID") String tenantId) {
+    public void deleteTrendingPlace(
+            @PathVariable
+            @Parameter(description = "ID of the trending place to delete", required = true, example = "123")
+            Long id,
+
+            @RequestHeader("X-Tenant-ID")
+            @Parameter(description = "Tenant ID header for multi-tenant isolation", required = true, example = "tenant123")
+            String tenantId) {
+
         TenantContext.setTenantId(tenantId);
         service.deleteTrendingPlace(id, tenantId);
     }

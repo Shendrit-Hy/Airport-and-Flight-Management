@@ -20,6 +20,10 @@ import java.util.List;
 
 /**
  * REST controller for managing seat-related operations such as availability and booking.
+ * <p>
+ * Provides endpoints to get available seats, all seats for a flight, and to mark seats as unavailable.
+ * Tenant validation is enforced on all methods.
+ * </p>
  */
 @RestController
 @RequestMapping("/api/seats")
@@ -31,16 +35,19 @@ public class SeatController {
     private SeatService seatService;
 
     /**
-     * Retrieve a list of available seats for a given flight.
-     * This endpoint is accessible without authentication.
-     * It validates tenant ID using the request header (X-Tenant-ID).
+     * Retrieves a list of available seats for the specified flight.
+     * This endpoint is public (no authentication required).
+     * Tenant ID must be provided via the "X-Tenant-ID" header and is validated.
      *
-     * @param tenantId Tenant ID from the request header.
-     * @param flightId ID of the flight for which to fetch available seats.
-     * @return List of available SeatDTOs.
+     * @param tenantId Tenant ID extracted from the request header "X-Tenant-ID"
+     * @param flightId Flight ID to fetch available seats for
+     * @return List of SeatDTO objects representing available seats
      */
     @GetMapping("/available/{flightId}")
-    @Operation(summary = "Get available seats for a flight", description = "Returns all available (not booked) seats for the specified flight. Public access.")
+    @Operation(
+            summary = "Get available seats for a flight",
+            description = "Returns all available (not booked) seats for the specified flight. Public access."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of available seats",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = SeatDTO.class))),
@@ -58,15 +65,19 @@ public class SeatController {
     }
 
     /**
-     * Retrieve all seats (both available and unavailable) for a specific flight.
-     * This endpoint requires authentication with role USER or ADMIN.
+     * Retrieves all seats (both available and unavailable) for the specified flight.
+     * Requires authenticated user with role USER or ADMIN.
+     * Tenant ID is retrieved from TenantContext and validated.
      *
-     * @param flightId ID of the flight for which to fetch all seats.
-     * @return List of all SeatDTOs for the flight.
+     * @param flightId Flight ID to fetch all seats for
+     * @return List of SeatDTO objects representing all seats for the flight
      */
     @GetMapping("/all/{flightId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    @Operation(summary = "Get all seats for a flight", description = "Returns all seats (both available and unavailable) for a specified flight. Requires authentication.")
+    @Operation(
+            summary = "Get all seats for a flight",
+            description = "Returns all seats (both available and unavailable) for a specified flight. Requires authentication."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of all seats",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = SeatDTO.class))),
@@ -81,15 +92,19 @@ public class SeatController {
     }
 
     /**
-     * Mark a specific seat as unavailable (typically when booked).
-     * Only authenticated users with USER or ADMIN role can access this endpoint.
+     * Marks a specific seat as unavailable (e.g., when it is booked).
+     * Requires authenticated user with role USER or ADMIN.
+     * Tenant ID is retrieved from TenantContext and validated.
      *
-     * @param seatId ID of the seat to mark as unavailable.
-     * @return Updated SeatDTO with availability set to false.
+     * @param seatId ID of the seat to mark as unavailable
+     * @return Updated SeatDTO with availability set to false
      */
     @PutMapping("/{seatId}/unavailable")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    @Operation(summary = "Mark seat as unavailable", description = "Marks a seat as unavailable (e.g., when it's booked). Requires authentication.")
+    @Operation(
+            summary = "Mark seat as unavailable",
+            description = "Marks a seat as unavailable (e.g., when it's booked). Requires authentication."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Seat marked as unavailable",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = SeatDTO.class))),

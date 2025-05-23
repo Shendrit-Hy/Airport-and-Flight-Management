@@ -27,14 +27,16 @@ import java.util.stream.Collectors;
 /**
  * REST controller for managing flight-related operations.
  *
- * This controller provides endpoints for:
- * - Retrieving today's and upcoming flights (public access via tenant header).
- * - Viewing all flights (admin access only).
- * - Adding and deleting flights (admin access only).
- * - Filtering flights based on multiple criteria (public access via tenant header).
+ * <p>This controller supports:</p>
+ * <ul>
+ *     <li>Retrieving today's and upcoming flights (public access with tenant header)</li>
+ *     <li>Viewing all flights (admin access only)</li>
+ *     <li>Adding and deleting flights (admin access only)</li>
+ *     <li>Filtering flights based on various criteria (public access with tenant header)</li>
+ * </ul>
  *
- * <p>Multi-tenancy is supported via the "X-Tenant-ID" header for unauthenticated access,
- * and via the {@link TenantContext} for authenticated users.</p>
+ * <p>Multi-tenancy is supported via the "X-Tenant-ID" header for unauthenticated requests
+ * and via {@link TenantContext} for authenticated users.</p>
  */
 @RestController
 @RequestMapping("/api/flights")
@@ -49,37 +51,41 @@ public class FlightController {
     private FlightRepository flightRepository;
 
     /**
-     * Retrieves flights that are scheduled for today or in the future.
+     * Retrieves flights scheduled for today and future dates.
+     * <p>This endpoint is accessible without authentication by providing the tenant ID in the "X-Tenant-ID" header.</p>
      *
-     * <p>This endpoint is accessible without authentication by passing the tenant identifier
-     * in the "X-Tenant-ID" request header.</p>
-     *
-     * @param tenantId The tenant identifier from the request header.
-     * @return A list of flight DTOs that represent upcoming flights.
+     * @param tenantId Tenant identifier from the request header.
+     * @return List of upcoming flight DTOs.
      */
     @GetMapping
-    @Operation(summary = "Get today's and upcoming flights", description = "Accessible without login by providing tenant header.")
+    @Operation(
+            summary = "Get today's and upcoming flights",
+            description = "Retrieve flights scheduled for today and future dates. Accessible without login by providing tenant header."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Flights retrieved successfully"),
             @ApiResponse(responseCode = "403", description = "Invalid or missing tenant context")
     })
     public List<FlightDTO> getFlights(
             @RequestHeader("X-Tenant-ID")
-            @Parameter(description = "Tenant identifier from request header") String tenantId) {
+            @Parameter(description = "Tenant identifier from request header", required = true) String tenantId) {
+
         TenantUtil.validateTenant(tenantId);
         return flightService.getTodayAndUpcomingFlights(tenantId);
     }
 
     /**
-     * Retrieves all flights for the current authenticated tenant.
+     * Retrieves all flights for the authenticated tenant.
+     * <p>This endpoint is restricted to users with ADMIN role.</p>
      *
-     * <p>This endpoint is restricted to users with the ADMIN role.</p>
-     *
-     * @return A list of all flight DTOs for the current tenant.
+     * @return List of all flight DTOs for the current tenant.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
-    @Operation(summary = "Get all flights", description = "Retrieve all flights for the current tenant. Admin only.")
+    @Operation(
+            summary = "Get all flights",
+            description = "Retrieve all flights for the current tenant. Admin access only."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "All flights retrieved successfully"),
             @ApiResponse(responseCode = "403", description = "Access denied or invalid tenant")
@@ -91,74 +97,96 @@ public class FlightController {
 
     /**
      * Adds a new flight for the current tenant.
+     * <p>This endpoint is restricted to users with ADMIN role.</p>
      *
-     * <p>This endpoint is restricted to users with the ADMIN role.</p>
-     *
-     * @param flightDTO The flight data to be added.
-     * @return The added flight DTO as confirmation.
+     * @param flightDTO Flight data transfer object containing flight details.
+     * @return The saved flight DTO.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    @Operation(summary = "Add a new flight", description = "Add a new flight. Admin only.")
+    @Operation(
+            summary = "Add a new flight",
+            description = "Create a new flight record. Admin access only."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Flight added successfully"),
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     public ResponseEntity<FlightDTO> addFlight(
             @RequestBody
-            @Parameter(description = "Flight data transfer object") FlightDTO flightDTO) {
+            @Parameter(description = "Flight data transfer object", required = true) FlightDTO flightDTO) {
+
         TenantUtil.validateTenantFromContext();
+
+        // Assign tenant and default flight status
         flightDTO.setTenantId(TenantContext.getTenantId());
         flightDTO.setFlightStatus(FlightStatus.UNKNOWN);
+
         FlightDTO saved = flightService.addFlight(flightDTO);
         return ResponseEntity.ok(saved);
     }
 
     /**
-     * Deletes a specific flight by its ID.
-     *
-     * <p>This endpoint is restricted to users with the ADMIN role.</p>
+     * Deletes a flight by its ID.
+     * <p>This endpoint is restricted to users with ADMIN role.</p>
      *
      * @param id The ID of the flight to delete.
-     * @return A 204 No Content response if deletion is successful.
+     * @return HTTP 204 No Content on successful deletion.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a flight", description = "Delete a flight by ID. Admin only.")
+    @Operation(
+            summary = "Delete a flight",
+            description = "Delete a flight by ID. Admin access only."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Flight deleted successfully"),
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     public ResponseEntity<Void> deleteFlight(
             @PathVariable
-            @Parameter(description = "ID of the flight to delete") Long id) {
+            @Parameter(description = "ID of the flight to delete", required = true) Long id) {
+
         TenantUtil.validateTenantFromContext();
         flightService.deleteFlight(id, TenantContext.getTenantId());
         return ResponseEntity.noContent().build();
     }
 
     /**
-     * Filters flights using the provided criteria such as departure/arrival airport, date range, and available seats.
+     * Filters flights by departure airport, arrival airport, date range, and minimum available seats.
+     * <p>This endpoint is publicly accessible with the tenant ID provided in the "X-Tenant-ID" header.</p>
      *
-     * <p>This endpoint is publicly accessible using the "X-Tenant-ID" header.</p>
-     *
-     * @param tenantId Tenant identifier from the request header.
-     * @param from Departure airport code (IATA format recommended).
-     * @param to Arrival airport code (IATA format recommended).
-     * @param startDate Start date of the search range (format: yyyy-MM-dd).
-     * @param endDate End date of the search range (format: yyyy-MM-dd).
+     * @param tenantId   Tenant identifier from the request header.
+     * @param from       Departure airport code (IATA format recommended).
+     * @param to         Arrival airport code (IATA format recommended).
+     * @param startDate  Start date of the search range (ISO format: yyyy-MM-dd).
+     * @param endDate    End date of the search range (ISO format: yyyy-MM-dd).
      * @param passengers Minimum number of available seats required.
-     * @return A list of flights that match the search criteria.
+     * @return List of flight DTOs matching the filter criteria or empty list on invalid input.
      */
     @GetMapping("/filter")
+    @Operation(
+            summary = "Filter flights",
+            description = "Search flights by departure/arrival airports, date range, and available seats. Public access with tenant header."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Filtered flights retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters")
+    })
     public ResponseEntity<List<FlightDTO>> getFilteredFlights(
-            @RequestHeader("X-Tenant-ID") String tenantId,
-            @RequestParam String from,
-            @RequestParam String to,
-            @RequestParam String startDate,
-            @RequestParam String endDate,
-            @RequestParam int passengers
-    ) {
+            @RequestHeader("X-Tenant-ID")
+            @Parameter(description = "Tenant identifier from request header", required = true) String tenantId,
+            @RequestParam
+            @Parameter(description = "Departure airport code (IATA format)", required = true) String from,
+            @RequestParam
+            @Parameter(description = "Arrival airport code (IATA format)", required = true) String to,
+            @RequestParam
+            @Parameter(description = "Start date (yyyy-MM-dd)", required = true) String startDate,
+            @RequestParam
+            @Parameter(description = "End date (yyyy-MM-dd)", required = true) String endDate,
+            @RequestParam
+            @Parameter(description = "Minimum available seats", required = true) int passengers) {
+
         TenantUtil.validateTenant(tenantId);
 
         try {
@@ -170,16 +198,14 @@ public class FlightController {
                             tenantId, from, to, start, end, passengers
                     );
 
-            // ✅ Convert to DTOs using service mapping
             List<FlightDTO> dtos = flights.stream()
-                    .map(flightService::mapToDTO) // ❗ Make `mapToDTO` public in the service
+                    .map(flightService::mapToDTO) // Ensure this method is public in FlightService
                     .collect(Collectors.toList());
 
             return ResponseEntity.ok(dtos);
         } catch (Exception e) {
+            // Bad input format or other error
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.emptyList());
         }
     }
-
 }
-

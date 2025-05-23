@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FlightService {
 
-
     @Autowired
     private FlightRepository flightRepository;
     @Autowired
@@ -40,32 +39,37 @@ public class FlightService {
      * Retrieves today's and upcoming flights for a given tenant.
      *
      * @param tenantId the tenant identifier
-     * @return list of flight DTOs
+     * @return a list of {@link FlightDTO} representing today's and upcoming flights
      */
     @Cacheable(value = "flights_today_upcoming", key = "#tenantId")
     public List<FlightDTO> getTodayAndUpcomingFlights(String tenantId) {
         LocalDate today = LocalDate.now();
         return flightRepository.findByFlightDateGreaterThanEqualAndTenantId(today, tenantId)
-                .stream().map(this::mapToDTO).collect(Collectors.toList());
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
     /**
      * Retrieves all flights for the authenticated tenant.
      *
      * @param tenantId the tenant identifier
-     * @return list of flight DTOs
+     * @return a list of {@link FlightDTO} for all flights of the tenant
      */
     @Cacheable(value = "flights_all", key = "#tenantId")
     public List<FlightDTO> getAllFlights(String tenantId) {
         return flightRepository.findByTenantId(tenantId)
-                .stream().map(this::mapToDTO).collect(Collectors.toList());
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
     /**
-     * Adds a new flight and generates seats automatically.
+     * Adds a new flight and automatically generates seats for it.
+     * Evicts relevant flight caches for the tenant.
      *
-     * @param dto flight data
-     * @return created flight as DTO
+     * @param dto the flight data transfer object to add
+     * @return the created flight as a {@link FlightDTO}
      */
     @CacheEvict(value = { "flights_today_upcoming", "flights_all" }, key = "#dto.tenantId")
     public FlightDTO addFlight(FlightDTO dto) {
@@ -78,11 +82,12 @@ public class FlightService {
     }
 
     /**
-     * Deletes a flight and all associated seats for the tenant.
-     * Evicts cache for the tenant after successful deletion.
+     * Deletes a flight and all associated seats for the specified tenant.
+     * Evicts relevant flight caches after deletion.
      *
-     * @param flightId the flight ID
-     * @param tenantId the tenant ID
+     * @param flightId the ID of the flight to delete
+     * @param tenantId the tenant identifier
+     * @throws RuntimeException if the flight is not found or tenant access is denied
      */
     @Transactional
     @CacheEvict(value = { "flights_today_upcoming", "flights_all" }, key = "#tenantId")
@@ -98,10 +103,10 @@ public class FlightService {
     }
 
     /**
-     * Maps a Flight entity to its DTO representation.
+     * Maps a {@link Flight} entity to its DTO representation.
      *
      * @param flight the flight entity
-     * @return DTO version of the flight
+     * @return a {@link FlightDTO} representing the flight data
      */
     public FlightDTO mapToDTO(Flight flight) {
         FlightDTO dto = new FlightDTO();
@@ -125,10 +130,11 @@ public class FlightService {
     }
 
     /**
-     * Converts a FlightDTO to its entity form.
+     * Converts a {@link FlightDTO} to its entity representation.
      *
      * @param dto the flight DTO
-     * @return the flight entity
+     * @return the corresponding {@link Flight} entity
+     * @throws RuntimeException if related Airline, Gate, or Terminal is not found for the tenant
      */
     private Flight mapToEntity(FlightDTO dto) {
         Flight flight = new Flight();
@@ -164,8 +170,9 @@ public class FlightService {
 
     /**
      * Auto-generates seats for a newly created flight.
+     * Seats are labeled in rows (A, B, C, ...) and columns (1 to 6).
      *
-     * @param saved the flight entity
+     * @param saved the flight entity for which seats are generated
      */
     private void generateSeats(Flight saved) {
         int totalSeats = saved.getAvailableSeat();

@@ -29,11 +29,10 @@ public class CityService {
     }
 
     /**
-     * Retrieves all cities for the current tenant.
-     * <p>
-     * The results are cached by tenant ID.
+     * Retrieves all cities associated with the current tenant.
+     * The result is cached to improve performance.
      *
-     * @return list of CityDTOs
+     * @return a list of CityDTO objects representing all cities of the tenant
      */
     @Cacheable(value = "cities", key = "T(com.mbi_re.airport_management.config.TenantContext).getTenantId() + '_all'")
     public List<CityDTO> getAllCities() {
@@ -44,12 +43,11 @@ public class CityService {
     }
 
     /**
-     * Retrieves all cities for a given country and current tenant.
-     * <p>
-     * The results are cached per country and tenant ID.
+     * Retrieves all cities within a specified country for the current tenant.
+     * The results are cached per country and tenant for efficiency.
      *
-     * @param countryId the country ID
-     * @return list of CityDTOs
+     * @param countryId the ID of the country whose cities are to be retrieved
+     * @return a list of CityDTO objects representing cities within the given country for the tenant
      */
     @Cacheable(value = "cities", key = "T(com.mbi_re.airport_management.config.TenantContext).getTenantId() + '_country_' + #countryId")
     public List<CityDTO> getCitiesByCountry(Long countryId) {
@@ -60,12 +58,12 @@ public class CityService {
     }
 
     /**
-     * Creates a new city for the current tenant.
-     * <p>
-     * Cache for all cities and cities by country is evicted upon creation.
+     * Creates a new city record for the current tenant.
+     * Evicts all cached city data to keep caches consistent after insertion.
      *
-     * @param dto the CityDTO to create
-     * @return the created CityDTO
+     * @param dto the CityDTO containing city details to be created
+     * @return the CityDTO representing the newly created city
+     * @throws RuntimeException if the specified country is not found
      */
     @CacheEvict(value = "cities", allEntries = true)
     public CityDTO createCity(CityDTO dto) {
@@ -84,9 +82,8 @@ public class CityService {
     }
 
     /**
-     * Deletes a city by ID for the current tenant.
-     * <p>
-     * Evicts all relevant cache entries for cities.
+     * Deletes a city by its ID for the current tenant.
+     * Evicts all city-related cache entries to maintain cache integrity.
      *
      * @param id the ID of the city to delete
      */

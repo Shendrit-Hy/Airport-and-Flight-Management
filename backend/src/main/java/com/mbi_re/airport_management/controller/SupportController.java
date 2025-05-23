@@ -34,13 +34,15 @@ public class SupportController {
     }
 
     /**
-     * Submits a general support request for the current tenant.
+     * Submit a general support request for the current tenant.
+     * <p>
      * This endpoint is publicly accessible and does not require authentication.
-     * The tenant is validated using the header and request context.
+     * Tenant validation is done based on the provided tenant ID header and current context.
+     * </p>
      *
-     * @param request  the support request payload
-     * @param tenantId the tenant ID from request header
-     * @return the saved support ticket
+     * @param request  The support request payload containing issue details.
+     * @param tenantId The tenant ID passed in the request header for validation.
+     * @return The saved Support entity with generated ID and tenant info.
      */
     @Operation(
             summary = "Submit support request",
@@ -56,24 +58,29 @@ public class SupportController {
     })
     @PostMapping
     public ResponseEntity<Support> fileComplaint(
+            @Parameter(description = "Support request payload", required = true)
             @RequestBody SupportDTO request,
+            @Parameter(description = "Tenant ID from request header", required = true)
             @RequestHeader("X-Tenant-ID") String tenantId) {
-        TenantUtil.validateTenantFromContext(); // validates match with TenantInterceptor
+        TenantUtil.validateTenantFromContext(); // Validates tenant consistency with interceptor
         request.setTenantId(tenantId);
-        return ResponseEntity.ok(service.fileComplaint(request));
+        Support saved = service.fileComplaint(request);
+        return ResponseEntity.ok(saved);
     }
 
     /**
-     * Retrieves all submitted support tickets for the authenticated tenant.
-     * Requires ADMIN role and JWT tenant ID validation.
-     * Results are cached per tenant.
+     * Retrieve all submitted support tickets for the authenticated tenant.
+     * <p>
+     * Requires ADMIN role and tenant ID extracted from JWT token.
+     * Results are cached per tenant for performance.
+     * </p>
      *
-     * @param jwtTenantId the tenant ID extracted from JWT
-     * @return list of support tickets
+     * @param jwtTenantId The tenant ID extracted from JWT token (request attribute).
+     * @return List of support tickets submitted for the tenant.
      */
     @Operation(
             summary = "Get all support tickets",
-            description = "Returns a list of all submitted support complaints for the current tenant. Only accessible to ADMIN users.",
+            description = "Returns all submitted support complaints for the current tenant. ADMIN role required.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
@@ -85,21 +92,25 @@ public class SupportController {
     @PreAuthorize("hasRole('ADMIN')")
     @Cacheable(value = "support_tickets", key = "#jwtTenantId")
     public ResponseEntity<List<Support>> getAll(
+            @Parameter(description = "Tenant ID extracted from JWT token", required = true)
             @RequestAttribute("jwtTenantId") String jwtTenantId) {
         TenantUtil.validateTenant(jwtTenantId);
-        return ResponseEntity.ok(service.getAllComplaints(jwtTenantId));
+        List<Support> tickets = service.getAllComplaints(jwtTenantId);
+        return ResponseEntity.ok(tickets);
     }
 
     /**
-     * Deletes a specific support ticket by ID for the authenticated tenant.
-     * Requires ADMIN role and valid tenant context.
+     * Delete a specific support ticket by ID for the authenticated tenant.
+     * <p>
+     * Requires ADMIN role and validates the tenant context.
+     * </p>
      *
-     * @param id the ID of the support complaint to delete
-     * @param jwtTenantId the tenant ID extracted from JWT
+     * @param id          The ID of the support complaint to delete.
+     * @param jwtTenantId The tenant ID extracted from JWT token (request attribute).
      */
     @Operation(
             summary = "Delete support ticket",
-            description = "Deletes a specific support ticket by ID. Only accessible to ADMIN users.",
+            description = "Deletes a specific support ticket by ID. ADMIN role required.",
             security = @SecurityRequirement(name = "bearerAuth"),
             parameters = {
                     @Parameter(name = "id", description = "ID of the support ticket to delete", required = true)
@@ -114,7 +125,9 @@ public class SupportController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public void delete(
+            @Parameter(description = "ID of the support ticket to delete", required = true)
             @PathVariable Long id,
+            @Parameter(description = "Tenant ID extracted from JWT token", required = true)
             @RequestAttribute("jwtTenantId") String jwtTenantId) {
         TenantUtil.validateTenant(jwtTenantId);
         service.deleteSupport(id, jwtTenantId);

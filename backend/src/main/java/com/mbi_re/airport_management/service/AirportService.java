@@ -33,11 +33,11 @@ public class AirportService {
     }
 
     /**
-     * Retrieves all airports associated with a specific tenant.
-     * Results are cached for better performance.
+     * Retrieves all airports associated with the specified tenant.
+     * Results are cached for performance optimization.
      *
-     * @param tenantId the tenant identifier
-     * @return list of airports
+     * @param tenantId the tenant identifier used to filter airports
+     * @return a list of Airport entities belonging to the tenant
      */
     @Cacheable(value = "airports", key = "#tenantId")
     public List<Airport> getAllAirports(String tenantId) {
@@ -45,12 +45,13 @@ public class AirportService {
     }
 
     /**
-     * Creates a new airport for the given tenant.
-     * Cache is invalidated for the tenant to ensure consistency.
+     * Creates a new airport for the specified tenant.
+     * This method also ensures cache consistency by evicting the tenant's airport cache.
      *
-     * @param airportDTO the airport data
-     * @param tenantId   the tenant identifier
-     * @return created airport entity
+     * @param airportDTO the data transfer object containing airport details
+     * @param tenantId   the tenant identifier for multi-tenancy support
+     * @return the persisted Airport entity after creation
+     * @throws IllegalArgumentException if the specified country or city does not exist
      */
     @CacheEvict(value = "airports", key = "#tenantId")
     public Airport createAirport(AirportDTO airportDTO, String tenantId) {
@@ -72,16 +73,13 @@ public class AirportService {
     }
 
     /**
-     * Deletes an airport by ID for a given tenant.
-     * Ensures the airport belongs to the tenant before deletion.
-     * Evicts cache for the tenant after successful deletion.
-     *
-     * This operation is transactional – if any part of the deletion process fails,
-     * the entire operation is rolled back.
+     * Deletes an airport by its ID for the specified tenant.
+     * Ensures that the airport exists and belongs to the tenant before deletion.
+     * The operation is transactional and evicts the tenant's airport cache upon success.
      *
      * @param id       the ID of the airport to delete
-     * @param tenantId the tenant identifier from request context or header
-     * @throws IllegalArgumentException if the airport is not found or doesn't belong to the tenant
+     * @param tenantId the tenant identifier to verify ownership
+     * @throws IllegalArgumentException if the airport is not found or does not belong to the tenant
      */
     @Transactional
     @CacheEvict(value = "airports", key = "#tenantId")

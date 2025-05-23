@@ -45,17 +45,20 @@ public class TimeZoneController {
     /**
      * Retrieves a list of all supported time zones for the current tenant.
      * <p>
-     * This endpoint may be accessed by:
+     * This endpoint supports two access modes:
      * </p>
      * <ul>
-     *     <li>Authenticated users (JWT token with tenant info)</li>
-     *     <li>Unauthenticated clients providing {@code X-Tenant-ID} in the request header</li>
+     *     <li><b>Authenticated:</b> Tenant ID is obtained from the JWT token via {@link TenantContext}.</li>
+     *     <li><b>Unauthenticated:</b> Tenant ID must be provided via the {@code X-Tenant-ID} header and must match the tenant context.</li>
      * </ul>
+     * <p>
+     * If tenant validation fails, the method returns HTTP 403 Forbidden.
+     * Otherwise, it returns a list of time zones available for the tenant.
+     * </p>
      *
-     * @param tenantHeader Optional {@code X-Tenant-ID} header for unauthenticated requests.
-     *                     If present, it must match the tenant from the current context.
-     * @return A {@link ResponseEntity} containing the list of {@link TimeZoneDTO}s
-     *         or a 403 Forbidden response if tenant validation fails.
+     * @param tenantHeader Optional tenant ID from the {@code X-Tenant-ID} header for unauthenticated requests.
+     *                     If present, must match the tenant ID from the current context.
+     * @return HTTP 200 with a list of {@link TimeZoneDTO} on success, or HTTP 403 if tenant validation fails.
      */
     @Operation(
             summary = "Get all time zones",
@@ -65,7 +68,8 @@ public class TimeZoneController {
                     @Parameter(
                             name = "X-Tenant-ID",
                             description = "Tenant ID for unauthenticated access",
-                            required = false
+                            required = false,
+                            example = "tenant123"
                     )
             },
             responses = {
@@ -93,10 +97,12 @@ public class TimeZoneController {
             String tenantHeader
     ) {
         if (tenantHeader != null) {
+            // Validate tenant header against the tenant in context
             if (!tenantHeader.equalsIgnoreCase(TenantContext.getTenantId())) {
                 return ResponseEntity.status(403).build();
             }
         } else {
+            // For authenticated users, validate tenant from context
             String jwtTenant = TenantContext.getTenantId();
             TenantUtil.validateTenant(jwtTenant);
         }

@@ -18,10 +18,11 @@ public class AirlineService {
     private AirlineRepository airlineRepository;
 
     /**
-     * Retrieves all airlines for a specific tenant.
+     * Retrieves all airlines associated with the specified tenant.
+     * Results are cached by tenantId to optimize repeated queries.
      *
-     * @param tenantId the tenant identifier
-     * @return list of airline DTOs
+     * @param tenantId the identifier of the tenant whose airlines to retrieve
+     * @return a list of AirlineDTOs representing airlines of the tenant
      */
     @Cacheable(value = "airlines", key = "#tenantId")
     public List<AirlineDTO> getAllAirlines(String tenantId) {
@@ -31,12 +32,13 @@ public class AirlineService {
     }
 
     /**
-     * Creates a new airline for the specified tenant.
+     * Creates and persists a new airline for the given tenant.
+     * Throws a RuntimeException if an airline with the same name already exists for the tenant.
      *
-     * @param dto      the airline data transfer object
-     * @param tenantId the tenant identifier
-     * @return the created airline as a DTO
-     * @throws RuntimeException if the airline already exists for the tenant
+     * @param dto the data transfer object containing airline details
+     * @param tenantId the identifier of the tenant for whom the airline is created
+     * @return the created AirlineDTO including the generated airline ID
+     * @throws RuntimeException if airline with the same name already exists for the tenant
      */
     public AirlineDTO createAirline(AirlineDTO dto, String tenantId) {
         if (airlineRepository.existsByNameAndTenantId(dto.getName(), tenantId)) {
@@ -51,6 +53,14 @@ public class AirlineService {
         return new AirlineDTO(saved.getId(), saved.getName());
     }
 
+    /**
+     * Deletes an existing airline by its ID for the specified tenant.
+     * Throws EntityNotFoundException if the airline does not exist.
+     *
+     * @param airlineId the ID of the airline to delete
+     * @param tenantId the identifier of the tenant that owns the airline
+     * @throws EntityNotFoundException if the airline is not found for the tenant
+     */
     public void deleteAirline(Long airlineId, String tenantId) {
         Airline existing = airlineRepository.findByIdAndTenantId(airlineId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Airline not found"));

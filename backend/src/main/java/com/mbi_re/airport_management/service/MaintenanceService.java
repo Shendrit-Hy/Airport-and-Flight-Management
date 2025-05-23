@@ -24,9 +24,11 @@ public class MaintenanceService {
 
     /**
      * Creates a new maintenance record for the current tenant.
+     * <p>
+     * This method evicts all entries in the "maintenance" cache to keep data consistent.
      *
-     * @param dto the maintenance request data
-     * @return the saved maintenance DTO
+     * @param dto the maintenance request data transfer object containing maintenance details
+     * @return the saved maintenance record as a DTO
      */
     @CacheEvict(value = "maintenance", allEntries = true)
     public MaintenanceDTO create(MaintenanceDTO dto) {
@@ -47,8 +49,10 @@ public class MaintenanceService {
 
     /**
      * Retrieves all maintenance records for the current tenant.
+     * <p>
+     * Results are cached under the "maintenance" cache to optimize repeated calls.
      *
-     * @return list of maintenance DTOs
+     * @return a list of maintenance record DTOs belonging to the current tenant
      */
     @Cacheable(value = "maintenance")
     public List<MaintenanceDTO> getAll() {
@@ -60,10 +64,12 @@ public class MaintenanceService {
     }
 
     /**
-     * Retrieves maintenance records filtered by airport code.
+     * Retrieves maintenance records filtered by airport code for the current tenant.
+     * <p>
+     * Results are cached with the airport code as cache key.
      *
-     * @param airportCode the airport code
-     * @return list of matching DTOs
+     * @param airportCode the airport code to filter maintenance records
+     * @return a list of matching maintenance record DTOs
      */
     @Cacheable(value = "maintenance", key = "#airportCode")
     public List<MaintenanceDTO> getByAirportCode(String airportCode) {
@@ -75,10 +81,12 @@ public class MaintenanceService {
     }
 
     /**
-     * Retrieves maintenance records filtered by status.
+     * Retrieves maintenance records filtered by status for the current tenant.
+     * <p>
+     * Results are cached with the status as cache key.
      *
-     * @param status the maintenance status
-     * @return list of matching DTOs
+     * @param status the status to filter maintenance records
+     * @return a list of matching maintenance record DTOs
      */
     @Cacheable(value = "maintenance", key = "#status")
     public List<MaintenanceDTO> getByStatus(String status) {
@@ -90,11 +98,13 @@ public class MaintenanceService {
     }
 
     /**
-     * Retrieves maintenance records filtered by both airport code and status.
+     * Retrieves maintenance records filtered by both airport code and status for the current tenant.
+     * <p>
+     * Results are cached with a combined key of airportCode-status.
      *
-     * @param airportCode the airport code
-     * @param status      the maintenance status
-     * @return list of matching DTOs
+     * @param airportCode the airport code to filter maintenance records
+     * @param status      the status to filter maintenance records
+     * @return a list of matching maintenance record DTOs
      */
     @Cacheable(value = "maintenance", key = "#airportCode + '-' + #status")
     public List<MaintenanceDTO> getByAirportCodeAndStatus(String airportCode, String status) {
@@ -106,10 +116,14 @@ public class MaintenanceService {
     }
 
     /**
-     * Deletes a maintenance record by ID and tenant ID.
+     * Deletes a maintenance record by ID for the given tenant.
+     * <p>
+     * This method evicts all entries in the "maintenance" cache.
+     * Throws a {@link RuntimeException} if no matching record is found.
      *
-     * @param id       the record ID
-     * @param tenantId the tenant identifier
+     * @param id       the ID of the maintenance record to delete
+     * @param tenantId the tenant ID to scope the deletion
+     * @throws RuntimeException if maintenance record is not found for the tenant
      */
     @CacheEvict(value = "maintenance", allEntries = true)
     public void delete(Long id, String tenantId) {
@@ -121,10 +135,10 @@ public class MaintenanceService {
     }
 
     /**
-     * Converts a Maintenance entity to a DTO.
+     * Converts a {@link Maintenance} entity into a {@link MaintenanceDTO}.
      *
-     * @param entity the maintenance entity
-     * @return the DTO representation
+     * @param entity the maintenance entity to convert
+     * @return the corresponding maintenance DTO
      */
     private MaintenanceDTO toDTO(Maintenance entity) {
         MaintenanceDTO dto = new MaintenanceDTO();

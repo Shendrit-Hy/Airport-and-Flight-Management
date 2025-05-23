@@ -38,11 +38,15 @@ public class SupportService {
     }
 
     /**
-     * Creates and saves a new support ticket.
-     * Can be used by unauthenticated users using X-Tenant-ID header.
+     * Creates and saves a new support ticket (complaint).
+     * This method can be accessed by unauthenticated users by providing the X-Tenant-ID header.
+     * Associates the support ticket with a flight if a valid flight number is provided.
+     * The cache for support tickets is evicted for the given tenant to maintain consistency.
      *
-     * @param dto support request data
-     * @return saved support entity
+     * @param dto the support request data transfer object containing tenant ID, subject, message,
+     *            email, type, and optionally flight number
+     * @return the saved Support entity representing the newly created support ticket
+     * @throws IllegalArgumentException if tenant validation fails
      */
     @Operation(summary = "File a complaint", description = "Allows users (even unauthenticated) to file a support ticket using the X-Tenant-ID header.")
     @CacheEvict(value = "support_tickets", key = "#dto.tenantId")
@@ -73,9 +77,12 @@ public class SupportService {
 
     /**
      * Retrieves all support tickets for the authenticated tenant.
+     * Access restricted to users with ROLE_USER or ROLE_ADMIN.
+     * Results are cached per tenant to optimize performance.
      *
-     * @param tenantId tenant identifier (from JWT)
-     * @return list of support tickets
+     * @param tenantId the tenant identifier extracted from the JWT token
+     * @return list of Support entities representing all support tickets for the tenant
+     * @throws IllegalArgumentException if tenant validation fails
      */
     @Operation(summary = "Get all support complaints", description = "Fetches all support tickets for the authenticated tenant. Requires USER or ADMIN role.")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -88,10 +95,14 @@ public class SupportService {
     }
 
     /**
-     * Deletes a support ticket by ID and tenant.
+     * Deletes a support ticket by its ID for the specified tenant.
+     * Access restricted to users with ROLE_ADMIN.
+     * Evicts the cached support tickets list for the tenant to maintain cache consistency.
      *
-     * @param supportId ID of the support ticket
-     * @param tenantId  tenant ID (from JWT)
+     * @param supportId the ID of the support ticket to delete
+     * @param tenantId  the tenant identifier extracted from the JWT token
+     * @throws ResponseStatusException with 404 status if the support ticket does not exist or does not belong to the tenant
+     * @throws IllegalArgumentException if tenant validation fails
      */
     @Operation(summary = "Delete support ticket", description = "Deletes a support ticket by ID for the authenticated tenant. Requires ADMIN role.")
     @PreAuthorize("hasRole('ADMIN')")
@@ -108,9 +119,9 @@ public class SupportService {
     }
 
     /**
-     * Generates a unique ticket ID.
+     * Generates a unique 10-character ticket identifier using UUID.
      *
-     * @return 10-character unique ticket identifier
+     * @return a unique 10-character ticket ID string
      */
     private String generateTicketId() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 10);

@@ -23,11 +23,22 @@ public class ParkingPriceService {
     }
 
     /**
-     * Calculates the parking price based on entry and exit time, applies tenant context,
-     * and persists the calculated result.
+     * Calculates the parking price based on the provided entry and exit times.
+     * Applies tenant context from the DTO, persists the calculated price, and returns the saved entity.
+     * <p>
+     * Pricing rules:
+     * <ul>
+     *     <li>Up to 15 minutes free</li>
+     *     <li>Up to 2 hours: 2 currency units</li>
+     *     <li>Up to 6 hours: 4 currency units</li>
+     *     <li>Up to 12 hours: 6 currency units</li>
+     *     <li>Up to 24 hours: 8 currency units</li>
+     *     <li>More than 24 hours: 10 currency units per day (rounded up)</li>
+     *     <li>Additional 1 currency unit if parking includes night hours (18:00 - 06:00)</li>
+     * </ul>
      *
-     * @param dto ParkingPriceDTO containing entry/exit times and tenant ID
-     * @return saved ParkingPrice entity
+     * @param dto Data Transfer Object containing entry hour, entry minute, exit hour, exit minute, and tenant ID
+     * @return the persisted ParkingPrice entity with calculated price and times
      */
     public ParkingPrice calculateAndSave(ParkingPriceDTO dto) {
         LocalTime entry = LocalTime.of(dto.getEntryHour(), dto.getEntryMinute());
@@ -71,11 +82,12 @@ public class ParkingPriceService {
     }
 
     /**
-     * Checks if the parking interval contains night-time hours (18:00 to 06:00).
+     * Checks if the parking period contains any night-time hours.
+     * Night-time is defined as the interval from 18:00 (inclusive) to 06:00 (exclusive).
      *
-     * @param entry Entry time
-     * @param exit  Exit time
-     * @return true if any portion of the time range falls in night hours
+     * @param entry the entry time of parking
+     * @param exit  the exit time of parking
+     * @return {@code true} if any minute within the parking duration falls in night hours; {@code false} otherwise
      */
     private boolean containsNightHours(LocalTime entry, LocalTime exit) {
         for (int i = 0; i <= ChronoUnit.MINUTES.between(entry, exit); i++) {
@@ -88,11 +100,12 @@ public class ParkingPriceService {
     }
 
     /**
-     * Returns all parking price records for the given tenant.
-     * This method is cacheable to reduce database load.
+     * Retrieves all parking price records associated with the specified tenant.
+     * <p>
+     * This method uses caching to optimize performance for repeated tenant queries.
      *
-     * @param tenantId Tenant identifier
-     * @return list of parking prices
+     * @param tenantId the tenant identifier used to filter parking prices
+     * @return a list of {@link ParkingPrice} entities belonging to the tenant
      */
     @Cacheable(value = "parkingPrices", key = "#tenantId")
     public List<ParkingPrice> getAllByTenant(String tenantId) {

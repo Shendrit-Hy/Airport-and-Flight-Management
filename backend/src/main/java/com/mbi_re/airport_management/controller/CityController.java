@@ -31,12 +31,15 @@ public class CityController {
     }
 
     /**
-     * Get all cities for the tenant.
+     * Retrieves all cities for the tenant.
      *
-     * @param tenantId Tenant ID from request header
-     * @return List of cities
+     * @param tenantId Tenant ID provided in the request header for tenant context validation.
+     * @return ResponseEntity containing the list of all CityDTOs.
      */
-    @Operation(summary = "Get all cities", description = "Public endpoint to retrieve all cities for a tenant.")
+    @Operation(
+            summary = "Get all cities",
+            description = "Public endpoint to retrieve all cities available for the specified tenant."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List of cities returned successfully"),
             @ApiResponse(responseCode = "403", description = "Invalid or missing tenant ID")
@@ -45,43 +48,54 @@ public class CityController {
     @Cacheable(value = "cities", key = "#tenantId + '_all'")
     public ResponseEntity<List<CityDTO>> getAllCities(
             @RequestHeader("X-Tenant-ID")
-            @Parameter(description = "Tenant ID from header", required = true) String tenantId) {
+            @Parameter(description = "Tenant ID from request header", required = true)
+            String tenantId) {
 
         TenantUtil.validateTenant(tenantId);
         return ResponseEntity.ok(cityService.getAllCities());
     }
 
     /**
-     * Get cities by country ID.
+     * Retrieves cities filtered by a specific country ID.
      *
-     * @param tenantId  Tenant ID from header
-     * @param countryId ID of the country
-     * @return List of cities in the specified country
+     * @param tenantId  Tenant ID from the request header for tenant context validation.
+     * @param countryId The ID of the country whose cities should be retrieved.
+     * @return ResponseEntity containing the list of CityDTOs filtered by country.
      */
-    @Operation(summary = "Get cities by country", description = "Public endpoint to retrieve cities by country ID.")
+    @Operation(
+            summary = "Get cities by country",
+            description = "Public endpoint to retrieve all cities for a given country ID within the tenant context."
+    )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "List of cities by country returned successfully"),
+            @ApiResponse(responseCode = "200", description = "List of cities filtered by country returned successfully"),
             @ApiResponse(responseCode = "403", description = "Invalid or missing tenant ID")
     })
     @GetMapping("/country/{countryId}")
     @Cacheable(value = "cities", key = "#tenantId + '_country_' + #countryId")
     public ResponseEntity<List<CityDTO>> getCitiesByCountry(
             @RequestHeader("X-Tenant-ID")
-            @Parameter(description = "Tenant ID from header", required = true) String tenantId,
+            @Parameter(description = "Tenant ID from request header", required = true)
+            String tenantId,
             @PathVariable
-            @Parameter(description = "Country ID", required = true) Long countryId) {
+            @Parameter(description = "Country ID to filter cities", required = true)
+            Long countryId) {
 
         TenantUtil.validateTenant(tenantId);
         return ResponseEntity.ok(cityService.getCitiesByCountry(countryId));
     }
 
     /**
-     * Create a new city. Requires ADMIN role.
+     * Creates a new city.
+     * <p>
+     * Requires the user to have ADMIN role.
      *
-     * @param dto City DTO to create
-     * @return Created city
+     * @param dto CityDTO object containing details for the city to be created.
+     * @return ResponseEntity containing the created CityDTO.
      */
-    @Operation(summary = "Create new city", description = "Admin-only endpoint to add a new city.")
+    @Operation(
+            summary = "Create new city",
+            description = "Admin-only endpoint to add a new city within the tenant's context."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "City created successfully"),
             @ApiResponse(responseCode = "403", description = "Access denied or missing tenant context")
@@ -91,19 +105,25 @@ public class CityController {
     @CacheEvict(value = "cities", allEntries = true)
     public ResponseEntity<CityDTO> createCity(
             @RequestBody
-            @Parameter(description = "City to create", required = true) CityDTO dto) {
+            @Parameter(description = "City data to create", required = true)
+            CityDTO dto) {
 
         TenantUtil.validateTenantFromContext();
         return ResponseEntity.ok(cityService.createCity(dto));
     }
 
     /**
-     * Delete a city by ID. Requires ADMIN role.
+     * Deletes a city by its ID.
+     * <p>
+     * Requires the user to have ADMIN role.
      *
-     * @param id ID of the city to delete
-     * @return 204 No Content if successful
+     * @param id The ID of the city to delete.
+     * @return ResponseEntity with HTTP status 204 No Content if deletion is successful.
      */
-    @Operation(summary = "Delete a city", description = "Admin-only endpoint to delete a city by ID.")
+    @Operation(
+            summary = "Delete a city",
+            description = "Admin-only endpoint to delete a city by its ID."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "City deleted successfully"),
             @ApiResponse(responseCode = "403", description = "Access denied or missing tenant context")
@@ -113,7 +133,8 @@ public class CityController {
     @CacheEvict(value = "cities", allEntries = true)
     public ResponseEntity<Void> deleteCity(
             @PathVariable
-            @Parameter(description = "City ID", required = true) Long id) {
+            @Parameter(description = "City ID to delete", required = true)
+            Long id) {
 
         TenantUtil.validateTenantFromContext();
         cityService.deleteCity(id);

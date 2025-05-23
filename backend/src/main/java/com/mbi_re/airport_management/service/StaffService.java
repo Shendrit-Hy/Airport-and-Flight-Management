@@ -11,7 +11,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,9 +21,10 @@ public class StaffService {
 
     /**
      * Creates a new staff member.
+     * Evicts the cached staff list for the tenant to keep cache consistent.
      *
-     * @param dto the staff data transfer object
-     * @return the created StaffDTO
+     * @param dto the staff data transfer object containing new staff info
+     * @return the created StaffDTO representing the saved staff member
      */
     @CacheEvict(value = "staffList", key = "#dto.tenantId")
     public StaffDTO create(StaffDTO dto) {
@@ -34,10 +34,11 @@ public class StaffService {
     }
 
     /**
-     * Retrieves all staff members for the given tenant.
+     * Retrieves all staff members associated with a tenant.
+     * Results are cached to optimize performance.
      *
-     * @param tenantId the tenant ID
-     * @return a list of StaffDTOs
+     * @param tenantId the tenant ID whose staff should be fetched
+     * @return list of StaffDTOs representing staff for the tenant
      */
     @Cacheable(value = "staffList", key = "#tenantId")
     public List<StaffDTO> getAll(String tenantId) {
@@ -47,10 +48,12 @@ public class StaffService {
     }
 
     /**
-     * Retrieves a staff member by ID and tenant ID.
+     * Retrieves a staff member by their ID and current tenant ID.
+     * Uses caching for faster repeated access.
      *
-     * @param id the staff ID
-     * @return the matching StaffDTO
+     * @param id the ID of the staff member to retrieve
+     * @return StaffDTO of the matching staff member
+     * @throws RuntimeException if staff not found for the current tenant
      */
     @Cacheable(value = "staff", key = "#id")
     public StaffDTO getByIdAndTenantId(Long id) {
@@ -60,11 +63,13 @@ public class StaffService {
     }
 
     /**
-     * Updates an existing staff member.
+     * Updates an existing staff member by their ID.
+     * Updates cache entries for the staff and evicts staff list cache for the tenant.
      *
-     * @param id the staff ID
-     * @param dto the updated staff data
-     * @return the updated StaffDTO
+     * @param id  the ID of the staff member to update
+     * @param dto the updated staff information
+     * @return the updated StaffDTO after saving changes
+     * @throws RuntimeException if staff not found for the current tenant
      */
     @CachePut(value = "staff", key = "#id")
     @CacheEvict(value = "staffList", key = "#dto.tenantId")
@@ -81,9 +86,11 @@ public class StaffService {
     }
 
     /**
-     * Deletes a staff member by ID.
+     * Deletes a staff member by their ID.
+     * Evicts all cache entries for individual staff and staff list to maintain cache integrity.
      *
-     * @param id the staff ID
+     * @param id the ID of the staff member to delete
+     * @throws RuntimeException if staff not found for the current tenant
      */
     @CacheEvict(value = {"staff", "staffList"}, allEntries = true)
     public void delete(Long id) {
@@ -92,6 +99,12 @@ public class StaffService {
         staffRepository.delete(staff);
     }
 
+    /**
+     * Converts a Staff entity to a StaffDTO.
+     *
+     * @param staff the Staff entity
+     * @return the corresponding StaffDTO
+     */
     private StaffDTO toDTO(Staff staff) {
         StaffDTO dto = new StaffDTO();
         dto.setId(staff.getId());
@@ -104,6 +117,12 @@ public class StaffService {
         return dto;
     }
 
+    /**
+     * Converts a StaffDTO to a Staff entity.
+     *
+     * @param dto the StaffDTO object
+     * @return the corresponding Staff entity
+     */
     private Staff toEntity(StaffDTO dto) {
         Staff staff = new Staff();
         staff.setName(dto.getName());

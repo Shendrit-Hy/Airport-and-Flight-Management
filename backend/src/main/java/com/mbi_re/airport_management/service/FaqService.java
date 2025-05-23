@@ -24,10 +24,12 @@ public class FaqService {
     private FaqRepository faqRepository;
 
     /**
-     * Retrieves all FAQs for a specific tenant.
+     * Retrieves all FAQs belonging to the specified tenant.
+     * <p>
+     * The result is cached per tenant to improve performance.
      *
      * @param tenantId the tenant identifier
-     * @return list of FAQ DTOs
+     * @return a list of {@link FaqDTO} objects representing the FAQs for the tenant
      */
     @Cacheable(value = "faqs", key = "#tenantId")
     public List<FaqDTO> getFaqsByTenant(String tenantId) {
@@ -38,11 +40,12 @@ public class FaqService {
     }
 
     /**
-     * Saves or updates an FAQ for a specific tenant.
-     * Also evicts the cached FAQs for the tenant.
+     * Saves or updates an FAQ for the given tenant.
+     * <p>
+     * Evicts the cached FAQs for the tenant after saving to ensure cache consistency.
      *
-     * @param dto the FAQ DTO to save
-     * @return the saved FAQ DTO
+     * @param dto the FAQ DTO to save or update
+     * @return the saved {@link FaqDTO} object
      */
     @CacheEvict(value = "faqs", key = "#dto.tenantId")
     public FaqDTO saveFaq(FaqDTO dto) {
@@ -52,11 +55,14 @@ public class FaqService {
     }
 
     /**
-     * Deletes an FAQ by ID and tenant ID.
-     * Also evicts the cached FAQs for the tenant.
+     * Deletes an FAQ by its ID and tenant ID.
+     * <p>
+     * Evicts the cached FAQs for the tenant after deletion.
+     * Throws a runtime exception if the FAQ is not found or the tenant does not match.
      *
-     * @param id the FAQ ID
+     * @param id the FAQ ID to delete
      * @param tenantId the tenant identifier
+     * @throws RuntimeException if the FAQ is not found or tenant mismatch occurs
      */
     @CacheEvict(value = "faqs", key = "#tenantId")
     public void deleteFaq(Long id, String tenantId) {
@@ -69,10 +75,10 @@ public class FaqService {
     }
 
     /**
-     * Converts an FAQ entity to its DTO representation.
+     * Converts an {@link Faq} entity to its data transfer object (DTO) representation.
      *
-     * @param faq the FAQ entity
-     * @return the FAQ DTO
+     * @param faq the FAQ entity to convert
+     * @return the corresponding {@link FaqDTO}
      */
     private FaqDTO toDTO(Faq faq) {
         FaqDTO dto = new FaqDTO();
@@ -84,10 +90,10 @@ public class FaqService {
     }
 
     /**
-     * Converts an FAQ DTO to its entity representation.
+     * Converts a {@link FaqDTO} to its entity representation.
      *
-     * @param dto the FAQ DTO
-     * @return the FAQ entity
+     * @param dto the FAQ DTO to convert
+     * @return the corresponding {@link Faq} entity
      */
     private Faq toEntity(FaqDTO dto) {
         Faq faq = new Faq();

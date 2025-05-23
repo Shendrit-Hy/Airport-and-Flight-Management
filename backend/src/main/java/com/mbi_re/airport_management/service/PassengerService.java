@@ -24,11 +24,11 @@ public class PassengerService {
     private PassengerRepository passengerRepository;
 
     /**
-     * Retrieves all passengers for a given tenant.
-     * Uses caching to avoid repeated lookups.
+     * Retrieves all passengers associated with the specified tenant.
+     * Uses caching to improve performance by avoiding repeated database queries.
      *
-     * @param tenantId the tenant identifier
-     * @return list of passengers for the tenant
+     * @param tenantId the tenant identifier to filter passengers
+     * @return a list of passengers belonging to the tenant
      */
     @Cacheable(value = "passengers", key = "#tenantId")
     public List<Passenger> getAllByTenantId(String tenantId) {
@@ -36,13 +36,14 @@ public class PassengerService {
     }
 
     /**
-     * Updates a passenger by ID and tenant ID.
-     * Clears the cache for the tenant to keep data consistent.
+     * Updates an existing passenger's details by ID and tenant ID.
+     * Evicts the cache for the tenant after successful update to keep data consistent.
      *
-     * @param id       the passenger ID
-     * @param updated  the updated passenger DTO
-     * @param tenantId the tenant identifier
-     * @return the updated passenger
+     * @param id       the ID of the passenger to update
+     * @param updated  the DTO containing updated passenger data
+     * @param tenantId the tenant identifier for authorization
+     * @return the updated Passenger entity
+     * @throws RuntimeException if the passenger does not exist or tenant is unauthorized
      */
     @CacheEvict(value = "passengers", key = "#tenantId")
     public Passenger update(Long id, PassengerDTO updated, String tenantId) {
@@ -58,11 +59,11 @@ public class PassengerService {
     }
 
     /**
-     * Saves a new passenger for a specific tenant.
-     * Clears the cache after creation to ensure the new passenger is visible.
+     * Saves a new passenger record for a specific tenant.
+     * Evicts the tenant's cache to ensure new passenger is included in future queries.
      *
-     * @param dto the passenger DTO
-     * @return the saved passenger DTO
+     * @param dto the passenger DTO containing passenger data and tenant ID
+     * @return the saved passenger DTO with generated ID and tenant info
      */
     @CacheEvict(value = "passengers", key = "#dto.tenantId")
     public PassengerDTO savePassenger(PassengerDTO dto) {
@@ -73,10 +74,11 @@ public class PassengerService {
 
     /**
      * Deletes a passenger by ID and tenant ID.
-     * Clears the cache for the tenant.
+     * Evicts the tenant's cache after deletion to maintain cache consistency.
      *
-     * @param id       the passenger ID
-     * @param tenantId the tenant identifier
+     * @param id       the ID of the passenger to delete
+     * @param tenantId the tenant identifier for authorization
+     * @throws RuntimeException if the passenger does not exist or tenant is unauthorized
      */
     @CacheEvict(value = "passengers", key = "#tenantId")
     public void deleteById(Long id, String tenantId) {
@@ -89,10 +91,10 @@ public class PassengerService {
     }
 
     /**
-     * Converts a Passenger entity to a DTO.
+     * Converts a Passenger entity to a PassengerDTO.
      *
-     * @param passenger the Passenger entity
-     * @return the corresponding PassengerDTO
+     * @param passenger the Passenger entity to convert
+     * @return the corresponding PassengerDTO object
      */
     private PassengerDTO toDTO(Passenger passenger) {
         PassengerDTO dto = new PassengerDTO();
@@ -108,8 +110,8 @@ public class PassengerService {
     /**
      * Converts a PassengerDTO to a Passenger entity.
      *
-     * @param dto the PassengerDTO
-     * @return the Passenger entity
+     * @param dto the PassengerDTO to convert
+     * @return the corresponding Passenger entity
      */
     private Passenger toEntity(PassengerDTO dto) {
         Passenger passenger = new Passenger();
