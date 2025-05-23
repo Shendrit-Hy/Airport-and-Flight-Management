@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -100,6 +101,7 @@ public class PassengerController {
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     @Operation(summary = "Delete passenger", description = "Delete a passenger by ID (ADMIN only)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Passenger deleted successfully"),

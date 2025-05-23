@@ -3,6 +3,7 @@ package com.mbi_re.airport_management.service;
 import com.mbi_re.airport_management.dto.AirlineDTO;
 import com.mbi_re.airport_management.model.Airline;
 import com.mbi_re.airport_management.repository.AirlineRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -49,4 +50,12 @@ public class AirlineService {
         Airline saved = airlineRepository.save(airline);
         return new AirlineDTO(saved.getId(), saved.getName());
     }
+
+    public void deleteAirline(Long airlineId, String tenantId) {
+        Airline existing = airlineRepository.findByIdAndTenantId(airlineId, tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("Airline not found"));
+
+        airlineRepository.delete(existing);
+    }
+
 }

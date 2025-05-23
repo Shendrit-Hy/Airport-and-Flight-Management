@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -61,6 +62,7 @@ public class PaymentController {
             @Parameter(description = "Tenant ID from X-Tenant-ID header") @RequestHeader("X-Tenant-ID") String tenantId) {
         TenantUtil.validateTenant(tenantId);
         paymentDTO.setTenantId(tenantId);
+        paymentDTO.setStatus("PAID");
         return paymentService.savePayment(paymentDTO);
     }
 
@@ -75,6 +77,7 @@ public class PaymentController {
             description = "Deletes a payment record by reference for the specified tenant. Requires ADMIN role."
     )
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     @DeleteMapping("/{reference}")
     public void deletePayment(
             @Parameter(description = "Payment reference ID") @PathVariable String reference,

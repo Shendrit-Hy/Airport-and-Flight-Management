@@ -1,86 +1,47 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import {getTenantIdFromSubdomain} from "../utils/getTenantId"; // assume this returns the current tenantId
-import "../styles/AdminBooking.css"; // shared CSS for admin pages
-import "../styles/AdminAirportPage.css"
-
+import { getPayments, deletePayment } from "../api/paymentService";
+import { getTenantIdFromSubdomain } from "../utils/getTenantId";
+import "../styles/AdminBooking.css";
+import "../styles/AdminAirportPage.css";
 
 function AdminPayments() {
   const [payments, setPayments] = useState([]);
-  const [form, setForm] = useState({
-    method: "",
-    amount: "",
-    status: "",
-    reference: "",
-  });
-
   const tenantId = getTenantIdFromSubdomain();
+  const token = localStorage.getItem("token"); // assuming token is stored in localStorage
 
   useEffect(() => {
     fetchPayments();
   }, []);
 
-const fetchPayments = () => {
-  console.log("TenantId sent to backend:", tenantId); // For debugging
-  axios
-    .get("http://localhost:8080/api/payments", {
-      headers: { "X-Tenant-ID": tenantId },
-    })
-    .then((res) => {
-      const data = Array.isArray(res.data) ? res.data : res.data.payments;
-      setPayments(data);
-    })
-    .catch((err) => console.error("Error fetching payments:", err));
-};
-
-const handleDeletePayment = (reference) => {
-  if (window.confirm("Are you sure you want to delete this payment?")) {
-    axios
-      .delete(`http://localhost:8080/api/payments/${reference}`, {
-        headers: { "X-Tenant-ID": tenantId },
+  const fetchPayments = () => {
+    getPayments(token, tenantId)
+      .then((res) => {
+        const data = Array.isArray(res.data) ? res.data : res.data.payments;
+        console.log(res);
+        setPayments(data);
       })
-      .then(() => {
-         setPayments((prev) => (Array.isArray(prev) ? [...prev, res.data] : [res.data]));
-      })
-      .catch((err) => console.error("Error deleting payment:", err));
-  }
-};
-
-
-
-  const handleInputChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+      .catch((err) => console.error("Error fetching payments:", err));
   };
 
-  const handleAddPayment = () => {
-    if (!form.method || !form.amount || !form.status || !form.reference) {
-      alert("Please fill in all fields.");
-      return;
+  const handleDeletePayment = (reference) => {
+    if (window.confirm("Are you sure you want to delete this payment?")) {
+      deletePayment(reference, token, tenantId)
+        .then(() => {
+          setPayments((prev) => prev.filter((p) => p.reference !== reference));
+        })
+        .catch((err) => console.error("Error deleting payment:", err));
     }
-
-    axios
-      .post(
-        "http://localhost:8080/api/payments",
-        { ...form },
-        { headers: { "X-Tenant-ID": tenantId } }
-      )
-      .then((res) => {
-        setPayments((prev) => (Array.isArray(prev) ? [...prev, res.data] : [res.data]));
-        setForm({ method: "", amount: "", status: "", reference: "" });
-      })
-      .catch((err) => console.error("Error saving payment:", err));
   };
 
   return (
     <div className="adminpayments-container">
-
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
           {[
             'dashboard', 'airport', 'booking', 'faqs', 'flightspage',
             'maintenance', 'passangers', 'payments', 'staff', 'support',
-            'announcements', 'city', 'languages', 'trending', 'policy', 'gate','terminal'
+            'announcements', 'city', 'languages', 'trending', 'policy', 'gate', 'terminal'
           ].map((item) => (
             <div className="airport-nav-row" key={item}>
               <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
@@ -88,12 +49,13 @@ const handleDeletePayment = (reference) => {
           ))}
         </nav>
       </aside>
+
       <main className="adminpayments-content">
         <header className="adminbooking-header">
           <h2>PAYMENTS</h2>
           <div className="adminbooking-title">ADMIN</div>
         </header>
-        
+
         <div className="adminpayments-table-container">
           <table className="adminpayments-table">
             <thead>
@@ -102,10 +64,11 @@ const handleDeletePayment = (reference) => {
                 <th>Amount</th>
                 <th>Status</th>
                 <th>Reference</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {Array.isArray(payments) && payments.length > 0 ? (
+              {payments.length > 0 ? (
                 payments.map((p, i) => (
                   <tr key={p.reference || i}>
                     <td>{p.method}</td>
@@ -125,7 +88,6 @@ const handleDeletePayment = (reference) => {
                 </tr>
               )}
             </tbody>
-
           </table>
         </div>
       </main>
