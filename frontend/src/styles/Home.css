@@ -153,41 +153,95 @@
 }
 
 
-/* Weather Section */
-<<<<<<< Updated upstream
-.weather-section {
+
+/* .weather-section {
   padding: 4rem;
-  background-color: rgb(0, 31, 143);
-=======
+  background-color: rgb(0, 31, 143); */
 .weather-container-dark {
   background-color: #1e2a47; /* ngjyrë e errët blu */
   padding: 1.5rem 2rem;
   margin: 1rem auto 2rem auto;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   color: #fff;
->>>>>>> Stashed changes
   text-align: center;
 }
 
-.weather-title {
-  font-size: 32px;
-  margin-bottom: 2rem;
-  color: white;
-}
-
-.weather-cards {
+.weather-card.current-weather-card-dark {
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
 }
 
-.weather-card {
+.weather-location {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.5rem;
+  color: #f0f0f0;
+}
+
+.weather-icon-large {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 0.3rem;
+}
+
+.weather-temp-large {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 0.3rem 0;
+}
+
+.weather-text-light {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.hourly-forecast-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  margin: 2rem;
+  scroll-behavior: smooth;
+}
+
+.hourly-forecast-card {
+  flex: 0 0 auto;
+  width: 80px;
   background-color: white;
-  border-radius: 15px;
-  padding: 1rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  width: 150px;
+  border-radius: 10px;
   text-align: center;
+  padding: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.hourly-forecast-card img {
+  width: 40px;
+  height: 40px;
+}
+
+.hour {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.temp {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.weekly-slide {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 0.5rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-height: 180px;
+}
+.weekly-slide p {
+  margin: 0.3rem 0;
+}
