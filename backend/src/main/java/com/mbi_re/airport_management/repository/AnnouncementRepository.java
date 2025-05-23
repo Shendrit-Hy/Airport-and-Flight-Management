@@ -6,15 +6,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 /**
- * Repository for accessing announcements with tenant-based filtering.
+ * {@code AnnouncementRepository} ofron metoda për qasje në njoftimet (announcements),
+ * me filtrim bazuar në tenantId për mbështetje të arkitekturës multi-tenant.
  */
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
 
     /**
-     * Finds all announcements belonging to the given tenant.
+     * Gjen të gjitha njoftimet që i përkasin një tenant-i specifik.
      *
-     * @param tenantId the tenant identifier
-     * @return list of announcements for the tenant
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me njoftimet për tenant-in përkatës
      */
     List<Announcement> findByTenantId(String tenantId);
 }

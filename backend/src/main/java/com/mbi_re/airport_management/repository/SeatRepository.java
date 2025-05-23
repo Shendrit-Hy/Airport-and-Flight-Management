@@ -7,36 +7,43 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository interface for Seat entities, scoped by tenant.
+ * {@code SeatRepository} ofron operacione për menaxhimin e entiteteve {@link Seat},
+ * me filtrime të përshtatshme për secilin tenant në një arkitekturë multi-tenant.
  */
 public interface SeatRepository extends JpaRepository<Seat, Long> {
 
     /**
-     * Finds all seats for a flight and tenant.
+     * Gjen të gjitha ulëset për një fluturim të caktuar dhe tenant.
      *
-     * @param flightId the flight ID
-     * @param tenantId the tenant ID
-     * @return list of seats
+     * @param flightId ID-ja e fluturimit
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me ulëse përkatëse
      */
     List<Seat> findByFlightIdAndTenantId(Long flightId, String tenantId);
 
     /**
-     * Finds unbooked (available) seats for a flight and tenant.
+     * Gjen të gjitha ulëset e lira (jo të rezervuara) për një fluturim dhe tenant.
      *
-     * @param flightId the flight ID
-     * @param tenantId the tenant ID
-     * @return list of available seats
+     * @param flightId ID-ja e fluturimit
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me ulëse të disponueshme
      */
     List<Seat> findByFlightIdAndTenantIdAndBookedFalse(Long flightId, String tenantId);
 
     /**
-     * Finds a seat by ID scoped to the given tenant.
+     * Gjen një ulëse të caktuar sipas ID-së dhe tenant-it përkatës.
      *
-     * @param id       the seat ID
-     * @param tenantId the tenant ID
-     * @return optional seat
+     * @param id       ID-ja e ulëses
+     * @param tenantId identifikuesi i tenant-it
+     * @return {@link Optional} që përmban ulësen nëse ekziston
      */
     Optional<Seat> findByIdAndTenantId(Long id, String tenantId);
 
+    /**
+     * Fshin të gjitha ulëset që i përkasin një fluturimi dhe tenant-i të caktuar.
+     *
+     * @param flightId ID-ja e fluturimit
+     * @param tenantId identifikuesi i tenant-it
+     */
     void deleteByFlightIdAndTenantId(Long flightId, String tenantId);
 }

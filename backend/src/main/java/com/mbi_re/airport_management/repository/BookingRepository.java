@@ -1,29 +1,31 @@
 package com.mbi_re.airport_management.repository;
 
 import com.mbi_re.airport_management.model.Booking;
-import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * {@code BookingRepository} ofron qasje në të dhënat e rezervimeve të fluturimeve,
+ * me mbështetje për filtrimin sipas tenant-it për aplikacione multi-tenant.
+ */
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     /**
-     * Retrieves all bookings for a given tenant ID.
+     * Gjen të gjitha rezervimet që i përkasin një tenant-i të caktuar.
      *
-     * @param tenantId the tenant identifier
-     * @return list of bookings belonging to the tenant
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me rezervimet përkatëse
      */
     List<Booking> findByTenantId(String tenantId);
 
     /**
-     * Finds a booking by ID and tenant ID.
+     * Gjen një rezervim sipas ID-së dhe tenant ID.
      *
-     * @param id the booking ID
-     * @param tenantId the tenant identifier
-     * @return an optional booking belonging to the tenant
+     * @param id ID-ja e rezervimit
+     * @param tenantId identifikuesi i tenant-it
+     * @return {@link Optional} që përmban rezervimin nëse ekziston
      */
     Optional<Booking> findByIdAndTenantId(Long id, String tenantId);
 }

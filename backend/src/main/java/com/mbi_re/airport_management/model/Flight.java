@@ -6,6 +6,10 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Entiteti {@code Flight} përfaqëson një fluturim në sistemin e menaxhimit të aeroporteve.
+ * Ai përmban informacion të plotë për nisjen, mbërritjen, kohët, çmimin, statusin dhe lidhjet me entitete të tjera si Gate, Terminal dhe Airline.
+ */
 @Entity
 @Data
 @NoArgsConstructor
@@ -13,39 +17,59 @@ import java.time.LocalTime;
 @Builder
 public class Flight {
 
+    /** ID unike e fluturimit, e gjeneruar automatikisht */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /** Numri unik i fluturimit (p.sh., "MB123") */
     private String flightNumber;
+
+    /** Aeroporti i nisjes (emri i qytetit ose kodi) */
     private String departureAirport;
+
+    /** Aeroporti i mbërritjes (emri i qytetit ose kodi) */
     private String arrivalAirport;
 
+    /** Ora e nisjes së fluturimit */
     private LocalTime departureTime;
+
+    /** Ora e mbërritjes së fluturimit */
     private LocalTime arrivalTime;
+
+    /** Data kur do të zhvillohet fluturimi */
     private LocalDate flightDate;
 
+    /** Numri i ulëseve të disponueshme për këtë fluturim */
     private int availableSeat;
+
+    /** Çmimi i një bilete për këtë fluturim */
     private double price;
 
+    /** Statusi aktual i fluturimit (p.sh., ON_TIME, DELAYED, CANCELLED) */
     @Enumerated(EnumType.STRING)
     private FlightStatus flightStatus;
 
+    /** ID e tenantit për të mbështetur multi-tenancy */
     @Column(name = "tenant_id", nullable = false)
     private String tenantId;
 
+    /** Porta (Gate) nga ku niset fluturimi (opsionale) */
     @ManyToOne
     @JoinColumn(name = "gate_id")
     private Gate gate;
 
+    /** Terminali i nisjes së fluturimit (opsional) */
     @ManyToOne
     @JoinColumn(name = "terminal_id")
     private Terminal terminal;
 
+    /** Kompania ajrore që operon këtë fluturim */
     @ManyToOne
     @JoinColumn(name = "airline_id", nullable = false)
     private Airline airline;
 
+    // Getters dhe Setters të manualizuar
 
     public Long getId() {
         return id;
@@ -159,4 +183,3 @@ public class Flight {
         this.airline = airline;
     }
 }
-

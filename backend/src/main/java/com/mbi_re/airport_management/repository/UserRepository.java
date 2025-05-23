@@ -7,33 +7,33 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository interface for User entity.
- * Supports multi-tenant queries.
+ * {@code UserRepository} ofron metoda për menaxhimin e entitetit {@link User},
+ * me mbështetje për filtrime në bazë të {@code tenantId} në arkitekturë multi-tenant.
  */
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
-     * Finds a user by username.
+     * Gjen një përdorues në bazë të {@code username}.
      *
-     * @param username The username.
-     * @return Optional containing the user if found.
+     * @param username emri i përdoruesit
+     * @return {@link Optional} që përmban përdoruesin nëse gjendet
      */
-    Optional<User> findByUsername(String username); // 🔹 Shto këtë
+    Optional<User> findByUsername(String username);
 
     /**
-     * Finds a user by username and tenant.
+     * Gjen një përdorues në bazë të {@code username} dhe {@code tenantId}.
      *
-     * @param username The username.
-     * @param tenantId The tenant ID.
-     * @return Optional containing the user if found.
+     * @param username emri i përdoruesit
+     * @param tenantId identifikuesi i tenant-it
+     * @return {@link Optional} që përmban përdoruesin nëse ekziston për tenant-in
      */
     Optional<User> findByUsernameAndTenantId(String username, String tenantId);
 
     /**
-     * Retrieves all users belonging to a tenant.
+     * Kthen të gjithë përdoruesit që i përkasin një tenant-i specifik.
      *
-     * @param tenantId The tenant ID.
-     * @return List of users.
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me përdorues
      */
     List<User> findAllByTenantId(String tenantId);
 }

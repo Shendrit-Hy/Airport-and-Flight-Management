@@ -8,25 +8,26 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository interface for managing FAQ entities with tenant-based filtering.
+ * {@code FaqRepository} është një interface për qasje në entitetet {@link Faq},
+ * me filtrim të të dhënave sipas tenant-it për mbështetje në arkitekturë multi-tenant.
  */
 @Repository
 public interface FaqRepository extends JpaRepository<Faq, Long> {
 
     /**
-     * Retrieves all FAQs associated with the given tenant ID.
+     * Gjen të gjitha pyetjet dhe përgjigjet (FAQ) për një tenant specifik.
      *
-     * @param tenantId the tenant identifier
-     * @return list of FAQs for the tenant
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me të gjitha FAQ-të e tenant-it
      */
     List<Faq> findAllByTenantId(String tenantId);
 
     /**
-     * Finds a specific FAQ by ID and tenant ID.
+     * Gjen një FAQ specifik sipas ID-së dhe tenant-it përkatës.
      *
-     * @param id the FAQ ID
-     * @param tenantId the tenant identifier
-     * @return optional containing the FAQ if found
+     * @param id       ID-ja e FAQ-së
+     * @param tenantId identifikuesi i tenant-it
+     * @return {@link Optional} me objektin {@link Faq} nëse ekziston
      */
     Optional<Faq> findByIdAndTenantId(Long id, String tenantId);
 }

@@ -2,34 +2,60 @@ package com.mbi_re.airport_management.model;
 
 import jakarta.persistence.*;
 
+/**
+ * Entiteti {@code ParkingPrice} përfaqëson çmimin e llogaritur për një periudhë parkimi
+ * në një aeroport të caktuar. Ai përfshin orarin e hyrjes dhe daljes, çmimin total
+ * dhe identifikuesin e tenantit për sistemin multi-tenant.
+ */
 @Entity
 @Table(name = "parking_prices")
 public class ParkingPrice {
 
+    /** ID unike e rreshtit të çmimit të parkimit */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /** Ora e hyrjes në parking (0-23) */
     @Column(name = "entry_hour")
     private int entryHour;
 
+    /** Minutat e hyrjes në parking (0-59) */
     @Column(name = "entry_minute")
     private int entryMinute;
 
+    /** Ora e daljes nga parkingu (0-23) */
     @Column(name = "exit_hour")
     private int exitHour;
 
+    /** Minutat e daljes nga parkingu (0-59) */
     @Column(name = "exit_minute")
     private int exitMinute;
 
+    /** Çmimi total për kohëzgjatjen e parkimit */
     private double price;
 
+    /** ID e tenantit për të përkrahur multi-tenancy */
     @Column(name = "tenant_id")
     private String tenantId;
 
+    /**
+     * Konstruktori i zbrazët i nevojshëm për JPA.
+     */
     public ParkingPrice() {
     }
 
+    /**
+     * Konstruktori me parametra për të inicializuar një objekt {@code ParkingPrice}.
+     *
+     * @param id ID e entitetit
+     * @param entryHour ora e hyrjes
+     * @param entryMinute minutat e hyrjes
+     * @param exitHour ora e daljes
+     * @param exitMinute minutat e daljes
+     * @param price çmimi total
+     * @param tenantId tenant ID i lidhur
+     */
     public ParkingPrice(Long id, int entryHour, int entryMinute, int exitHour, int exitMinute, double price, String tenantId) {
         this.id = id;
         this.entryHour = entryHour;
@@ -41,6 +67,7 @@ public class ParkingPrice {
     }
 
     // Getters & Setters
+
     public Long getId() {
         return id;
     }

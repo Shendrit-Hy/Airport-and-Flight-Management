@@ -6,30 +6,34 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * {@code CurrencyRateRepository} ofron funksionalitete për menaxhimin e kurseve valutore
+ * në një mjedis multi-tenant, duke mundësuar izolimin e të dhënave për çdo tenant.
+ */
 public interface CurrencyRateRepository extends JpaRepository<CurrencyRate, String> {
 
     /**
-     * Finds all currency rates for the specified tenant.
+     * Gjen të gjitha kurset valutore për një tenant të caktuar.
      *
-     * @param tenantId the tenant identifier
-     * @return a list of currency rates
+     * @param tenantId identifikuesi i tenant-it
+     * @return një listë me kurset valutore
      */
     List<CurrencyRate> findAllByTenantId(String tenantId);
 
     /**
-     * Finds a specific currency rate by code and tenant ID.
+     * Gjen një kurs valutor sipas kodit të valutës dhe tenant-it përkatës.
      *
-     * @param code     the currency code
-     * @param tenantId the tenant identifier
-     * @return the currency rate, if found
+     * @param code     kodi i valutës (p.sh., "EUR", "USD")
+     * @param tenantId identifikuesi i tenant-it
+     * @return {@link Optional} me kursin nëse ekziston
      */
     Optional<CurrencyRate> findByCodeAndTenantId(String code, String tenantId);
 
     /**
-     * Deletes a currency rate by code and tenant ID.
+     * Fshin një kurs valutor bazuar në kodin e valutës dhe tenant-id-in.
      *
-     * @param code     the currency code
-     * @param tenantId the tenant identifier
+     * @param code     kodi i valutës
+     * @param tenantId identifikuesi i tenant-it
      */
     void deleteByCodeAndTenantId(String code, String tenantId);
 }

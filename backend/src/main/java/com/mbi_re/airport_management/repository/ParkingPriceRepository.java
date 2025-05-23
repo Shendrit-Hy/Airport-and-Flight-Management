@@ -6,15 +6,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 /**
- * Repository interface for managing ParkingPrice entities with tenant-based filtering.
+ * {@code ParkingPriceRepository} ofron operacione për qasjen dhe menaxhimin e entiteteve {@link ParkingPrice}
+ * në një ambient multi-tenant, duke përdorur filtrimin sipas {@code tenantId}.
  */
 public interface ParkingPriceRepository extends JpaRepository<ParkingPrice, Long> {
 
     /**
-     * Retrieves all parking prices associated with a specific tenant.
+     * Kthen të gjitha çmimet e parkingut që i përkasin një tenant-i të caktuar.
      *
-     * @param tenantId the tenant identifier
-     * @return list of ParkingPrice entities
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me entitete {@link ParkingPrice}
      */
     List<ParkingPrice> findAllByTenantId(String tenantId);
 }

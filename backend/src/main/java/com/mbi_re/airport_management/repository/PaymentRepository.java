@@ -7,25 +7,26 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Repository for managing Payment entities.
+ * {@code PaymentRepository} ofron funksionalitete për qasjen dhe menaxhimin e entiteteve {@link Payment},
+ * duke siguruar izolim të të dhënave për secilin tenant në një arkitekturë multi-tenant.
  */
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     /**
-     * Retrieves all payments for a specific tenant.
+     * Kthen të gjitha pagesat që i përkasin një tenant-i specifik.
      *
-     * @param tenantId the tenant ID
-     * @return list of payments associated with the tenant
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me pagesa për tenant-in përkatës
      */
     List<Payment> findAllByTenantId(String tenantId);
 
     /**
-     * Finds a payment by its reference and tenant ID.
+     * Gjen një pagesë bazuar në referencën unike dhe tenant-in përkatës.
      *
-     * @param reference the unique payment reference
-     * @param tenantId  the tenant ID
-     * @return the payment matching the reference and tenant, or null if not found
+     * @param reference referenca unike e pagesës (p.sh. kodi i transaksionit ose rezervimit)
+     * @param tenantId  identifikuesi i tenant-it
+     * @return objekti {@link Payment} nëse ekziston, përndryshe {@code null}
      */
     Payment findByReferenceAndTenantId(String reference, String tenantId);
 }

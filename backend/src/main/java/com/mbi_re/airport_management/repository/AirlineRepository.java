@@ -6,31 +6,32 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository për menaxhimin e entitetit {@link Airline}.
+ * Siguron metoda të personalizuara për operacione që varen nga tenantId.
+ */
 public interface AirlineRepository extends JpaRepository<Airline, Long> {
 
     /**
-     * Checks if an airline exists by name for a specific tenant.
+     * Kontrollon nëse ekziston një kompani ajrore me emrin e dhënë për një tenant specifik.
      *
-     * @param name     the airline name
-     * @param tenantId the tenant identifier
-     * @return true if the airline exists, false otherwise
-     */
-    boolean existsByNameAndTenantId(String name, String tenantId);
-
-    /**
-     * Retrieves all airlines for the specified tenant.
+     * @param name     emri i kompanisë ajrore
+     * @param tenantId identifikuesi i tenantit
+     * @return {@code true} nëse ekziston, përndryshe {@code false}
+     */boolean existsByNameAndTenantId(String name, String tenantId);/**
+     * Gjen të gjitha kompanitë ajrore për një tenant të caktuar.
      *
-     * @param tenantId the tenant identifier
-     * @return list of airlines belonging to the tenant
+     * @param tenantId identifikuesi i tenantit
+     * @return listë e kompanive ajrore përkatëse
      */
     List<Airline> findByTenantId(String tenantId);
 
     /**
-     * Retrieves a specific airline for the specified tenant.
+     * Gjen një kompani ajrore sipas ID-së dhe tenantId-it të saj.
      *
-     * @param tenantId the tenant identifier
-     * @param airlineId the airline identifier
-     * @return list of airlines belonging to the tenant
+     * @param airlineId ID e kompanisë ajrore
+     * @param tenantId  identifikuesi i tenantit
+     * @return {@link Optional} me kompaninë ajrore, nëse ekziston
      */
     Optional<Airline> findByIdAndTenantId(Long airlineId, String tenantId);
 }

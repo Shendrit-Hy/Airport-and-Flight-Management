@@ -9,56 +9,57 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository interface for performing CRUD operations on Flight entities.
- * Includes methods scoped to specific tenants.
+ * {@code FlightRepository} ofron operacione CRUD për entitetet {@link Flight},
+ * me filtrim të të dhënave sipas tenant-it në një sistem multi-tenant.
  */
 @Repository
 public interface FlightRepository extends JpaRepository<Flight, Long> {
 
     /**
-     * Retrieves all flights for a tenant that are scheduled from the specified date onward.
+     * Gjen të gjitha fluturimet që fillojnë nga një datë e caktuar e tutje për një tenant specifik.
      *
-     * @param date the date from which to start retrieving flights
-     * @param tenantId the tenant identifier
-     * @return list of flights
+     * @param date     data fillestare e fluturimit
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me fluturimet e gjetura
      */
     List<Flight> findByFlightDateGreaterThanEqualAndTenantId(LocalDate date, String tenantId);
 
     /**
-     * Finds a flight by its flight number.
+     * Gjen një fluturim bazuar në numrin e fluturimit.
      *
-     * @param flightNumber the flight number
-     * @return the flight if found
+     * @param flightNumber numri i fluturimit
+     * @return objekti {@link Flight} nëse gjendet, përndryshe {@code null}
      */
     Flight findByFlightNumber(String flightNumber);
 
     /**
-     * Finds a flight by its ID and tenant ID.
+     * Gjen një fluturim sipas ID-së dhe tenantId.
      *
-     * @param id the flight ID
-     * @param tenantId the tenant ID
-     * @return an optional containing the flight if found
+     * @param id       ID-ja e fluturimit
+     * @param tenantId identifikuesi i tenant-it
+     * @return {@link Optional} që përmban fluturimin nëse ekziston
      */
     Optional<Flight> findByIdAndTenantId(Long id, String tenantId);
 
     /**
-     * Finds all flights associated with a specific tenant.
+     * Gjen të gjitha fluturimet që i përkasin një tenant-i të caktuar.
      *
-     * @param tenantId the tenant ID
-     * @return list of flights
+     * @param tenantId identifikuesi i tenant-it
+     * @return listë me fluturime
      */
     List<Flight> findByTenantId(String tenantId);
 
     /**
-     * Retrieves flights matching filtering criteria for a tenant.
+     * Kthen të gjitha fluturimet që përputhen me kriteret e filtrimit për një tenant:
+     * aeroporti i nisjes, aeroporti i mbërritjes, periudha e datave dhe numri i vendeve të lira.
      *
-     * @param tenantId the tenant ID
-     * @param from departure airport
-     * @param to arrival airport
-     * @param start start date
-     * @param end end date
-     * @param passengers minimum available seats
-     * @return list of matching flights
+     * @param tenantId   identifikuesi i tenant-it
+     * @param from       aeroporti i nisjes
+     * @param to         aeroporti i mbërritjes
+     * @param start      data e fillimit
+     * @param end        data e përfundimit
+     * @param passengers numri minimal i vendeve të lira
+     * @return listë me fluturimet që përputhen me kërkesën
      */
     List<Flight> findByTenantIdAndDepartureAirportIgnoreCaseAndArrivalAirportIgnoreCaseAndFlightDateBetweenAndAvailableSeatGreaterThanEqual(
             String tenantId, String from, String to, LocalDate start, LocalDate end, int passengers
