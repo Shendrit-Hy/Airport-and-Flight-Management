@@ -89,7 +89,7 @@ public class UserController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
             }
     )
-    @Cacheable(value = "userProfiles", key = "#root.methodName + '_' + T(com.mbi_re.airport_management.config.TenantContext).getTenantId()")
+
     public ResponseEntity<UserDTO> getProfile() {
         String tenantId = getTenantFromContext();
         TenantUtil.validateTenant(tenantId);

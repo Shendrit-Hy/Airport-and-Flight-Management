@@ -13,14 +13,14 @@ const Navbar = () => {
     const newLang = selectedLanguage === 'en' ? 'sq' : 'en';
     setSelectedLanguage(newLang);
     localStorage.setItem('language', newLang);
-    window.location.reload(); // mund të zëvendësohet me setLanguage() nëse bëhet me context live
+    window.location.reload();
 
   };
 
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <Link to="/" className="navbar-logo">MBI RE</Link>
+        <Link to="/home" className="navbar-logo">MBI RE</Link>
       </div>
       <div className="navbar-right">
         <Link to="/flights" className="navbar-link">{t("Flights", "Fluturimet")}</Link>
