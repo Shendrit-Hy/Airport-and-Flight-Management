@@ -70,8 +70,8 @@ const handleDelete = (id) => {
                   <tr key={user.id || index}>
                     <td>{user.fullName}</td>
                     <td>{user.email}</td>
+                    <td>{user.phone}</td>
                     <td>{user.age}</td>
-                    <td>{user.nationality}</td>
                     <td>
                       <button
                         className="adminpassangers-delete-btn"
