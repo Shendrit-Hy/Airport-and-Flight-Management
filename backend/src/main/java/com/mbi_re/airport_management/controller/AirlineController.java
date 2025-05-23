@@ -68,4 +68,29 @@ public class AirlineController {
         TenantUtil.validateTenant(tenantId);
         return airlineService.createAirline(dto, tenantId);
     }
+
+    /**
+     * Deletes an airline by ID for the current tenant.
+     * Requires ADMIN role.
+     *
+     * @param airlineId the ID of the airline to delete
+     * @param tenantId the tenant ID from the request header
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{airlineId}")
+    @Operation(summary = "Delete airline", description = "Deletes an airline by ID (ADMIN only)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Airline deleted successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden or tenant mismatch"),
+            @ApiResponse(responseCode = "404", description = "Airline not found")
+    })
+    public void deleteAirline(
+            @PathVariable("airlineId") Long airlineId,
+            @RequestHeader("X-Tenant-ID")
+            @Parameter(description = "Tenant ID in request header", required = true) String tenantId) {
+
+        TenantUtil.validateTenant(tenantId);
+        airlineService.deleteAirline(airlineId, tenantId);
+    }
+
 }

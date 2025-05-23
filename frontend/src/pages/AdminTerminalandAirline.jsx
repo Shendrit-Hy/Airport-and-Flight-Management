@@ -3,39 +3,62 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import '../styles/AdminAirportPage.css';
 import { getAllAirports, createAirport, deleteAirport } from '../api/airportService';
+import { getAllTerminals, createTerminal } from '../api/terminalService';
+import { getAllAirlines, createAirline, deleteAirline } from '../api/airlineService';
+import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 export default function AdminTerminalandAirline() {
   const [airports, setAirports] = useState([]);
+  const [terminals, setTerminals] = useState([]);
+  const [airlines, setAirlines] = useState([]);
+  const tenantId = getTenantIdFromSubdomain();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    loadAirports();
+    loadData();
   }, []);
 
-  const loadAirports = async () => {
+  const loadData = async () => {
     try {
-      const res = await getAirports();
-      setAirports(Array.isArray(res.data) ? res.data : []);
+      const [airportRes, terminalRes, airlineRes] = await Promise.all([
+        getAllAirports(tenantId),
+        getAllTerminals(tenantId),
+        getAllAirlines(tenantId)
+      ]);
+      setAirports(airportRes.data || []);
+      setTerminals(terminalRes.data || []);
+      setAirlines(airlineRes.data || []);
     } catch (err) {
-      console.error('Error loading airports:', err);
+      console.error('Error loading data:', err);
     }
   };
 
-  const handleAdd = async (values, { resetForm }) => {
+  const handleAddTerminal = async (values, { resetForm }) => {
     try {
-      await createAirport(values);
+      await createTerminal(values, tenantId, token);
       resetForm();
-      loadAirports();
+      loadData();
     } catch (err) {
-      console.error('Error creating airport:', err);
+      console.error('Error creating terminal:', err);
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleAddAirline = async (values, { resetForm }) => {
     try {
-      await deleteAirport(id);
-      loadAirports();
+      await createAirline({ name: values.airlinename }, tenantId, token);
+      resetForm();
+      loadData();
     } catch (err) {
-      console.error('Error deleting airport:', err);
+      console.error('Error creating airline:', err);
+    }
+  };
+
+  const handleDeleteAirline = async (id) => {
+    try {
+      await deleteAirline(id, tenantId, token);
+      loadData();
+    } catch (err) {
+      console.error('Error deleting airline:', err);
     }
   };
 
@@ -56,139 +79,99 @@ export default function AdminTerminalandAirline() {
         </nav>
       </aside>
 
-      <main className="airport-main-content" style={{ backgroundImage: "url('../../public/AdminTerminalImage.png')", 
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            width: '100%',
-            height: 'auto' }}>
+      <main className="airport-main-content" style={{
+        backgroundImage: "url('../../public/AdminTerminalImage.png')",
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        width: '100%',
+        height: 'auto'
+      }}>
         <header className="airport-header">
-          <h2 style={{color:"black"}}>TERMINAL AND AIRLINE</h2>
-          <div className="airport-admin-title" style={{color:"black"}}>ADMIN</div>
+          <h2 style={{ color: "black" }}>TERMINAL AND AIRLINE</h2>
+          <div className="airport-admin-title" style={{ color: "black" }}>ADMIN</div>
         </header>
 
-
+        {/* Terminal Form */}
         <Formik
-          initialValues={{ terminalname: '', airportID: ''}}
+          initialValues={{ terminalname: '', airportID: '' }}
           validationSchema={Yup.object({
             terminalname: Yup.string().required('Required'),
             airportID: Yup.string().required('Required'),
-            
           })}
-          onSubmit={handleAdd}
+          onSubmit={handleAddTerminal}
         >
           <Form className="admin-city-country-form">
             <div className="admin-city-country-row">
-                {['terminal name', 'airport ID'].map((field) => (
+              {['terminalname', 'airportID'].map((field) => (
                 <div className="admin-city-country-input-group" key={field}>
-                    <Field
+                  <Field
                     type="text"
-                    id={field}
                     name={field}
                     placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                     className="admin-city-country-input"
-                    />
-                    <ErrorMessage
-                    name={field}
-                    component="div"
-                    className="admin-city-country-error"
-                    />
+                  />
+                  <ErrorMessage name={field} component="div" className="admin-city-country-error" />
                 </div>
-    ))}
-    <button type="submit" className="admin-city-country-add-btn">ADD</button>
-  </div>
+              ))}
+              <button type="submit" className="admin-city-country-add-btn">ADD TERMINAL</button>
+            </div>
           </Form>
-
         </Formik>
 
+        {/* Airline Form */}
         <Formik
-          initialValues={{ airlinename: ''}}
+          initialValues={{ airlinename: '' }}
           validationSchema={Yup.object({
             airlinename: Yup.string().required('Required'),
           })}
-          onSubmit={handleAdd}
+          onSubmit={handleAddAirline}
         >
           <Form className="admin-city-country-form">
             <div className="admin-city-country-row">
-                {['airline name'].map((field) => (
-                <div className="admin-city-country-input-group" key={field}>
-                    <Field
-                    type="text"
-                    id={field}
-                    name={field}
-                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                    className="admin-city-country-input"
-                    />
-                    <ErrorMessage
-                    name={field}
-                    component="div"
-                    className="admin-city-country-error"
-                    />
-                </div>
-    ))}
-    <button type="submit" className="admin-city-country-add-btn">ADD</button>
-  </div>
+              <div className="admin-city-country-input-group">
+                <Field
+                  type="text"
+                  name="airlinename"
+                  placeholder="Airline Name"
+                  className="admin-city-country-input"
+                />
+                <ErrorMessage name="airlinename" component="div" className="admin-city-country-error" />
+              </div>
+              <button type="submit" className="admin-city-country-add-btn">ADD AIRLINE</button>
+            </div>
           </Form>
-
         </Formik>
 
-        <div className="airport-table" style={{marginBottom:20}}>
-            <div
-                className="airport-table-header"
-                style={{ display: 'flex', width: '100%' }}
-            >
-                <span style={{ width: '33%' }}>Terminal Name</span>
-                <span style={{ width: '33%' }}>Airport ID</span>
-                <span style={{ width: '33%' }}>Actions</span>
+        {/* Terminals Table */}
+        <div className="airport-table" style={{ marginBottom: 20 }}>
+          <div className="airport-table-header" style={{ display: 'flex', width: '100%' }}>
+            <span style={{ width: '50%' }}>Terminal Name</span>
+            <span style={{ width: '50%' }}>Airport ID</span>
+          </div>
+          {terminals.map((terminal) => (
+            <div key={terminal.id} className="airport-table-row" style={{ display: 'flex', width: '100%' }}>
+              <span style={{ width: '50%' }}>{terminal.terminalname}</span>
+              <span style={{ width: '50%' }}>{terminal.airportID}</span>
             </div>
-
-            {airports.map((airport) => (
-                <div
-                className="airport-table-row"
-                key={airport.id}
-                style={{ display: 'flex', width: '100%' }}
-                >
-                <span style={{ width: '33%' }}>{airport.name}</span>
-                <span style={{ width: '33%' }}>{airport.code}</span>
-                <span>
-                <button
-                  className="airport-delete-btn"
-                  onClick={() => handleDelete(airport.id)}
-                >
-                  🗑
-                </button>
-              </span>
-                </div>
-            ))}
+          ))}
         </div>
+
+        {/* Airlines Table */}
         <div className="airport-table">
-            <div
-                className="airport-table-header"
-                style={{ display: 'flex', width: '100%' }}
-            >
-                <span style={{ width: '50%' }}>Airline Name</span>
-                <span style={{ width: '50%' }}>Actions</span>
-            </div>
-
-            {airports.map((airport) => (
-                <div
-                className="airport-table-row"
-                key={airport.id}
-                style={{ display: 'flex', width: '100%' }}
-                >
-                <span style={{ width: '50%' }}>{airport.name}</span>
-                <span>
-                <button
-                  className="airport-delete-btn"
-                  onClick={() => handleDelete(airport.id)}
-                >
-                  🗑
-                </button>
+          <div className="airport-table-header" style={{ display: 'flex', width: '100%' }}>
+            <span style={{ width: '50%' }}>Airline Name</span>
+            <span style={{ width: '50%' }}>Actions</span>
+          </div>
+          {airlines.map((airline) => (
+            <div key={airline.id} className="airport-table-row" style={{ display: 'flex', width: '100%' }}>
+              <span style={{ width: '50%' }}>{airline.name}</span>
+              <span style={{ width: '50%' }}>
+                <button className="airport-delete-btn" onClick={() => handleDeleteAirline(airline.id)}>🗑</button>
               </span>
-                </div>
-            ))}
+            </div>
+          ))}
         </div>
-
       </main>
     </div>
   );
