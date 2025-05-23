@@ -9,7 +9,7 @@ const API_URL = 'http://localhost:8080/api/gates';
  * @param {string} [token] - Optional JWT token for Authorization.
  * @returns {Promise} Axios response promise.
  */
-export const getGates = (tenantId, token) => {
+export const getGates = async (tenantId, token) => {
   const headers = {
     'X-Tenant-ID': tenantId,
   };
@@ -18,7 +18,8 @@ export const getGates = (tenantId, token) => {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  return axios.get(API_URL, { headers });
+  const response = await axios.get(API_URL, { headers });
+  return response.data; // This ensures only the gate array is returned
 };
 
 /**

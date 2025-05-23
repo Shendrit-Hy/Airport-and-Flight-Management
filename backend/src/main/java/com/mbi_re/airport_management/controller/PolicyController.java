@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST controller for managing policies such as terms of service, privacy, etc.
- */
 @RestController
 @RequestMapping("/api/policies")
 @Tag(name = "Policy Controller", description = "API endpoints for managing policies per tenant.")
@@ -27,28 +24,18 @@ public class PolicyController {
         this.policyService = policyService;
     }
 
-    /**
-     * Retrieves all policies for the current tenant.
-     *
-     * @return List of tenant-specific policies
-     */
     @Operation(
             summary = "Get all policies",
             description = "Fetches all policies associated with the authenticated tenant. Requires USER or ADMIN role."
     )
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<List<Policy>> getAllPolicies() {
-        TenantUtil.validateTenantFromContext(); // Ensure tenant context is set
-        return ResponseEntity.ok(policyService.getAllPolicies());
+    public ResponseEntity<List<Policy>> getAllPolicies(
+            @RequestHeader("X-Tenant-ID") String tenantId) {
+        TenantUtil.validateTenant(tenantId);
+        System.out.println(tenantId);
+        return ResponseEntity.ok(policyService.getAllPolicies(tenantId));
     }
 
-    /**
-     * Creates a new policy for the tenant.
-     *
-     * @param policyDTO Policy data
-     * @return The created Policy entity
-     */
     @Operation(
             summary = "Create a new policy",
             description = "Creates a new policy entry. Requires ADMIN role and tenant must match JWT."
@@ -56,8 +43,24 @@ public class PolicyController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Policy> createPolicy(
-            @Parameter(description = "Policy details including tenant ID") @RequestBody PolicyDTO policyDTO) {
-        TenantUtil.validateTenant(policyDTO.getTenantId());
+            @RequestHeader("X-Tenant-ID") String tenantId,
+            @Parameter(description = "Policy details") @RequestBody PolicyDTO policyDTO) {
+        TenantUtil.validateTenant(tenantId);
+        policyDTO.setTenantId(tenantId); // enforce tenant consistency
         return ResponseEntity.ok(policyService.createPolicy(policyDTO));
+    }
+
+    @Operation(
+            summary = "Delete a policy",
+            description = "Deletes a policy by ID. Requires ADMIN role and tenant must match JWT."
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePolicy(
+            @RequestHeader("X-Tenant-ID") String tenantId,
+            @PathVariable Long id) {
+        TenantUtil.validateTenant(tenantId);
+        policyService.deletePolicy(id, tenantId);
+        return ResponseEntity.ok("Policy deleted successfully.");
     }
 }

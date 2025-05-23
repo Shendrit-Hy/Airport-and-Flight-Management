@@ -7,6 +7,7 @@ import com.mbi_re.airport_management.repository.BookingRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -95,6 +96,7 @@ public class BookingService {
      * @param id booking ID
      */
     @CacheEvict(value = "bookings", key = "T(com.mbi_re.airport_management.config.TenantContext).getTenantId() + '_all'")
+    @Transactional
     public void deleteBooking(Long id) {
         String tenantId = TenantContext.getTenantId();
         Optional<Booking> optional = repository.findByIdAndTenantId(id, tenantId);

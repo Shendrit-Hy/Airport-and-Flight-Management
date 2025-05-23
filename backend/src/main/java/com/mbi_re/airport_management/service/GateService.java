@@ -12,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -103,6 +104,7 @@ public class GateService {
      * @param tenantId the tenant ID to ensure scoping
      */
     @CacheEvict(value = "gates", key = "#tenantId")
+    @Transactional
     public void deleteGate(Long id, String tenantId) {
         Gate gate = gateRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Gate not found or not owned by tenant"));

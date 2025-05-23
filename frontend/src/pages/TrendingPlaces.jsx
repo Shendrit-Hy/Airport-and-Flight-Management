@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/TrendingPlaces.css";
-import { getTrendingPlaces } from "../api/trendingPlaceService";
+// import { getTrendingPlaces } from "../api/trendingPlaceService";
 
 import { useLanguage } from "../context/LanguageContext"; // ✅ për përkthim
 

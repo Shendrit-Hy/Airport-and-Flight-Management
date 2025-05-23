@@ -11,6 +11,32 @@
   flex-direction: column;
 }
 
+/* Input and Select Styling */
+.airport-input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+/* Optional: Match hover/focus behavior */
+.airport-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+/* Optional: Error message */
+.airport-error {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+
 /* Container for content */
 .TrendingPlaces__Container {
   flex: 1;

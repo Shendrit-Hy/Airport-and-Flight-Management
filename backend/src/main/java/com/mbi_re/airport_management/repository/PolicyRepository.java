@@ -16,4 +16,6 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
      * @return list of policies for the given tenant
      */
     List<Policy> findByTenantId(String tenantId);
+
+    void deleteByIdAndTenantId(Long id, String tenantId);
 }
