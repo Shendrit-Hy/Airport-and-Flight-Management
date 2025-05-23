@@ -45,11 +45,14 @@ function AdminAnnouncements() {
 
   return (
     <div className="adminpayments-container">
-      <aside className="airport-sidebar">
+     <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
-
-          {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
+          {[
+            'dashboard', 'airport', 'booking', 'faqs', 'flightspage',
+            'maintenance', 'passangers', 'payments', 'staff', 'support',
+            'announcements', 'city', 'languages', 'trending', 'policy', 'gate','terminal'
+          ].map((item) => (
             <div className="airport-nav-row" key={item}>
               <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
             </div>

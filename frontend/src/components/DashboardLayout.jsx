@@ -11,16 +11,19 @@ function DashboardLayout() {
   return (
     <div className="dashboard-container">
     <aside className="airport-sidebar">
-            <div className="airport-logo">MBI RE</div>
-            <nav className="airport-nav-group">
-
-              {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
-                <div className="airport-nav-row" key={item}>
-                  <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
-                </div>
-              ))}
-            </nav>
-          </aside>
+        <div className="airport-logo">MBI RE</div>
+        <nav className="airport-nav-group">
+          {[
+            'dashboard', 'airport', 'booking', 'faqs', 'flightspage',
+            'maintenance', 'passangers', 'payments', 'staff', 'support',
+            'announcements', 'city', 'languages', 'trending', 'policy', 'gate','terminal'
+          ].map((item) => (
+            <div className="airport-nav-row" key={item}>
+              <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
+            </div>
+          ))}
+        </nav>
+      </aside>
 
       <div className="main">
         <header className="topbar">
