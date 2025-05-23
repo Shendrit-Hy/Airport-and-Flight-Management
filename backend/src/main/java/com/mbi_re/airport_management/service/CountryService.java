@@ -7,6 +7,7 @@ import com.mbi_re.airport_management.config.TenantContext;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,15 +65,18 @@ public class CountryService {
     }
 
     /**
-     * Deletes a country for the current tenant based on the code.
+     /**
+     * Deletes a country for the current tenant based on the ID.
      * <p>
      * Invalidates the countries cache after deletion.
      *
-     * @param code the country code to delete
+     * @param id the country ID to delete
      */
     @CacheEvict(value = "countries", key = "T(com.mbi_re.airport_management.config.TenantContext).getTenantId()")
-    public void deleteCountry(String code) {
+    @Transactional
+    public void deleteCountry(Long id) {
         String tenantId = TenantContext.getTenantId();
-        countryRepository.deleteByCodeAndTenantId(code, tenantId);
+        countryRepository.deleteByIdAndTenantId(id, tenantId);
     }
+
 }

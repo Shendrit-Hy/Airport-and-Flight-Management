@@ -2,6 +2,7 @@ package com.mbi_re.airport_management.controller;
 
 import com.mbi_re.airport_management.dto.BookingDTO;
 import com.mbi_re.airport_management.model.Booking;
+import com.mbi_re.airport_management.security.JwtService;
 import com.mbi_re.airport_management.service.BookingService;
 import com.mbi_re.airport_management.utils.TenantUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,11 +10,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller for managing flight bookings within tenant-based system.
@@ -25,6 +29,9 @@ import java.util.List;
 public class BookingController {
 
     private final BookingService service;
+
+    @Autowired
+    private JwtService jwtService;
 
     public BookingController(BookingService service) {
         this.service = service;
@@ -48,6 +55,7 @@ public class BookingController {
 
         TenantUtil.validateTenantFromContext();
         String tenantId = TenantUtil.getCurrentTenant();
+        dto.setCheckedIn(false);
         Booking booking = service.createBooking(dto, tenantId);
         return ResponseEntity.ok(booking);
     }
@@ -135,4 +143,18 @@ public class BookingController {
         service.deleteBooking(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/{id}/checkin")
+    @Operation(summary = "Update check-in status", description = "Mark a booking as checked-in or not.")
+    public ResponseEntity<Booking> updateCheckInStatus(
+            @PathVariable Long id,
+            @RequestParam boolean checkedIn) {
+
+        TenantUtil.validateTenantFromContext();
+        return service.updateCheckInStatus(id, checkedIn)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }

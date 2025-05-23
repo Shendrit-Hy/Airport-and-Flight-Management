@@ -33,6 +33,16 @@ public class Booking {
     @Column(nullable = false)
     private String tenantId;
 
+    private boolean checkedIn;
+
+    public boolean isCheckedIn() {
+        return checkedIn;
+    }
+
+    public void setCheckedIn(boolean checkedIn) {
+        this.checkedIn = checkedIn;
+    }
+
     public String getBookingId() {
         return bookingId;
     }

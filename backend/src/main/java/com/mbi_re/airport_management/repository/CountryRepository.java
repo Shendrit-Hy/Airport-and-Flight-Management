@@ -44,4 +44,7 @@ public interface CountryRepository extends JpaRepository<Country, Long> {
      * @param tenantId the tenant identifier
      */
     void deleteByCodeAndTenantId(String code, String tenantId);
+
+    void deleteByIdAndTenantId(Long id, String tenantId);
+
 }

@@ -5,6 +5,7 @@ import com.mbi_re.airport_management.model.Seat;
 import com.mbi_re.airport_management.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class SeatService {
      * @param tenantId the tenant ID
      * @return list of available seats
      */
-    @Cacheable(value = "availableSeats", key = "#flightId + '_' + #tenantId")
+    @CacheEvict(value = "availableSeats", key = "#flightId + '_' + #tenantId")
     public List<SeatDTO> getAvailableSeats(Long flightId, String tenantId) {
         List<Seat> seats = seatRepository.findByFlightIdAndTenantIdAndBookedFalse(flightId, tenantId);
         return seats.stream().map(this::convertToDTO).collect(Collectors.toList());

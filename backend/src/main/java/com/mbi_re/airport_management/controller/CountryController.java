@@ -76,26 +76,27 @@ public class CountryController {
     }
 
     /**
-     * Delete a country by its code. Requires ADMIN role.
+     * Delete a country by its ID. Requires ADMIN role.
      *
-     * @param code Country code
+     * @param id Country ID
      * @return 204 No Content on success
      */
-    @Operation(summary = "Delete a country", description = "Admin-only endpoint to delete a country by code.")
+    @Operation(summary = "Delete a country", description = "Admin-only endpoint to delete a country by ID.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Country deleted successfully"),
             @ApiResponse(responseCode = "403", description = "Access denied or missing tenant context")
     })
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{code}")
+    @DeleteMapping("/{id}")
     @CacheEvict(value = "countries", key = "T(com.mbi_re.airport_management.config.TenantContext).getTenantId()")
     public ResponseEntity<Void> deleteCountry(
             @PathVariable
-            @Parameter(description = "Country code", required = true) String code) {
+            @Parameter(description = "Country ID", required = true) Long id) {
 
         TenantUtil.validateTenantFromContext();
-        countryService.deleteCountry(code);
+        countryService.deleteCountry(id);
         return ResponseEntity.noContent().build();
     }
+
 }
 

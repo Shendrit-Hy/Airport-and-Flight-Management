@@ -101,6 +101,14 @@ public class BookingService {
         optional.ifPresent(repository::delete);
     }
 
+    public Optional<Booking> updateCheckInStatus(Long id, boolean checkedIn) {
+        String tenantId = TenantContext.getTenantId();
+        return repository.findByIdAndTenantId(id, tenantId).map(booking -> {
+            booking.setCheckedIn(checkedIn);
+            return repository.save(booking);
+        });
+    }
+
     /**
      * Generates a unique booking ID string.
      *
@@ -109,4 +117,5 @@ public class BookingService {
     private String generateBookingId() {
         return "BOOK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
+
 }

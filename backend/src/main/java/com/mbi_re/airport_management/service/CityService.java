@@ -9,6 +9,7 @@ import com.mbi_re.airport_management.repository.CountryRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -90,6 +91,7 @@ public class CityService {
      * @param id the ID of the city to delete
      */
     @CacheEvict(value = "cities", allEntries = true)
+    @Transactional
     public void deleteCity(Long id) {
         String tenantId = TenantContext.getTenantId();
         cityRepository.deleteByIdAndTenantId(id, tenantId);
