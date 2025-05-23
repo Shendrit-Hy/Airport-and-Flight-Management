@@ -1,4 +1,4 @@
-# ✈️ Sistemi për Menaxhimin e Aeroportit dhe Fluturimeve
+# Sistemi për Menaxhimin e Aeroportit dhe Fluturimeve
 
 Ky projekt është një aplikacion web full-stack që mundëson:
 - Menaxhimin e aeroporteve dhe fluturimeve
@@ -9,9 +9,9 @@ Ky projekt është një aplikacion web full-stack që mundëson:
 
 ---
 
-## 🧱 Teknologjitë dhe Arkitektura
+## Teknologjitë dhe Arkitektura
 
-### ✅ Backend (Java Spring Boot)
+### Backend (Java Spring Boot)
 - Spring Boot, Spring Security, Spring Data JPA
 - JWT për autentikim të sigurt
 - PostgreSQL si bazë e të dhënave
@@ -19,7 +19,7 @@ Ky projekt është një aplikacion web full-stack që mundëson:
 
 > Çdo rekord lidhet me një `tenantId`, dhe izolimi i të dhënave sigurohet përmes `TenantContext` + `Interceptor`.
 
-### ✅ Frontend (React.js)
+### Frontend (React.js)
 - React për UI dinamike
 - Axios për thirrje API
 - Formik + Yup për validime
@@ -28,7 +28,7 @@ Ky projekt është një aplikacion web full-stack që mundëson:
 
 ---
 
-## 🌤 Veçori të veçanta
+##  Veçori të veçanta
 
 | Veçori                  | Përshkrimi                                                             |
 |-------------------------|-------------------------------------------------------------------------|
@@ -41,7 +41,7 @@ Ky projekt është një aplikacion web full-stack që mundëson:
 
 ---
 
-## 🚀 Si ta ekzekutoni projektin (lokalisht)
+## Si ta ekzekutoni projektin (lokalisht)
 
 ### Kërkesat:
 - Java 17+
