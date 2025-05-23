@@ -29,7 +29,7 @@ function AdminBooking() {
 
   const handleDelete = async (id) => {
     try {
-      await deleteBooking(id, tenantId, token);
+      await deleteBooking(id,token);
       setBookings((prev) => prev.filter((booking) => booking.id !== id));
       console.log("Booking deleted successfully.");
     } catch (error) {
