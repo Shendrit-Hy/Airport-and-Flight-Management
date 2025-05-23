@@ -1,88 +1,89 @@
+// src/services/bookingService.js
 import axios from 'axios';
 
 const API_URL = 'http://localhost:8080/api/bookings';
 
 /**
- * Create a new booking (Authenticated users)
- * @param {object} bookingData - { flightId, passengerId, seatNumber, ... }
- * @param {string} tenantId
- * @param {string} token
- * @returns {Promise<Booking>}
+ * Create a new booking (authenticated users only).
+ * @param {Object} bookingDTO - Booking data to be submitted.
+ * @param {string} token - JWT token for Authorization header.
+ * @returns {Promise} Axios response promise.
  */
-export const createBooking = (bookingData, tenantId, token) => {
-  return axios.post(API_URL, bookingData, {
+export const createBooking = (bookingDTO, token) => {
+  return axios.post(API_URL, bookingDTO, {
     headers: {
-      'X-Tenant-ID': tenantId,
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
     },
   });
 };
 
 /**
- * Get all bookings (Admin only)
- * @param {string} tenantId
- * @param {string} token
- * @returns {Promise<Booking[]>}
+ * Get all bookings (admin only).
+ * @param {string} token - JWT token for Authorization header.
+ * @returns {Promise} Axios response promise.
  */
-export const getAllBookings = (tenantId, token) => {
+export const getAllBookings = (token) => {
   return axios.get(API_URL, {
     headers: {
-      'X-Tenant-ID': tenantId,
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
     },
   });
 };
 
 /**
- * Get booking by ID (Admin only)
- * @param {number} bookingId
- * @param {string} tenantId
- * @param {string} token
- * @returns {Promise<Booking>}
+ * Get booking by ID (admin only).
+ * @param {number} id - Booking ID.
+ * @param {string} token - JWT token for Authorization header.
+ * @returns {Promise} Axios response promise.
  */
-export const getBookingById = (bookingId, tenantId, token) => {
-  return axios.get(`${API_URL}/${bookingId}`, {
+export const getBookingById = (id, token) => {
+  return axios.get(`${API_URL}/${id}`, {
     headers: {
-      'X-Tenant-ID': tenantId,
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
     },
   });
 };
 
 /**
- * Update a booking (Admin only)
- * @param {number} bookingId
- * @param {object} updatedData
- * @param {string} tenantId
- * @param {string} token
- * @returns {Promise<Booking>}
+ * Update a booking (admin only).
+ * @param {number} id - Booking ID.
+ * @param {Object} bookingDTO - Updated booking data.
+ * @param {string} token - JWT token for Authorization header.
+ * @returns {Promise} Axios response promise.
  */
-export const updateBooking = (bookingId, updatedData, tenantId, token) => {
-  return axios.put(`${API_URL}/${bookingId}`, updatedData, {
+export const updateBooking = (id, bookingDTO, token) => {
+  return axios.put(`${API_URL}/${id}`, bookingDTO, {
     headers: {
-      'X-Tenant-ID': tenantId,
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
     },
   });
 };
 
 /**
- * Delete a booking (Admin only)
- * @param {number} bookingId
- * @param {string} tenantId
- * @param {string} token
- * @returns {Promise<void>}
+ * Delete a booking by ID (admin only).
+ * @param {number} id - Booking ID.
+ * @param {string} token - JWT token for Authorization header.
+ * @returns {Promise} Axios response promise.
  */
-export const deleteBooking = (bookingId, tenantId, token) => {
-  return axios.delete(`${API_URL}/${bookingId}`, {
+export const deleteBooking = (id, token) => {
+  return axios.delete(`${API_URL}/${id}`, {
     headers: {
-      'X-Tenant-ID': tenantId,
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+    },
+  });
+};
+
+/**
+ * Update check-in status (authenticated users).
+ * @param {number} id - Booking ID.
+ * @param {boolean} checkedIn - Check-in status to set (true or false).
+ * @param {string} token - JWT token for Authorization header.
+ * @returns {Promise} Axios response promise.
+ */
+export const updateCheckInStatus = (id, checkedIn, token) => {
+  return axios.put(`${API_URL}/${id}/checkin?checkedIn=${checkedIn}`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
   });
 };

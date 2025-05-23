@@ -1,12 +1,11 @@
+// src/pages/AdminFaqs.js
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { getTenantIdFromSubdomain } from "../utils/getTenantId";
+import { getFaqs, saveFaq } from "../api/faqService";
 import "../styles/AdminBooking.css";
-
 import "../styles/AdminAirportPage.css";
-
 
 function AdminFaqs() {
   const [faqs, setFaqs] = useState([]);
@@ -16,29 +15,23 @@ function AdminFaqs() {
     fetchFaqs();
   }, []);
 
-  const fetchFaqs = () => {
-    axios
-      .get("http://localhost:8080/api/faqs", {
-        headers: { "X-Tenant-ID": tenantId },
-      })
-      .then((res) => {
-        setFaqs(Array.isArray(res.data) ? res.data : []);
-      })
-      .catch((err) => console.error("Error fetching FAQs:", err));
+  const fetchFaqs = async () => {
+    try {
+      const res = await getFaqs(tenantId);
+      setFaqs(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Error fetching FAQs:", err);
+    }
   };
 
-  const handleAddFaq = (values, { resetForm }) => {
-    axios
-      .post(
-        "http://localhost:8080/api/faqs",
-        { ...values },
-        { headers: { "X-Tenant-ID": tenantId } }
-      )
-      .then((res) => {
-        setFaqs((prev) => (Array.isArray(prev) ? [...prev, res.data] : [res.data]));
-        resetForm();
-      })
-      .catch((err) => console.error("Error adding FAQ:", err));
+  const handleAddFaq = async (values, { resetForm }) => {
+    try {
+      const res = await saveFaq(tenantId, values, "admin_token_here"); // Replace with actual token
+      setFaqs((prev) => [...prev, res.data]);
+      resetForm();
+    } catch (err) {
+      console.error("Error adding FAQ:", err);
+    }
   };
 
   return (
@@ -46,11 +39,7 @@ function AdminFaqs() {
       <aside className="airport-sidebar">
         <div className="airport-logo">MBI RE</div>
         <nav className="airport-nav-group">
-          {[
-            'dashboard', 'airport', 'booking', 'faqs', 'flightspage',
-            'maintenance', 'passangers', 'payments', 'staff', 'support',
-            'announcements', 'city', 'languages', 'trending', 'policy', 'gate','terminal'
-          ].map((item) => (
+          {["dashboard", "airport", "booking", "faqs", "flightspage", "maintenance", "passangers", "payments", "staff", "support", "announcements"].map((item) => (
             <div className="airport-nav-row" key={item}>
               <a href={`/admin/${item}`}>{item.toUpperCase()}</a>
             </div>
@@ -65,7 +54,6 @@ function AdminFaqs() {
         </header>
 
         <div style={{ maxWidth: 600, margin: "0 20px 30px 20px" }}>
-
           <Formik
             initialValues={{ question: "", answer: "" }}
             validationSchema={Yup.object({

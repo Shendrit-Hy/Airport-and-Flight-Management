@@ -3,15 +3,11 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/BookingPage.css";
-import {
-  fetchAvailableSeats,
-  submitBooking,
-  toggleSeatSelection,
-  isSeatSelectedHelper,
-  createPassenger,
-  createBooking
-} from "../api/bookedService";
 import { getUserProfile } from "../utils/auth";
+import { createBooking } from "../api/bookingService";
+import { createPassenger } from "../api/passengerService";
+import { savePayment } from "../api/paymentService";
+import { getAvailableSeats, markSeatAsUnavailable } from "../api/seatService";
 
 const BookingContext = createContext();
 
@@ -25,22 +21,20 @@ function BookingProvider({ children }) {
 }
 
 function parseTimeString(timeStr) {
-  const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+  const [hours, minutes, seconds] = timeStr.split(":").map(Number);
   const now = new Date();
   now.setHours(hours, minutes, seconds || 0, 0);
   return now;
 }
 
-
 function BookingDetails({ flight }) {
-  console.log(flight)
   const departureTime = parseTimeString(flight.departureTime);
   const arrivalTime = parseTimeString(flight.arrivalTime);
   return (
     <div className="bookingpage-details">
       <h2>Flight Details</h2>
       <p className="bookingpage-detail-box">
-        {new Date(departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} → {new Date(arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        {new Date(departureTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} → {new Date(arrivalTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
       </p>
       <p className="bookingpage-detail-box">From: {flight.departureAirport}</p>
       <p className="bookingpage-detail-box">To: {flight.arrivalAirport}</p>
@@ -78,13 +72,10 @@ function UserInfoForm({ next }) {
 
         <Field name="fullName" placeholder="Full Name" className="bookingpage-input" />
         <ErrorMessage name="fullName" component="div" className="bookingpage-error" />
-
         <Field name="email" type="email" placeholder="Email" className="bookingpage-input" />
         <ErrorMessage name="email" component="div" className="bookingpage-error" />
-
         <Field name="age" placeholder="Age" className="bookingpage-input" />
         <ErrorMessage name="age" component="div" className="bookingpage-error" />
-
         <Field name="phone" placeholder="Phone Number" className="bookingpage-input" />
         <ErrorMessage name="phone" component="div" className="bookingpage-error" />
 
@@ -108,21 +99,26 @@ function PaymentForm({ flight }) {
   const [availableSeats, setAvailableSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const navigate = useNavigate();
+  const tenantId = flight.tenantId;
 
-useEffect(() => {
-  console.log("Flight object:", flight);
+  useEffect(() => {
+    getAvailableSeats(flight.id, tenantId)
+      .then((res) => {
+        const seats = Array.isArray(res.data) ? res.data : [];
+        setAvailableSeats(seats);
+      })
+      .catch(() => setAvailableSeats([]));
+  }, [flight.id, tenantId]);
 
-  fetchAvailableSeats(flight.id)
-    .then((seats) => {
-      console.log("Available seats:", seats);
-      setAvailableSeats(seats);
-    })
-    .catch((error) => {
-      console.error("Failed to fetch seats:", error);
-      setAvailableSeats([]);
-    });
-}, [flight.id]);
+  const toggleSeatSelection = (seat, selected, max) => {
+    const exists = selected.find(s => s.id === seat.id);
+    if (exists) return selected.filter(s => s.id !== seat.id);
+    if (selected.length < max) return [...selected, seat];
+    return selected;
+  };
 
+  const isSeatSelectedHelper = (seat, selected) =>
+    selected.some(s => s.id === seat.id);
 
   const handleSeatClick = (seat) => {
     setSelectedSeats(toggleSeatSelection(seat, selectedSeats, userInfo.ticketCount));
@@ -135,35 +131,46 @@ useEffect(() => {
         cardNumber: Yup.string().required("Required"),
         cvc: Yup.string().required("Required"),
       })}
-        onSubmit={async () => {
-          try {
-            const userProfile = await getUserProfile(localStorage.getItem("token"));
-            console.log(selectedSeats);
-            console.log(userInfo);
-            console.log(flight);
-            console.log(userProfile);
-            await createBooking(userProfile, userInfo, selectedSeats, flight);
+      onSubmit={async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const userProfile = await getUserProfile(token);
 
-
-            
-            // Then create the passenger record using the userInfo data
-            const passengerData = {
+          const passengerPromises = Array(userInfo.ticketCount).fill().map(() =>
+            createPassenger({
               fullName: userInfo.fullName,
               email: userInfo.email,
               age: userInfo.age,
-              phone: userInfo.phone
-              // Add any other needed fields
-            };
-            
-            await createPassenger(passengerData);
-            
-            // Navigate to checkin page after both operations succeed
-            navigate("/checkin");
-          } catch (err) {
-            alert("Booking failed. Please try again.");
-            console.error(err);
-          }
-        }}
+              phone: userInfo.phone,
+            }, tenantId)
+          );
+
+          const passengerResponses = await Promise.all(passengerPromises);
+          console.log(userProfile);
+          const bookingResponse = await createBooking({
+            flightNumber: flight.id,
+            seatNumber: selectedSeats.map(seat => seat.seatNumber).join(','),
+            passengerId: userProfile.data.id,
+            passengerName: passengerResponses[0].data.fullName,
+          }, token);
+
+          await savePayment({
+            bookingId: bookingResponse.data.id,
+            amount: flight.price * userInfo.ticketCount,
+            method: "CARD",
+            reference: `BOOK-${bookingResponse.data.id}`
+          }, token, tenantId);
+
+          await Promise.all(selectedSeats.map(seat =>
+            markSeatAsUnavailable(seat.id, token)
+          ));
+
+          navigate("/checkin");
+        } catch (err) {
+          alert("Booking failed. Please try again.");
+          console.error(err);
+        }
+      }}
     >
       <Form className="bookingpage-form">
         <div className="bookingpage-tab-bar">

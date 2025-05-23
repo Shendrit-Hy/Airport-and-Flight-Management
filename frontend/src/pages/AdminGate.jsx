@@ -2,51 +2,43 @@ import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import '../styles/AdminAirportPage.css';
-import { getAllAirports, createAirport, deleteAirport } from '../api/airportService';
+import { getGates, createGate, deleteGate } from '../api/gateService';
 import { getTenantIdFromSubdomain } from '../utils/getTenantId';
 
 export default function AdminGate() {
-  const [airports, setAirports] = useState([]);
+  const [gates, setGates] = useState([]);
   const tenantId = getTenantIdFromSubdomain();
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    loadAirports();
+    loadGates();
   }, []);
 
-  const loadAirports = async () => {
+  const loadGates = async () => {
     try {
-      const res = await getAllAirports(tenantId, token);
-      setAirports(Array.isArray(res.data) ? res.data : []);
+      const res = await getGates(tenantId, token);
+      setGates(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error('Error loading airports:', err);
+      console.error('Error loading gates:', err);
     }
   };
 
   const handleAdd = async (values, { resetForm }) => {
-    const airportData = {
-      name: values.name,
-      code: values.code,
-      timezone: values.timezone,
-      cityId: values.cityId,
-      countryId: values.countryId,
-    };
-
     try {
-      await createAirport(airportData, tenantId, token);
+      await createGate(tenantId, values, token);
       resetForm();
-      loadAirports();
+      loadGates();
     } catch (err) {
-      console.error('Error creating airport:', err);
+      console.error('Error creating gate:', err);
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      await deleteAirport(id, tenantId, token);
-      loadAirports();
+      await deleteGate(tenantId, id, token);
+      loadGates();
     } catch (err) {
-      console.error('Error deleting airport:', err);
+      console.error('Error deleting gate:', err);
     }
   };
 
@@ -79,7 +71,7 @@ export default function AdminGate() {
         </header>
 
         <Formik
-          initialValues={{ gatenr: '', status: '', terminalid: '', terminalname: ''}}
+          initialValues={{ gatenr: '', status: '', terminalid: '', terminalname: '' }}
           validationSchema={Yup.object({
             gatenr: Yup.string().required('Required'),
             status: Yup.string().required('Required'),
@@ -90,25 +82,29 @@ export default function AdminGate() {
         >
           <Form className="airport-add-form">
             <div className="airport-form-grid">
-              {['Gate Nr','status', 'terminal id', 'terminal name'].map((field) => (
-                <div className="airport-input-group" key={field}>
-                  <Field
-                    type="text"
-                    id={field}
-                    name={field}
-                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                    className="airport-input"
-                  />
-                  <ErrorMessage name={field} component="div" className="airport-error" />
-                </div>
-              ))}
+              <div className="airport-input-group">
+                <Field type="text" name="gatenr" placeholder="Gate Nr" className="airport-input" />
+                <ErrorMessage name="gatenr" component="div" className="airport-error" />
+              </div>
+              <div className="airport-input-group">
+                <Field type="text" name="status" placeholder="Status" className="airport-input" />
+                <ErrorMessage name="status" component="div" className="airport-error" />
+              </div>
+              <div className="airport-input-group">
+                <Field type="text" name="terminalid" placeholder="Terminal ID" className="airport-input" />
+                <ErrorMessage name="terminalid" component="div" className="airport-error" />
+              </div>
+              <div className="airport-input-group">
+                <Field type="text" name="terminalname" placeholder="Terminal Name" className="airport-input" />
+                <ErrorMessage name="terminalname" component="div" className="airport-error" />
+              </div>
             </div>
             <button type="submit" className="airport-add-btn">ADD</button>
           </Form>
         </Formik>
 
         <div className="airport-table">
-          <div className="airport-table-header" style={{ width: '100%',display:'flex' }}>
+          <div className="airport-table-header" style={{ width: '100%', display: 'flex' }}>
             <span style={{ width: '20%' }}>Gate Number</span>
             <span style={{ width: '20%' }}>Status</span>
             <span style={{ width: '20%' }}>Terminal ID</span>
@@ -116,20 +112,14 @@ export default function AdminGate() {
             <span style={{ width: '20%' }}>Actions</span>
           </div>
 
-          {airports.map((airport) => (
-            <div className="airport-table-row" key={airport.id}>
-              <span style={{ width: '20%' }}>{airport.name}</span>
-              <span style={{ width: '20%' }}>{airport.code}</span>
-              <span style={{ width: '20%' }}>{airport.timezone}</span>
-              <span style={{ width: '20%' }}>{airport.city.id}</span>
-              <span>
-                <button
-                  style={{ width: '20%' }}
-                  className="airport-delete-btn"
-                  onClick={() => handleDelete(airport.id)}
-                >
-                  🗑
-                </button>
+          {gates.map((gate) => (
+            <div className="airport-table-row" key={gate.id}>
+              <span style={{ width: '20%' }}>{gate.gatenr}</span>
+              <span style={{ width: '20%' }}>{gate.status}</span>
+              <span style={{ width: '20%' }}>{gate.terminalid}</span>
+              <span style={{ width: '20%' }}>{gate.terminalname}</span>
+              <span style={{ width: '20%' }}>
+                <button className="airport-delete-btn" onClick={() => handleDelete(gate.id)}>🗑</button>
               </span>
             </div>
           ))}
