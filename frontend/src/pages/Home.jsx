@@ -74,7 +74,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchForecast = async () => {
       try {
-        const apiKey = 'c8e04e837b134803a7c132638252305';
+        const apiKey = 'API_KEY';
         const lat = '42.665440';
         const lon = '21.165319';
         const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
